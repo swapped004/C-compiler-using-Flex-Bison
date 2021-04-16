@@ -81,7 +81,8 @@ extern int yydebug;
     LTHIRD = 287,
     RTHIRD = 288,
     COMMA = 289,
-    SEMICOLON = 290
+    SEMICOLON = 290,
+    LOWER_THAN_ELSE = 291
   };
 #endif
 /* Tokens.  */
@@ -118,6 +119,7 @@ extern int yydebug;
 #define RTHIRD 288
 #define COMMA 289
 #define SEMICOLON 290
+#define LOWER_THAN_ELSE 291
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -126,7 +128,7 @@ union YYSTYPE
 #line 42 "./parser.y"
 int ival;SymbolInfo* si;
 
-#line 130 "y.tab.h"
+#line 132 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -7,9 +7,6 @@ Terminals unused in grammar
     DO
 
 
-State 110 conflicts: 1 shift/reduce
-
-
 Grammar
 
     0 $accept: start $end
@@ -140,82 +137,83 @@ Terminals, with rules where they appear
     RTHIRD <si> (288) 22 24 39
     COMMA <si> (289) 11 12 21 22 62
     SEMICOLON <si> (290) 7 8 17 34 35 36 37
+    LOWER_THAN_ELSE (291)
 
 
 Nonterminals, with rules where they appear
 
-    $accept (36)
+    $accept (37)
         on left: 0
-    start (37)
+    start <si> (38)
         on left: 1
         on right: 0
-    program (38)
+    program <si> (39)
         on left: 2 3
         on right: 1 2
-    unit (39)
+    unit <si> (40)
         on left: 4 5 6
         on right: 2 3
-    func_declaration (40)
+    func_declaration <si> (41)
         on left: 7 8
         on right: 5
-    func_definition (41)
+    func_definition <si> (42)
         on left: 9 10
         on right: 6
-    parameter_list (42)
+    parameter_list <si> (43)
         on left: 11 12 13 14
         on right: 7 9 11 12
-    compound_statement (43)
+    compound_statement <si> (44)
         on left: 15 16
         on right: 9 10 29
-    var_declaration <si> (44)
+    var_declaration <si> (45)
         on left: 17
         on right: 4 27
-    type_specifier <si> (45)
+    type_specifier <si> (46)
         on left: 18 19 20
         on right: 7 8 9 10 11 12 13 14 17
-    declaration_list <si> (46)
+    declaration_list <si> (47)
         on left: 21 22 23 24
         on right: 17 21 22
-    statements (47)
+    statements <si> (48)
         on left: 25 26
         on right: 15 26
-    statement <si> (48)
+    statement <si> (49)
         on left: 27 28 29 30 31 32 33 34 35
         on right: 25 26 30 31 32 33
-    expression_statement (49)
+    expression_statement <si> (50)
         on left: 36 37
         on right: 28 30
-    variable <si> (50)
+    variable <si> (51)
         on left: 38 39
         on right: 41 53 58 59
-    expression <si> (51)
+    expression <si> (52)
         on left: 40 41
         on right: 30 31 32 33 35 37 39 55
-    logic_expression (52)
+    logic_expression <si> (53)
         on left: 42 43
         on right: 40 41 62 63
-    rel_expression (53)
+    rel_expression <si> (54)
         on left: 44 45
         on right: 42 43
-    simple_expression (54)
+    simple_expression <si> (55)
         on left: 46 47
         on right: 44 45 47
-    term (55)
+    term <si> (56)
         on left: 48 49
         on right: 46 47 49
-    unary_expression (56)
+    unary_expression <si> (57)
         on left: 50 51 52
         on right: 48 49 50 51
-    factor <si> (57)
+    factor <si> (58)
         on left: 53 54 55 56 57 58 59
         on right: 52
-    argument_list (58)
+    argument_list <si> (59)
         on left: 60 61
         on right: 54
-    arguments (59)
+    arguments <si> (60)
         on left: 62 63
         on right: 60 62
-    id <si> (60)
+    id <si> (61)
         on left: 64
         on right: 7 8 9 10 11 13 21 22 23 24 34 38 39 54
 
@@ -1488,7 +1486,6 @@ State 110
 
     ELSE  shift, and go to state 115
 
-    ELSE      [reduce using rule 31 (statement)]
     $default  reduce using rule 31 (statement)
 
 

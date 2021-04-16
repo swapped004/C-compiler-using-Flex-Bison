@@ -47,96 +47,146 @@ void yyerror(char *s)
 %token <si> ASSIGNOP NOT INCOP DECOP LOGICOP RELOP ADDOP MULOP
 %token <si> LPAREN RPAREN LCURL RCURL LTHIRD RTHIRD COMMA SEMICOLON 
 
-%type <si> type_specifier declaration_list var_declaration statement variable
+%type <si> type_specifier declaration_list var_declaration variable
 %type <si> id
-%type <si> factor expression
+%type <si> factor unary_expression term simple_expression rel_expression logic_expression expression expression_statement
+%type <si> arguments argument_list
+%type <si> statement statements compound_statement
+%type <si> parameter_list func_definition func_declaration
+%type <si> start program unit
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
 
 
 %%
 
 start: program
 	{
+		$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
 		print_line();
 		fp2<<"start : program\n"<<endl;
+		fp2<<$$->getName()<<endl<<endl;
 	}
 	;
 
 program: program unit 
 		{
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName(), "NON_TERMINAL");
 			print_line();
 			fp2<<"program : program unit\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
 	| unit
 		{
+			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
 			print_line();
 			fp2<<"program : unit\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
 	;
 	
 unit: var_declaration
 		{
+			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
 			print_line();
 			fp2<<"unit : var_declaration\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
      | func_declaration
      	{	
-			 print_line();
+			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
+			print_line();
 			fp2<<"unit : func_declaration\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
      | func_definition
      	{
-			 print_line();
+			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
+		 	print_line();
 			fp2<<"unit : func_definition\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
      ;
      
 func_declaration: type_specifier id LPAREN parameter_list RPAREN SEMICOLON
 		{
-			fp2<<"func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON"<<endl;
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName()+" "+$6->getName(), "NON_TERMINAL");
+			print_line();
+			fp2<<"func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
 		| type_specifier id LPAREN RPAREN SEMICOLON
 		{
-			fp2<<"func_declaration : type_specifier ID LPAREN RPAREN SEMICOLON"<<endl;
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName(), "NON_TERMINAL");
+			print_line();
+			fp2<<"func_declaration : type_specifier ID LPAREN RPAREN SEMICOLON\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
 		;
 		 
 func_definition: type_specifier id LPAREN parameter_list RPAREN compound_statement
 		{
-			fp2<<"func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement"<<endl;
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName()+" "+$6->getName(), "NON_TERMINAL");
+			print_line();
+			fp2<<"func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
+
 		}
 		| type_specifier id LPAREN RPAREN compound_statement
 		{
-			fp2<<"func_definition : type_specifier ID LPAREN RPAREN compound_statement"<<endl;
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName(), "NON_TERMINAL");
+			print_line();
+			fp2<<"func_definition : type_specifier ID LPAREN RPAREN compound_statement\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
  		;				
 
 
 parameter_list: parameter_list COMMA type_specifier id
 		{
-			fp2<<"parameter_list: parameter_list COMMA type_specifier id"<<endl;
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
+			print_line();
+			fp2<<"parameter_list: parameter_list COMMA type_specifier id\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
 		| parameter_list COMMA type_specifier
 		{
-			fp2<<"parameter_list: parameter_list COMMA type_specifier"<<endl;
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(), "NON_TERMINAL");
+			print_line();
+			fp2<<"parameter_list: parameter_list COMMA type_specifier\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
  		| type_specifier id
 		{
-			fp2<<"parameter_list: type_specifier id"<<endl;
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName(), "NON_TERMINAL");
+			print_line();
+			fp2<<"parameter_list: type_specifier id\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
 		| type_specifier
 		{
-			fp2<<"parameter_list: type_specifier"<<endl;
+			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
+			print_line();
+			fp2<<"parameter_list: type_specifier\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 		}
  		;
 
  		
 compound_statement: LCURL statements RCURL
 			{
-				fp2<<"compound_statement: LCURL statements RCURL"<<endl;
+				$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(), "NON_TERMINAL");
+				print_line();
+				fp2<<"compound_statement: LCURL statements RCURL\n"<<endl;
+				fp2<<$$->getName()<<endl<<endl;
 			}
  		    | LCURL RCURL
 			{
-				fp2<<"compound_statement: LCURL RCURL"<<endl;
+				$$ = new SymbolInfo($1->getName()+" "+$2->getName(), "NON_TERMINAL");
+				print_line();
+				fp2<<"compound_statement: LCURL RCURL\n"<<endl;
+				fp2<<$$->getName()<<endl<<endl;
 			}
  		    ;
  		    
@@ -204,16 +254,18 @@ declaration_list: declaration_list COMMA id
  		  
 statements: statement
 			{
- 		  	
+				$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  		print_line();
-				fp2<<"statements : statement"<<endl;
-
+				fp2<<"statements : statement\n"<<endl;
+				fp2<<$1->getName()<<endl<<endl;
  		  	}
 		
 	   | statements statement
 	   {
+		   	$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"statements : statements statement"<<endl;
+			fp2<<"statements : statements statement\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 
  		}
 	   ;
@@ -229,64 +281,84 @@ statement: var_declaration
 		
 	  | expression_statement
 	   {
+		   	$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement : expression_statement"<<endl;
-
+			fp2<<"statement : expression_statement\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
  		}
 	  | compound_statement
 	  {
+		  	$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement : compound_statement"<<endl;
+			fp2<<"statement : compound_statement\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
 
  		}
 	  | FOR LPAREN expression_statement expression_statement expression RPAREN statement
 	  {
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName()+" "+$6->getName()+" "+$7->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"FOR LPAREN expression_statement expression_statement expression RPAREN statement"<<endl;
+			fp2<<"statement: FOR LPAREN expression_statement expression_statement expression RPAREN statement\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 
  		}
-	  | IF LPAREN expression RPAREN statement
+	  | IF LPAREN expression RPAREN statement %prec LOWER_THAN_ELSE
 	   {
+		   	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"IF LPAREN expression RPAREN statement"<<endl;
+			fp2<<"statement: IF LPAREN expression RPAREN statement\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 
  		}
 	  | IF LPAREN expression RPAREN statement ELSE statement
 	  {
+		  	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName()+" "+$6->getName()+" "+$7->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"IF LPAREN expression RPAREN statement ELSE statement"<<endl;
+			fp2<<"statement: IF LPAREN expression RPAREN statement ELSE statement\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 
  		}
 	  | WHILE LPAREN expression RPAREN statement
 	  {
+		  	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"WHILE LPAREN expression RPAREN statement"<<endl;
+			fp2<<"statement: WHILE LPAREN expression RPAREN statement\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 
  		}
 	  | PRINTLN LPAREN id RPAREN SEMICOLON
 	   {
+		   	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"PRINTLN LPAREN id RPAREN SEMICOLON"<<endl;
+			fp2<<"statement: PRINTLN LPAREN id RPAREN SEMICOLON\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 
  		}
 	  | RETURN expression SEMICOLON
-	  {
+	  	{
+			fp2<<"RETURN symbol->name: "<<$1->getName()<<endl<<endl;
+		  	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"RETURN expression SEMICOLON"<<endl;
+			fp2<<"statement: RETURN expression SEMICOLON"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 
  		}
 	  ;
 	  
 expression_statement: SEMICOLON	
 		{
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"expression_statement 	: SEMICOLON	"<<endl;
+			fp2<<"expression_statement: SEMICOLON\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
 
  		}		
 			| expression SEMICOLON 
 			{
+				$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
 	 		  	print_line();
-				fp2<<"expression SEMICOLON 	"<<endl;
+				fp2<<"expression SEMICOLON\n"<<endl;
+				fp2<<$1->getName()+$2->getName()<<endl<<endl;
 
  			}
 			;
@@ -310,35 +382,44 @@ variable: id
 	 
  expression: logic_expression	
  		{
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"expression : logic_expression	"<<endl;
+			fp2<<"expression : logic_expression\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
+
 
  		} 
 	   | variable ASSIGNOP logic_expression 
 	   {
+		   	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"expression : variable ASSIGNOP logic_expression "<<endl;
+			fp2<<"expression : variable ASSIGNOP logic_expression\n"<<endl;
+			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
 
  		} 	
 	   ;
 			
 logic_expression: rel_expression 	
  		{
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"logic_expression : rel_expression "<<endl;
+			fp2<<"logic_expression : rel_expression\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
 
  		} 	
 		 | rel_expression LOGICOP rel_expression 
 		 {
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"logic_expression : rel_expression LOGICOP rel_expression "<<endl;
+			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
+			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
 
  		} 		
 		 ;
 			
 rel_expression: simple_expression 
 		{
-			$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -420,15 +501,17 @@ factor: variable
  		} 
 	| id LPAREN argument_list RPAREN
 	{
-		//$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
+		$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
  	  	print_line();
 		fp2<<"factor: id LPAREN argument_list RPAREN\n"<<endl;
+		fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()<<endl;
  	} 
 	| LPAREN expression RPAREN
 	{
-		//$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(), "NON_TERMINAL");
+		$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(), "NON_TERMINAL");
  		print_line();
 		fp2<<"factor: LPAREN expression RPAREN\n"<<endl;
+		fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
 
 	} 
 	| CONST_INT 
@@ -464,29 +547,35 @@ factor: variable
 	
 argument_list: arguments
 		{
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"argument_list : arguments"<<endl;
-
+			fp2<<"argument_list : arguments\n"<<endl;
+			fp2<<$1->getName()<<endl;
  		} 
-			  |
-			  {
+		|
+		{
+			$$ = new SymbolInfo("", "NON_TERMINAL");
  		  	print_line();
-			fp2<<"argument_list : "<<endl;
+			fp2<<"argument_list : \n"<<endl;
+			fp2<<""<<endl<<endl;
 
  		} 
 			  ;
 	
 arguments: arguments COMMA logic_expression
 			{
+				$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(), "NON_TERMINAL");
 				print_line();
-				fp2<<"arguments : arguments COMMA logic_expression"<<endl;
+				fp2<<"arguments : arguments COMMA logic_expression\n"<<endl;
+				fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
 
  			} 
 	      | logic_expression
 	     	{
+				$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 				print_line();
-				fp2<<"arguments : logic_expression"<<endl;
-
+				fp2<<"arguments : logic_expression\n"<<endl;
+				fp2<<$1->getName()<<endl;
  			} 
 	      ;
 	      

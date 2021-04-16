@@ -22,6 +22,7 @@ extern SymbolTable st;   // NOTICE
 //output to token file
 ofstream tok;
 //number of errors
+extern ofstream fp2;
 long long int error_cnt = 0;
 //tracking string and comments
 string temp = "";
@@ -61,7 +62,12 @@ void	{
 			
 			return VOID;
 		}
-return	{return RETURN;}
+"return"	{
+				fp2<<"here"<<endl;
+				SymbolInfo* si = new SymbolInfo(yytext,"RETURN");
+			 	yylval.si = si; 
+				return RETURN;
+			}
 continue {return CONTINUE;}
 println {return PRINTLN;}
 
@@ -71,7 +77,7 @@ println {return PRINTLN;}
 			 yylval.si = si; 
 			 return CONST_INT;
 			 }
-{digit}+(.{digit}+)?([Ee][+-]?{digit}+)?	 {
+{digit}+(\.{digit}+)?([Ee][+-]?{digit}+)?	 {
   											 SymbolInfo* si = new SymbolInfo(yytext,"CONST_FLOAT");
 			 								 yylval.si = si; 
 			 								 return CONST_FLOAT;
@@ -144,10 +150,10 @@ println {return PRINTLN;}
     	 	}
 	 
 "}"         {
-			SymbolInfo* si = new SymbolInfo(yytext,"LCURL");
+			SymbolInfo* si = new SymbolInfo(yytext,"RCURL");
 		 	yylval.si = si;
 		 	//st.exit_scope();
-    	 	return LCURL;
+    	 	return RCURL;
 		    } 
 "[" 		{
 			SymbolInfo* si = new SymbolInfo(yytext,"LTHIRD");
