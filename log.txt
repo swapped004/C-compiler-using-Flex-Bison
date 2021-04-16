@@ -1,0 +1,30 @@
+At Line No: 1 type_specifier: INT
+
+At Line No: 1 declaration_list: ID LTHIRD CONST_INT RTHIRD
+
+At Line No: 1 declaration_list : declaration_list COMMA ID
+
+At Line No: 1 declaration_list : declaration_list COMMA ID
+
+At Line No: 1 var_declaration: type_specifier declaration_list SEMICOLON
+
+At Line No: 1 unit : var_declaration
+
+At Line No: 1 program : unit
+
+At Line No: 2 type_specifier: INT
+
+At Line No: 2 declaration_list: ID LTHIRD CONST_INT RTHIRD
+
+At Line No: 2 declaration_list : declaration_list COMMA ID
+
+At Line No: 2 declaration_list : declaration_list COMMA ID
+
+At Line No: 2 var_declaration: type_specifier declaration_list SEMICOLON
+
+At Line No: 2 unit : var_declaration
+
+At Line No: 2 program : program unit
+
+At Line No: 4 start : program
+

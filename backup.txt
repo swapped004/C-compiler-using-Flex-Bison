@@ -1,0 +1,154 @@
+%{
+#include<iostream>
+#include<cstdlib>
+#include<cstring>
+#include<cmath>
+#include<fstream>
+#include "symbol_table.h"
+#define YYSTYPE SymbolInfo*
+
+using namespace std;
+
+
+int yyparse(void);
+int yylex(void);
+
+
+extern FILE *yyin;
+extern long long int yylineno;
+extern ofstream tok;
+extern long long int error_cnt;
+
+
+SymbolTable st(30);
+ofstream fp2,fp3;
+
+
+
+void yyerror(char *s)
+{
+	//write your code
+}
+
+
+%}
+
+
+%token CONST_INT CONST_FLOAT CONST_CHAR ID 
+%token INT FLOAT CHAR DOUBLE VOID IF ELSE FOR WHILE RETURN PRINTLN CONTINUE DO
+%token ASSIGNOP NOT INCOP DECOP LOGICOP RELOP ADDOP MULOP
+%token LPAREN RPAREN LCURL RCURL LTHIRD RTHIRD COMMA SEMICOLON 
+
+
+
+%%
+
+start : program
+	{
+		//write your code in this block in all the similar blocks below
+		fp2 << "start : program" <<endl;
+	}
+	;
+
+program : program unit 
+	| unit
+	{
+	fp2 << "program : program unit " <<endl;
+	}
+	;
+	
+unit : var_declaration
+	{
+	fp2 << "unit : var_declaration" <<endl;
+	}
+     ;
+     
+ 		    
+var_declaration : type_specifier declaration_list SEMICOLON
+		{
+		fp2 << "var_declaration : type_specifier declaration_list SEMICOLON" <<endl;
+		}
+ 		 ;
+ 		 
+type_specifier	: INT
+				{
+ 				$$ = new SymbolInfo("int", "NON_TERMINAL");
+            	fp2 << "At line no: " << yylineno << " type_specifier: INT" << "\n"  << endl;
+            	fp2 << "int" << "\n"  << endl;
+            	//type = "int";
+ 				}
+ 		| FLOAT
+ 				{
+ 				$$ = new SymbolInfo("float", "NON_TERMINAL");
+            	fp2 << "At line no: " << yylineno << " type_specifier: INT" << "\n"  << endl;
+            	fp2 << "int" << "\n"  << endl;
+            	//type = "int";
+ 				}
+ 		| VOID
+ 				{
+ 				$$ = new SymbolInfo("void", "NON_TERMINAL");
+            	fp2 << "At line no: " << yylineno << " type_specifier: INT" << "\n"  << endl;
+            	fp2 << "int" << "\n"  << endl;
+            	//type = "int";
+ 				}
+ 		;
+ 		
+declaration_list : ID
+			{
+			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
+		 	cout<<"here"<<endl;
+		 	fp2 << "At line no: " << yylineno << " variable: ID" << "\n"  << endl;
+		 	SymbolInfo* si = st.Look_up($1->getName());
+		 	if(si == NULL)
+		 	{
+		 		st.Insert($1->getName(),$1->getType());
+		 	}
+			}
+ 		  ;
+
+ 
+
+%%
+int main(int argc,char *argv[])
+{
+	FILE *fp;
+
+	if((fp=fopen(argv[1],"r"))==NULL)
+	{
+		printf("Cannot Open Input File.\n");
+		exit(1);
+	}
+
+	/*fp2= fopen(argv[2],"w");//log file
+	fclose(fp2);
+	fp3= fopen(argv[3],"w");//error_file
+	fclose(fp3);
+	
+	fp2= fopen(argv[2],"a");
+	fp3= fopen(argv[3],"a");
+	*/
+	
+	
+
+	yyin=fp;
+	
+	fp2.open(argv[2]);
+	fp3.open(argv[3]);
+	
+	yyparse();
+	
+	
+	
+
+	tok.open("1705025_token.txt");
+	//yylineno = 1;
+
+
+	st.Print_all();
+	//out<<"Total lines: "<<yylineno-1<<endl;
+	//out<<"Total errors: "<<error_cnt<<endl;
+	fclose(yyin);
+	
+	return 0;
+}
+
