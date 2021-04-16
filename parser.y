@@ -1,4 +1,5 @@
 %{
+#include<bits/stdc++.h>
 #include<iostream>
 #include<cstdlib>
 #include<cstring>
@@ -150,21 +151,21 @@ var_declaration: type_specifier declaration_list SEMICOLON
  		 
 type_specifier: INT
 			{
-				$$ = new SymbolInfo("INT","NON_TERMINAL");
+				$$ = new SymbolInfo("int","NON_TERMINAL");
 				print_line();
 				fp2<<"type_specifier: "<<"INT\n"<<endl;
 				fp2<<"int\n"<<endl;
 			}
  		| FLOAT
  		{
-			$$ = new SymbolInfo("VOID","NON_TERMINAL");
+			$$ = new SymbolInfo("float","NON_TERMINAL");
 			print_line();
 			fp2<<"type_specifier: "<<"FLOAT\n"<<endl;
 			fp2<<"float\n"<<endl;
 		}
  		| VOID
  		{
-			$$ = new SymbolInfo("VOID","NON_TERMINAL");
+			$$ = new SymbolInfo("void","NON_TERMINAL");
 			print_line();
 			fp2<<"type_specifier: "<<"VOID\n"<<endl;
 			fp2<<"void\n"<<endl;
@@ -190,13 +191,14 @@ declaration_list: declaration_list COMMA id
  		  		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  		print_line();
 				fp2<<"declaration_list : id\n"<<endl;
-				fp2<<endl<<endl;
+				fp2<<$1->getName()<<endl<<endl;
  		  }
  		  | id LTHIRD CONST_INT RTHIRD
  		  {
 			    $$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
  		  		print_line();
 				fp2<<"declaration_list: ID LTHIRD CONST_INT RTHIRD\n"<<endl;
+				fp2<<$1->getName()+$2->getName()+" "+$3->getName()+$4->getName()<<endl<<endl;
  		  }
  		  ;
  		  
@@ -221,6 +223,7 @@ statement: var_declaration
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"statement : var_declaration\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
 
  		}
 		
@@ -293,12 +296,15 @@ variable: id
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"variable : ID\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
  		}		
 	 	| id LTHIRD expression RTHIRD
 	 	{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
  		  	print_line();
 			fp2<<"variable : ID LTHIRD expression RTHIRD\n"<<endl;
+			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()<<endl<<endl;
+
  		} 
 	 ;
 	 
@@ -332,63 +338,75 @@ logic_expression: rel_expression
 			
 rel_expression: simple_expression 
 		{
+			$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"rel_expression	: simple_expression "<<endl;
-
+			fp2<<"rel_expression	: simple_expression\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
  		} 	
 		| simple_expression RELOP simple_expression	
 		{
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"rel_expression	: simple_expression RELOP simple_expression	"<<endl;
-
+			fp2<<"rel_expression	: simple_expression RELOP simple_expression\n"<<endl;
+			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
  		} 
 		;
 				
 simple_expression: term 
 		{
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"simple_expression : term "<<endl;
-
+			fp2<<"simple_expression : term\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
  		} 
 		  | simple_expression ADDOP term 
-		  {
+		{
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"simple_expression ADDOP term "<<endl;
-
+			fp2<<"simple_expression ADDOP term\n"<<endl;
+			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
  		} 
 		  
 		  ;
 					
 term:	unary_expression
 		{
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"term :	unary_expression"<<endl;
-
+			fp2<<"term :unary_expression\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
  		}
      |  term MULOP unary_expression
-     {
+     	{
+		 	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"term :term MULOP unary_expression"<<endl;
-
+			fp2<<"term :term MULOP unary_expression\n"<<endl;
+			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
  		}
      ;
 
 unary_expression: ADDOP unary_expression
  		{
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"unary_expression : ADDOP unary_expression"<<endl;
+			fp2<<"unary_expression : ADDOP unary_expression\n"<<endl;
+			fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
 
  		}  
 		 | NOT unary_expression
 		 {
+			$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"unary_expression : NOT unary_expression"<<endl;
+			fp2<<"unary_expression : NOT unary_expression\n"<<endl;
+			fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
 
  		}   
 		 | factor 
 		 {
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"unary_expression : factor "<<endl;
+			fp2<<"unary_expression : factor\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
 
  		}  
 		 ;
@@ -398,6 +416,7 @@ factor: variable
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"factor: variable\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
  		} 
 	| id LPAREN argument_list RPAREN
 	{
@@ -410,31 +429,36 @@ factor: variable
 		//$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(), "NON_TERMINAL");
  		print_line();
 		fp2<<"factor: LPAREN expression RPAREN\n"<<endl;
+
 	} 
 	| CONST_INT 
 	{
 		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		print_line();
 		fp2<<"factor: CONST_INT\n"<<endl;
+		fp2<<$1->getName()<<endl<<endl;
 	} 
 	| CONST_FLOAT
 	{
 		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 	  	print_line();
 		fp2<<"factor: CONST_FLOAT\n"<<endl;
+		fp2<<$1->getName()<<endl<<endl;
  	} 
 	| variable INCOP
 	{
 
-		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+		$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
  	  	print_line();
 		fp2<<"factor: variable INCOP\n"<<endl;
+		fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
  	}  
 	| variable DECOP
 	{
-		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+		$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
  	  	print_line();
 		fp2<<"factor: variable INCOP\n"<<endl;
+		fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
  	} 
 	;
 	
