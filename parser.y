@@ -144,6 +144,11 @@ bool check_func_declared(string name)
 		return false;
 }
 
+void set_data_type(SymbolInfo* s1, SymbolInfo* s2)
+{
+	s1->set_data_type(s2->get_data_type());
+}
+
 void enterScope_parser()
 {
 	cout<<"entered scope"<<endl;
@@ -655,6 +660,10 @@ variable: id
 			}
 			
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set variable data type according to id's data type
+			SymbolInfo* s = st.Look_up($1->getName());
+			if(s != NULL)
+				set_data_type($$,s);
 			print_line();
 			fp2<<"variable : ID\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -669,8 +678,20 @@ variable: id
 				error_print_line();
 				fp3<<"variable "<<$1->getName()<<" not declared"<<endl;
 			}
+
+			//check array's index is integer type
+			if($3->get_data_type() != "int")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"array index not integer"<<endl<<endl;
+			}
 			
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
+			//set variable data type according to id's data type
+			SymbolInfo* s = st.Look_up($1->getName());
+			if(s != NULL)
+				set_data_type($$,s);
 			print_line();
 			fp2<<"variable : ID LTHIRD expression RTHIRD\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()<<endl<<endl;
@@ -680,6 +701,8 @@ variable: id
  expression: logic_expression	
  		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set data type of expression
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"expression : logic_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -693,21 +716,17 @@ variable: id
 			fp2<<"expression : variable ASSIGNOP logic_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
 
+			//set data type of logic expression
+			set_data_type($$,$1);
+
 
 			//find error if operands of assignment operations are not compatible
-			string var_name = $1->getName();
-			vector<string> vec;
-			vec = spiltWord(var_name);
-			var_name = vec[0];
-
-			string var_type = type_mapper[var_name];
-
-			if(var_type == "")
-				var_type = global_type_mapper[var_name];
-			
-			cout<<"var_name: " << var_name<<" -> var_type: "<<var_type<<endl;
-
-			//find right_type
+			if($1->get_data_type() != $3->get_data_type())
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"operands of assignment operations are not compatible"<<endl<<endl;
+			}
 
  		} 	
 	   ;
@@ -715,6 +734,8 @@ variable: id
 logic_expression: rel_expression 	
  		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set data type of logic expression
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"logic_expression : rel_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -723,6 +744,8 @@ logic_expression: rel_expression
 		 | rel_expression LOGICOP rel_expression 
 		 {
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
+			//set data type of logic expression
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -733,6 +756,8 @@ logic_expression: rel_expression
 rel_expression: simple_expression 
 		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set data type of rel expression
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -740,6 +765,8 @@ rel_expression: simple_expression
 		| simple_expression RELOP simple_expression	
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
+			//set data type of rel expression
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -749,6 +776,8 @@ rel_expression: simple_expression
 simple_expression: term 
 		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set data type of simple expression
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"simple_expression : term\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -756,6 +785,8 @@ simple_expression: term
 		  | simple_expression ADDOP term 
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
+			//set data type of simple expression
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"simple_expression ADDOP term\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -766,6 +797,8 @@ simple_expression: term
 term:	unary_expression
 		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set data type of term
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"term :unary_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -773,6 +806,20 @@ term:	unary_expression
      |  term MULOP unary_expression
      	{
 		 	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
+			//set data type of term
+			set_data_type($$,$2);
+
+			//check operands of modulus operator
+			if($2->getName() == "%")
+			{
+				if($1->get_data_type() != "int" | $3->get_data_type() != "int")
+				{
+					error_cnt++;
+					error_print_line();
+					fp3<<"operands of the modulus operation have to be integer"<<endl<<endl;
+				}
+
+			}
  		  	print_line();
 			fp2<<"term :term MULOP unary_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -782,6 +829,8 @@ term:	unary_expression
 unary_expression: ADDOP unary_expression
  		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
+			//set data type of unary expression
+			set_data_type($$,$2);
  		  	print_line();
 			fp2<<"unary_expression : ADDOP unary_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
@@ -790,6 +839,8 @@ unary_expression: ADDOP unary_expression
 		 | NOT unary_expression
 		 {
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
+			//set data type of unary expression
+			set_data_type($$,$2);
  		  	print_line();
 			fp2<<"unary_expression : NOT unary_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
@@ -798,6 +849,8 @@ unary_expression: ADDOP unary_expression
 		 | factor 
 		 {
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set data type of unary expression
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"unary_expression : factor\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -808,6 +861,8 @@ unary_expression: ADDOP unary_expression
 factor: variable 
  		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set data type of factor
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"factor: variable\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -830,6 +885,7 @@ factor: variable
 	| CONST_INT 
 	{
 		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+		$$->set_data_type("int");
  		print_line();
 		fp2<<"factor: CONST_INT\n"<<endl;
 		fp2<<$1->getName()<<endl<<endl;
@@ -837,14 +893,16 @@ factor: variable
 	| CONST_FLOAT
 	{
 		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+		$$->set_data_type("float");
 	  	print_line();
 		fp2<<"factor: CONST_FLOAT\n"<<endl;
 		fp2<<$1->getName()<<endl<<endl;
  	} 
 	| variable INCOP
 	{
-
 		$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
+		//set data type of factor
+		set_data_type($$,$1);
  	  	print_line();
 		fp2<<"factor: variable INCOP\n"<<endl;
 		fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
@@ -852,6 +910,8 @@ factor: variable
 	| variable DECOP
 	{
 		$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
+		//set data type of factor
+		set_data_type($$,$1);
  	  	print_line();
 		fp2<<"factor: variable INCOP\n"<<endl;
 		fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
@@ -923,17 +983,13 @@ int main(int argc,char *argv[])
 	fp3= fopen(argv[3],"a");
 	*/
 	
-	
 
 	yyin=fp;
 	
 	fp2.open(argv[2]);
 	fp3.open(argv[3]);
 	
-	yyparse();
-	
-	
-	
+	yyparse();	
 
 	tok.open("1705025_token.txt");
 	//yylineno = 1;

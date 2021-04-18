@@ -1071,7 +1071,7 @@ YY_RULE_SETUP
 			SymbolInfo* si = new SymbolInfo(yytext,"LCURL");
 		 	yylval.si = si;
 		 	//enter scope
-			enterScope_parser();
+			//enterScope_parser();
     	 	return LCURL;
     	 	}
 	YY_BREAK
@@ -1082,7 +1082,7 @@ YY_RULE_SETUP
 			SymbolInfo* si = new SymbolInfo(yytext,"RCURL");
 		 	yylval.si = si;
 		 	//st.exit_scope();
-			exitScope_parser();
+			//exitScope_parser();
     	 	return RCURL;
 		    } 
 	YY_BREAK

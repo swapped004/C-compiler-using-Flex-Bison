@@ -148,7 +148,7 @@ println {return PRINTLN;}
 			SymbolInfo* si = new SymbolInfo(yytext,"LCURL");
 		 	yylval.si = si;
 		 	//enter scope
-			enterScope_parser();
+			//enterScope_parser();
     	 	return LCURL;
     	 	}
 	 
@@ -156,7 +156,7 @@ println {return PRINTLN;}
 			SymbolInfo* si = new SymbolInfo(yytext,"RCURL");
 		 	yylval.si = si;
 		 	//st.exit_scope();
-			exitScope_parser();
+			//exitScope_parser();
     	 	return RCURL;
 		    } 
 "[" 		{
