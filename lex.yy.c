@@ -554,7 +554,7 @@ using namespace std;
 
 void yyerror(char*);  // yyerror() function for generating error message
 extern YYSTYPE yylval;  
-extern SymbolTable st;   // NOTICE
+extern SymbolTable st;   // SymbolTable variable referencing the SymbolTable object from  parser
 
 //output to token file
 ofstream tok;
@@ -564,11 +564,13 @@ long long int error_cnt = 0;
 //tracking string and comments
 string temp = "";
 long long int line_begin = 0;
+extern void enterScope_parser();
+extern void exitScope_parser();
 
 
 
-#line 571 "./lex.yy.c"
-#line 572 "./lex.yy.c"
+#line 573 "./lex.yy.c"
+#line 574 "./lex.yy.c"
 
 #define INITIAL 0
 
@@ -785,9 +787,9 @@ YY_DECL
 		}
 
 	{
-#line 42 "./offline.l"
+#line 44 "./offline.l"
 
-#line 791 "./lex.yy.c"
+#line 793 "./lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -857,43 +859,43 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 43 "./offline.l"
+#line 45 "./offline.l"
 {}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 44 "./offline.l"
+#line 46 "./offline.l"
 {}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 46 "./offline.l"
+#line 48 "./offline.l"
 {return IF;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 47 "./offline.l"
+#line 49 "./offline.l"
 {return ELSE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 48 "./offline.l"
+#line 50 "./offline.l"
 {return FOR;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 49 "./offline.l"
+#line 51 "./offline.l"
 {return WHILE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 50 "./offline.l"
+#line 52 "./offline.l"
 {return DO;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 51 "./offline.l"
+#line 53 "./offline.l"
 {
 			
 			return INT;
@@ -901,12 +903,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 55 "./offline.l"
+#line 57 "./offline.l"
 {return CHAR;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 56 "./offline.l"
+#line 58 "./offline.l"
 {
 			
 			return FLOAT;
@@ -914,12 +916,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 60 "./offline.l"
+#line 62 "./offline.l"
 {return DOUBLE;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 61 "./offline.l"
+#line 63 "./offline.l"
 {
 			
 			return VOID;
@@ -927,7 +929,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 65 "./offline.l"
+#line 67 "./offline.l"
 {
 				fp2<<"here"<<endl;
 				SymbolInfo* si = new SymbolInfo(yytext,"RETURN");
@@ -937,17 +939,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 71 "./offline.l"
+#line 73 "./offline.l"
 {return CONTINUE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 72 "./offline.l"
+#line 74 "./offline.l"
 {return PRINTLN;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 75 "./offline.l"
+#line 77 "./offline.l"
 {
 			 SymbolInfo* si = new SymbolInfo(yytext,"CONST_INT");
 			 yylval.si = si; 
@@ -956,7 +958,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 80 "./offline.l"
+#line 82 "./offline.l"
 {
   											 SymbolInfo* si = new SymbolInfo(yytext,"CONST_FLOAT");
 			 								 yylval.si = si; 
@@ -965,7 +967,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 85 "./offline.l"
+#line 87 "./offline.l"
 {
 														 SymbolInfo* si = new SymbolInfo(yytext,"CONST_CHAR");
 			 											 yylval.si = si; 
@@ -974,7 +976,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 92 "./offline.l"
+#line 94 "./offline.l"
 {
 		 SymbolInfo* si = new SymbolInfo(yytext,"ADDOP");
 		 yylval.si = si; 
@@ -983,7 +985,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 98 "./offline.l"
+#line 100 "./offline.l"
 {
 		 SymbolInfo* si = new SymbolInfo(yytext,"MULOP");
 		 yylval.si = si; 
@@ -992,7 +994,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 104 "./offline.l"
+#line 106 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"INCOP");
 		 	yylval.si = si; 
@@ -1001,7 +1003,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 110 "./offline.l"
+#line 112 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"DECOP");
 		 	yylval.si = si; 
@@ -1010,7 +1012,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 115 "./offline.l"
+#line 117 "./offline.l"
 {
 						SymbolInfo* si = new SymbolInfo(yytext,"RELOP");
 					 	yylval.si = si;
@@ -1019,7 +1021,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 120 "./offline.l"
+#line 122 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"ASSIGNOP");
 		 	yylval.si = si;
@@ -1028,7 +1030,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 125 "./offline.l"
+#line 127 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"LOGICOP");
 		 	yylval.si = si;
@@ -1037,7 +1039,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 130 "./offline.l"
+#line 132 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"NOT");
 		 	yylval.si = si;
@@ -1046,7 +1048,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 135 "./offline.l"
+#line 137 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"LPAREN");
 		 	yylval.si = si;
@@ -1055,7 +1057,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 140 "./offline.l"
+#line 142 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"RPAREN");
 		 	yylval.si = si; 
@@ -1064,27 +1066,29 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 145 "./offline.l"
+#line 147 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"LCURL");
 		 	yylval.si = si;
-		 	//st.enter_scope();	
+		 	//enter scope
+			enterScope_parser();
     	 	return LCURL;
     	 	}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 152 "./offline.l"
+#line 155 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"RCURL");
 		 	yylval.si = si;
 		 	//st.exit_scope();
+			exitScope_parser();
     	 	return RCURL;
 		    } 
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 158 "./offline.l"
+#line 162 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"LTHIRD");
 		 	yylval.si = si;
@@ -1093,7 +1097,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 163 "./offline.l"
+#line 167 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"RTHIRD");
 		 	yylval.si = si;
@@ -1102,7 +1106,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 168 "./offline.l"
+#line 172 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"COMMA");
 		 	yylval.si = si;
@@ -1111,7 +1115,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 173 "./offline.l"
+#line 177 "./offline.l"
 {
 			SymbolInfo* si = new SymbolInfo(yytext,"SEMICOLON");
 		 	yylval.si = si;
@@ -1120,7 +1124,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 181 "./offline.l"
+#line 185 "./offline.l"
 {
 									cout<<"here in lex ID"<<endl;
 									SymbolInfo* si = new SymbolInfo(yytext,"ID");
@@ -1130,10 +1134,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 190 "./offline.l"
+#line 194 "./offline.l"
 ECHO;
 	YY_BREAK
-#line 1137 "./lex.yy.c"
+#line 1141 "./lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2150,7 +2154,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 190 "./offline.l"
+#line 194 "./offline.l"
 
 
 

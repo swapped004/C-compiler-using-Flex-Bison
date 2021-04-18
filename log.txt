@@ -82,6 +82,9 @@ At Line No: 5 parameter_list: parameter_list COMMA type_specifier id
 
 int a , int b
 
+here in dummy token begin
+(a, int)
+(b, int)
 here
 At Line No: 6 variable : ID
 
@@ -144,7 +147,8 @@ At Line No: 6 statements : statement
 
 return a + b ;
 
-At Line No: 7 compound_statement: LCURL statements RCURL
+here in dummy token end
+At Line No: 7 compound_statement: LCURL dum statements RCURL dum
 
 { return a + b ; }
 
@@ -164,6 +168,7 @@ At Line No: 9 type_specifier: VOID
 
 void
 
+here in dummy token begin
 At Line No: 10 variable : ID
 
 x
@@ -272,7 +277,8 @@ At Line No: 11 statements : statements statement
 
 x = 2 ; y = x - 5 ;
 
-At Line No: 12 compound_statement: LCURL statements RCURL
+here in dummy token end
+At Line No: 12 compound_statement: LCURL dum statements RCURL dum
 
 { x = 2 ; y = x - 5 ; }
 
@@ -292,6 +298,7 @@ At Line No: 14 type_specifier: INT
 
 int
 
+here in dummy token begin
 At Line No: 15 type_specifier: INT
 
 int
@@ -959,7 +966,8 @@ At Line No: 21 statements : statements statement
 
 int a [ 2 ] , c , i , j ; float d ; a [ 0 ] = 1 ; a [ 1 ] = 5 ; i = a [ 0 ] + a [ 1 ] ; j = 2 * 3 + ( 5 % 3 < 4 && 8 ) || 2 ; d = var ( 1 , 2 * 3 ) + 3.5 * 2 ; return 0 ;
 
-At Line No: 22 compound_statement: LCURL statements RCURL
+here in dummy token end
+At Line No: 22 compound_statement: LCURL dum statements RCURL dum
 
 { int a [ 2 ] , c , i , j ; float d ; a [ 0 ] = 1 ; a [ 1 ] = 5 ; i = a [ 0 ] + a [ 1 ] ; j = 2 * 3 + ( 5 % 3 < 4 && 8 ) || 2 ; d = var ( 1 , 2 * 3 ) + 3.5 * 2 ; return 0 ; }
 

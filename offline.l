@@ -17,7 +17,7 @@ using namespace std;
 
 void yyerror(char*);  // yyerror() function for generating error message
 extern YYSTYPE yylval;  
-extern SymbolTable st;   // NOTICE
+extern SymbolTable st;   // SymbolTable variable referencing the SymbolTable object from  parser
 
 //output to token file
 ofstream tok;
@@ -27,6 +27,8 @@ long long int error_cnt = 0;
 //tracking string and comments
 string temp = "";
 long long int line_begin = 0;
+extern void enterScope_parser();
+extern void exitScope_parser();
 
 
 
@@ -145,7 +147,8 @@ println {return PRINTLN;}
 "{"			{
 			SymbolInfo* si = new SymbolInfo(yytext,"LCURL");
 		 	yylval.si = si;
-		 	//st.enter_scope();	
+		 	//enter scope
+			enterScope_parser();
     	 	return LCURL;
     	 	}
 	 
@@ -153,6 +156,7 @@ println {return PRINTLN;}
 			SymbolInfo* si = new SymbolInfo(yytext,"RCURL");
 		 	yylval.si = si;
 		 	//st.exit_scope();
+			exitScope_parser();
     	 	return RCURL;
 		    } 
 "[" 		{

@@ -7,12 +7,52 @@ using namespace std;
 #define INF 999999
 
 
+class func_param{
+    int number_of_param;
+    string return_type;
+    vector<pair<string,string>> param_list;
+
+public:
+    func_param()
+    {
+
+    }
+
+    func_param(int n, string rt,vector<pair<string,string>> pl)
+    {
+        number_of_param = n;
+        return_type = rt;
+        param_list = pl;
+    }
+
+    int getNumber_of_param()
+    {
+        return number_of_param;
+    }
+
+    string getReturn_type()
+    {
+        return return_type;
+    }
+
+    vector<pair<string,string>> getParam_list()
+    {
+        return param_list;
+    }
+};
+
+
 class SymbolInfo{
     string name;
     string type;
     SymbolInfo *next;
     int index;
     int pos;
+
+    string data_type;
+    func_param* func;
+
+    
 
 public:
 
@@ -29,6 +69,30 @@ public:
         this->type = type;
         index = -1;
         pos = -1;
+
+        //default data type set to int
+        data_type = "int";
+        func = NULL;
+    }
+
+    void set_data_type(string dt)
+    {
+        data_type = dt;
+    }
+
+    string get_data_type()
+    {
+        return data_type;
+    }
+
+    void set_func(int num_of_param, string return_type, vector<pair<string,string>> param_list)
+    {
+        func = new func_param(num_of_param, return_type, param_list);
+    }
+
+    func_param* get_func()
+    {
+        return func;
     }
 
     string getName()
@@ -84,9 +148,10 @@ public:
 
     ~SymbolInfo()
     {
-
+        delete func;
     }
 };
+
 
 
 
@@ -164,6 +229,7 @@ public:
         num_of_children = n;
     }
 
+    
     SymbolInfo* Look_up(string name)
     {
         int index = hash_func(name,total_buckets);
@@ -420,6 +486,14 @@ public:
 
         return ok;
     }
+
+    SymbolInfo* Look_up_current(string name)
+    {
+        SymbolInfo* temp = curr->Look_up(name);
+
+        return temp;
+    }
+
 
     SymbolInfo* Look_up(string name)
     {
