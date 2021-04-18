@@ -1,0 +1,2 @@
+Error At Line No: 17 function already declared:foo
+

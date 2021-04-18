@@ -84,10 +84,82 @@ vector<string> decl_list;
 //function param_list
 vector<pair<string,string>> param_list;
 
+
+bool insert_ID(SymbolInfo* si, string data_type)
+{
+	SymbolInfo* s = st.Look_up_current(si->getName());
+
+	if(s == NULL)
+	{
+		st.Insert(si->getName(),"ID");
+		SymbolInfo* temp = st.Look_up_current(si->getName());
+		temp->set_data_type(data_type);
+		return true;
+	}
+
+	return false;
+}
+
+bool insert_function(string name, string return_type,int flag)
+{
+	SymbolInfo* s = st.Look_up(name);
+
+	if(s == NULL)
+	{
+		st.Insert(name,"func");
+		SymbolInfo* temp = st.Look_up_current(name);
+		temp->set_func((int)param_list.size(),return_type,param_list,flag);
+
+		return true;
+	}
+
+	return false;
+
+}
+
+bool check_var_declared(string name)
+{
+	SymbolInfo *s = st.Look_up(name);
+
+	if(s != NULL)
+		return true;
+	else
+		return false;
+
+}
+
+bool check_func_declared(string name)
+{
+	SymbolInfo* s = st.Look_up(name);
+	func_param* f = s->get_func();
+
+	if(f->get_flag() == 0)
+	{
+		//make it defined
+		f->set_flag(1);
+		return true;
+	}
+
+	else
+		return false;
+}
+
 void enterScope_parser()
 {
 	cout<<"entered scope"<<endl;
 	st.enter_scope();
+
+	//add func parameters int the new scope
+	for(auto x:param_list)
+	{
+		cout<<"("<<x.first<<", "<<x.second<<")"<<endl;
+		fp2<<"("<<x.first<<", "<<x.second<<")"<<endl;
+		
+		st.Insert(x.first, "ID");
+		SymbolInfo* si = st.Look_up(x.first);
+		si->set_data_type(x.second);
+	}
+
 	prev_global_type_mapper = global_type_mapper;
 	prev_declare_mapper = declare_mapper;
 }
@@ -108,20 +180,7 @@ void exitScope_parser()
 	st.exit_scope();
 }
 
-void add_function_param()
-{
-	for(auto x:param_list)
-	{
-		cout<<"("<<x.first<<", "<<x.second<<")"<<endl;
-		fp2<<"("<<x.first<<", "<<x.second<<")"<<endl;
-		scope_var.push_back(x.first);
-		mapper[x.first]++;
-		declare_mapper[x.first]++;
-		type_mapper[x.first] = x.second;
-		global_type_mapper[x.first] = x.second;
-	}
 
-}
 
 
 
@@ -206,9 +265,15 @@ func_declaration: type_specifier id LPAREN parameter_list RPAREN SEMICOLON
 			fp2<<$$->getName()<<endl<<endl;
 
 			//insert into symbol table
-			SymbolInfo* func_id = st.Look_up($2->getName());
-			func_id->set_func((int)param_list.size(), $1->getName(), param_list);
+			bool ok = insert_function($2->getName(),$1->getName(),0);
 
+			if(!ok)
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
+			}
+			
 			//clear the parameter list
 			param_list.clear();
 		}
@@ -219,10 +284,16 @@ func_declaration: type_specifier id LPAREN parameter_list RPAREN SEMICOLON
 			fp2<<"func_declaration : type_specifier ID LPAREN RPAREN SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
-			//insert into symbol table
-			SymbolInfo* func_id = st.Look_up($2->getName());
-			func_id->set_func((int)param_list.size(), $1->getName(), param_list);
+			///insert into symbol table
+			bool ok = insert_function($2->getName(),$1->getName(),0);
 
+			if(!ok)
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
+			}
+			
 			//clear the parameter list
 			param_list.clear();
 		}
@@ -236,10 +307,20 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 			fp2<<$$->getName()<<endl<<endl;
 
 			//insert into symbol table
-			SymbolInfo* func_id = st.Look_up($2->getName());
-			func_id->set_func((int)param_list.size(), $1->getName(), param_list);
+			bool ok = insert_function($2->getName(),$1->getName(),1);
 
+			if(!ok)
+			{
+				//check if declared before
+				bool declared = check_func_declared($2->getName());
 
+				if(!declared)
+				{
+					error_cnt++;
+					error_print_line();
+					fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
+				}
+			}
 
 		}
 		| type_specifier id LPAREN RPAREN compound_statement
@@ -250,8 +331,21 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 			fp2<<$$->getName()<<endl<<endl;
 
 			//insert into symbol table
-			SymbolInfo* func_id = st.Look_up($2->getName());
-			func_id->set_func((int)param_list.size(), $1->getName(), param_list);
+			bool ok = insert_function($2->getName(),$1->getName(),1);
+
+			if(!ok)
+			{
+				//check if declared before
+				bool declared = check_func_declared($2->getName());
+
+				if(!declared)
+				{
+					error_cnt++;
+					error_print_line();
+					fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
+				}
+			}
+
 		}
  		;				
 
@@ -265,6 +359,8 @@ parameter_list: parameter_list COMMA type_specifier id
 
 			//add to param list
 			param_list.push_back(make_pair($4->getName(),$3->getName()));
+
+			
 		}
 		| parameter_list COMMA type_specifier
 		{
@@ -318,8 +414,8 @@ compound_statement: LCURL dummy_token_begin statements RCURL dummy_token_end
 dummy_token_begin:
 				 {
 					 fp2<<"here in dummy token begin"<<endl;
-					 add_function_param();
 					 enterScope_parser();
+					 //add_function_param();
 
 				 }
 				 ;
@@ -344,20 +440,31 @@ var_declaration: type_specifier declaration_list SEMICOLON
 			for(string x:decl_list)
 			{
 				cout<<x<<endl;
-				if(mapper[x] == 0)
-				{
-					scope_var.push_back(x);
-					mapper[x]++;
-					declare_mapper[x]++;
-					type_mapper[x] = $1->getName();
-					global_type_mapper[x] = $1->getName();
-				}
-				else
+
+				SymbolInfo* si = new SymbolInfo(x,"ID");
+				bool val = insert_ID(si,$1->getName());
+
+				if(!val)
 				{
 					error_cnt++;
 					error_print_line();
 					fp3<<"multiple declaration of variable "<<x<<endl<<endl;
 				}
+				
+				// if(mapper[x] == 0)
+				// {
+				// 	scope_var.push_back(x);
+				// 	mapper[x]++;
+				// 	declare_mapper[x]++;
+				// 	type_mapper[x] = $1->getName();
+				// 	global_type_mapper[x] = $1->getName();
+				// }
+				// else
+				// {
+				// 	error_cnt++;
+				// 	error_print_line();
+				// 	fp3<<"multiple declaration of variable "<<x<<endl<<endl;
+				// }
 			}
 			decl_list.clear();
 		}
@@ -408,10 +515,10 @@ declaration_list: declaration_list COMMA id
  		  {
  		  		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  		print_line();
-				fp2<<"declaration_list : id\n"<<endl;
+				fp2<<"declaration_list : ID\n"<<endl;
 				fp2<<$1->getName()<<endl<<endl;
 
-				decl_list.clear();
+				//decl_list.clear();
 				decl_list.push_back($1->getName());
  		  }
  		  | id LTHIRD CONST_INT RTHIRD
@@ -421,7 +528,7 @@ declaration_list: declaration_list COMMA id
 				fp2<<"declaration_list: ID LTHIRD CONST_INT RTHIRD\n"<<endl;
 				fp2<<$1->getName()+$2->getName()+" "+$3->getName()+$4->getName()<<endl<<endl;
 
-				decl_list.clear();
+				//decl_list.clear();
 				decl_list.push_back($1->getName());
  		  }
  		  ;
@@ -540,7 +647,7 @@ expression_statement: SEMICOLON
 variable: id
 		{
 			//check if ID is declared or not
-			if(declare_mapper[$1->getName()] == 0)
+			if(!check_var_declared($1->getName()))
 			{
 				error_cnt++;
 				error_print_line();
@@ -556,7 +663,7 @@ variable: id
 	 	| id LTHIRD expression RTHIRD
 	 	{
 			//check if ID is declared or not
-			if(declare_mapper[$1->getName()] == 0)
+			if(!check_var_declared($1->getName()))
 			{
 				error_cnt++;
 				error_print_line();
@@ -786,17 +893,9 @@ arguments: arguments COMMA logic_expression
 	      ;
 	      
 id: ID
-	{
-		SymbolInfo* si = st.Look_up($1->getName());	
-
-		//if not found in the SymbolTable insert it
-		if(si == NULL)
-		{
-			st.Insert($1->getName(),$1->getType());
-		}
-			
-		$$ = new SymbolInfo($1->getName(),$1->getType());
-			
+	{		
+		//st.Insert($1->getName(),$1->getType());
+		$$ = new SymbolInfo($1->getName(),$1->getType());		
 		//print_line();
 		//fp2<<"id: ID"<<endl;
 	}

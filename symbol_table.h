@@ -1,3 +1,7 @@
+#ifndef SYMBOL
+#define SYMBOL
+
+
 #include<bits/stdc++.h>
 #include<cstdlib>
 #include<fstream>
@@ -11,6 +15,7 @@ class func_param{
     int number_of_param;
     string return_type;
     vector<pair<string,string>> param_list;
+    int dec_or_def;
 
 public:
     func_param()
@@ -18,11 +23,22 @@ public:
 
     }
 
-    func_param(int n, string rt,vector<pair<string,string>> pl)
+    func_param(int n, string rt,vector<pair<string,string>> pl,int flag)
     {
         number_of_param = n;
         return_type = rt;
         param_list = pl;
+        dec_or_def = flag; 
+    }
+
+    void set_flag(int flag)
+    {
+        dec_or_def = flag;
+    }
+
+    int get_flag()
+    {
+        return dec_or_def;
     }
 
     int getNumber_of_param()
@@ -85,9 +101,9 @@ public:
         return data_type;
     }
 
-    void set_func(int num_of_param, string return_type, vector<pair<string,string>> param_list)
+    void set_func(int num_of_param, string return_type, vector<pair<string,string>> param_list,int flag)
     {
-        func = new func_param(num_of_param, return_type, param_list);
+        func = new func_param(num_of_param, return_type, param_list, flag);
     }
 
     func_param* get_func()
@@ -543,5 +559,7 @@ public:
         }
     }
 };
+
+#endif
 
 

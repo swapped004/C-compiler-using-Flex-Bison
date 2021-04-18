@@ -11,6 +11,11 @@ void foo(){
 	y=x-5;
 }
 
+void foo()
+{
+	x = 3;
+}
+
 int main(){
 	int a[2],c,i,j ; float d;
 	a[0]=1;

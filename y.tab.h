@@ -125,7 +125,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 131 "./parser.y"
+#line 190 "./parser.y"
 int ival;SymbolInfo* si;
 
 #line 132 "y.tab.h"
