@@ -64,6 +64,7 @@ class SymbolInfo{
     SymbolInfo *next;
     int index;
     int pos;
+    bool is_array;
 
     string data_type;
     func_param* func;
@@ -89,6 +90,7 @@ public:
         //default data type set to int
         data_type = "int";
         func = NULL;
+        is_array = false;
     }
 
     void set_data_type(string dt)
@@ -99,6 +101,16 @@ public:
     string get_data_type()
     {
         return data_type;
+    }
+
+    void set_array(bool val)
+    {
+        is_array = val;
+    }
+
+    bool get_array()
+    {
+        return is_array;
     }
 
     void set_func(int num_of_param, string return_type, vector<pair<string,string>> param_list,int flag)

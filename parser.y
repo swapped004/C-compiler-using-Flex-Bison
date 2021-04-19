@@ -735,7 +735,7 @@ logic_expression: rel_expression
  		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 			//set data type of logic expression
-			set_data_type($$,$1);
+			$$->set_data_type("int");
  		  	print_line();
 			fp2<<"logic_expression : rel_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -745,7 +745,7 @@ logic_expression: rel_expression
 		 {
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of logic expression
-			set_data_type($$,$1);
+			$$->set_data_type("int");
  		  	print_line();
 			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -757,7 +757,7 @@ rel_expression: simple_expression
 		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 			//set data type of rel expression
-			set_data_type($$,$1);
+			$$->set_data_type("int");
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -766,7 +766,7 @@ rel_expression: simple_expression
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of rel expression
-			set_data_type($$,$1);
+			$$->set_data_type("int");
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -787,6 +787,14 @@ simple_expression: term
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of simple expression
 			set_data_type($$,$1);
+
+			if($1->get_data_type() != $3->get_data_type())
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"Type Mismatch"<<endl<<endl;
+			}
+
  		  	print_line();
 			fp2<<"simple_expression ADDOP term\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -820,6 +828,14 @@ term:	unary_expression
 				}
 
 			}
+
+			if($1->get_data_type() != $3->get_data_type())
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"Type Mismatch"<<endl<<endl;
+			}
+
  		  	print_line();
 			fp2<<"term :term MULOP unary_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
