@@ -79,21 +79,23 @@ map<string,string> type_mapper;
 vector<string> scope_var;
 
 //declaration_list vector
-vector<string> decl_list;
+vector<pair<string,int>> decl_list;
 
 //function param_list
 vector<pair<string,string>> param_list;
 
 
-bool insert_ID(SymbolInfo* si, string data_type)
+bool insert_ID(string name, string data_type, int is_array)
 {
-	SymbolInfo* s = st.Look_up_current(si->getName());
+	SymbolInfo* s = st.Look_up_current(name);
 
 	if(s == NULL)
 	{
-		st.Insert(si->getName(),"ID");
-		SymbolInfo* temp = st.Look_up_current(si->getName());
+		st.Insert(name,"ID");
+		SymbolInfo* temp = st.Look_up_current(name);
 		temp->set_data_type(data_type);
+		if(is_array == 1)
+			temp->set_array(true);
 		return true;
 	}
 
@@ -442,18 +444,17 @@ var_declaration: type_specifier declaration_list SEMICOLON
 
 
 			//mapping the types of all variables in declaration list
-			for(string x:decl_list)
+			for(auto x:decl_list)
 			{
-				cout<<x<<endl;
-
-				SymbolInfo* si = new SymbolInfo(x,"ID");
-				bool val = insert_ID(si,$1->getName());
+				cout<<x.first<<" : "<<x.second<<endl;
+				
+				bool val = insert_ID(x.first,$1->getName(),x.second);
 
 				if(!val)
 				{
 					error_cnt++;
 					error_print_line();
-					fp3<<"multiple declaration of variable "<<x<<endl<<endl;
+					fp3<<"multiple declaration of variable "<<x.first<<endl<<endl;
 				}
 				
 				// if(mapper[x] == 0)
@@ -505,7 +506,7 @@ declaration_list: declaration_list COMMA id
 				fp2<<"declaration_list : declaration_list COMMA ID\n"<<endl;
 				fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
 
-				decl_list.push_back($3->getName());
+				decl_list.push_back(make_pair($3->getName(),0));
 			}
  		  | declaration_list COMMA id LTHIRD CONST_INT RTHIRD
  		  	{
@@ -514,7 +515,7 @@ declaration_list: declaration_list COMMA id
 				fp2<<"declaration_list : declaration_list COMMA ID LTHIRD CONST_INT RTHIRD\n"<<endl;
 				fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()+" "+$5->getName()+" "+$6->getName()<<endl<<endl;
 
-				decl_list.push_back($3->getName());
+				decl_list.push_back(make_pair($3->getName(),1));
 			}
  		  | id
  		  {
@@ -524,7 +525,7 @@ declaration_list: declaration_list COMMA id
 				fp2<<$1->getName()<<endl<<endl;
 
 				//decl_list.clear();
-				decl_list.push_back($1->getName());
+				decl_list.push_back(make_pair($1->getName(),0));
  		  }
  		  | id LTHIRD CONST_INT RTHIRD
  		  {
@@ -534,7 +535,7 @@ declaration_list: declaration_list COMMA id
 				fp2<<$1->getName()+$2->getName()+" "+$3->getName()+$4->getName()<<endl<<endl;
 
 				//decl_list.clear();
-				decl_list.push_back($1->getName());
+				decl_list.push_back(make_pair($1->getName(),1));
  		  }
  		  ;
  		  
@@ -679,7 +680,21 @@ variable: id
 				fp3<<"variable "<<$1->getName()<<" not declared"<<endl;
 			}
 
+			else
+			{	
+				//check is the id actually declared as an array
+				SymbolInfo *s = st.Look_up($1->getName());
+				if(!s->get_array())
+				{
+					error_cnt++;
+					error_print_line();
+					fp3<<$1->getName()+" not an array"<<endl<<endl;
+
+				}		
+			}
+
 			//check array's index is integer type
+			fp2<<$3->get_data_type()<<endl<<endl;
 			if($3->get_data_type() != "int")
 			{
 				error_cnt++;
@@ -735,7 +750,7 @@ logic_expression: rel_expression
  		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 			//set data type of logic expression
-			$$->set_data_type("int");
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"logic_expression : rel_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -745,7 +760,7 @@ logic_expression: rel_expression
 		 {
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of logic expression
-			$$->set_data_type("int");
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -757,7 +772,7 @@ rel_expression: simple_expression
 		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 			//set data type of rel expression
-			$$->set_data_type("int");
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
@@ -766,7 +781,7 @@ rel_expression: simple_expression
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of rel expression
-			$$->set_data_type("int");
+			set_data_type($$,$1);
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -787,13 +802,6 @@ simple_expression: term
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of simple expression
 			set_data_type($$,$1);
-
-			if($1->get_data_type() != $3->get_data_type())
-			{
-				error_cnt++;
-				error_print_line();
-				fp3<<"Type Mismatch"<<endl<<endl;
-			}
 
  		  	print_line();
 			fp2<<"simple_expression ADDOP term\n"<<endl;
@@ -829,12 +837,6 @@ term:	unary_expression
 
 			}
 
-			if($1->get_data_type() != $3->get_data_type())
-			{
-				error_cnt++;
-				error_print_line();
-				fp3<<"Type Mismatch"<<endl<<endl;
-			}
 
  		  	print_line();
 			fp2<<"term :term MULOP unary_expression\n"<<endl;
