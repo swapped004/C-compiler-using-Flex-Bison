@@ -28,6 +28,9 @@ public:
         number_of_param = n;
         return_type = rt;
         param_list = pl;
+
+        //flag = 0 -> declared
+        // flag = 1 -> defined
         dec_or_def = flag; 
     }
 

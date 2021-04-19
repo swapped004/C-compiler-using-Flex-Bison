@@ -84,6 +84,9 @@ vector<pair<string,int>> decl_list;
 //function param_list
 vector<pair<string,string>> param_list;
 
+//function call argument list
+vector<string> arg_list;
+
 
 bool insert_ID(string name, string data_type, int is_array)
 {
@@ -990,6 +993,77 @@ factor: variable
 	| id LPAREN argument_list RPAREN
 	{
 		$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
+
+		
+		//check if declared
+		SymbolInfo* s = st.Look_up($1->getName());
+		if(s == NULL)
+		{
+			error_cnt++;
+			error_print_line();
+			fp3<<$1->getName() + " has not been declared"<<endl<<endl;
+
+		}
+
+		else //is declared
+		{
+			//check if id is really a function
+			func_param* f = s->get_func();
+			if(f == NULL)
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<$1->getName() + " not a function"<<endl<<endl;
+			}
+
+			else //is a function
+			{
+				//check if defined
+				if(f->get_flag() != 1)
+				{
+					error_cnt++;
+					error_print_line();
+					fp3<<$1->getName() + " function declared but not defined"<<endl<<endl;
+				}
+
+				else //function defined
+				{
+					//check if arguments are consistent
+					
+
+					if((int)arg_list.size() != f->getNumber_of_param())
+					{
+						error_cnt++;
+						error_print_line();
+						fp3<<$1->getName()+ " func parameters do not match with definition"<<endl<<endl;
+					}
+
+					else
+					{
+						vector<pair<string,string>> p_list = f->getParam_list();
+
+						int i = 0;
+						for(string x:arg_list)
+						{
+							if(x != p_list[i].second)
+							{
+								error_cnt++;
+								error_print_line();
+								fp3<<$1->getName()+ " func parameters do not match with definition"<<endl<<endl;
+								break;
+							}
+							i++;
+						}
+
+					}
+
+				}
+
+							
+			}
+		}
+
+		arg_list.clear();
  	  	print_line();
 		fp2<<"factor: id LPAREN argument_list RPAREN\n"<<endl;
 		fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName()<<endl;
@@ -997,6 +1071,7 @@ factor: variable
 	| LPAREN expression RPAREN
 	{
 		$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(), "NON_TERMINAL");
+		set_data_type($$,$2);
  		print_line();
 		fp2<<"factor: LPAREN expression RPAREN\n"<<endl;
 		fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -1062,6 +1137,8 @@ arguments: arguments COMMA logic_expression
 				fp2<<"arguments : arguments COMMA logic_expression\n"<<endl;
 				fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
 
+				arg_list.push_back($1->get_data_type());
+
  			} 
 	      | logic_expression
 	     	{
@@ -1069,6 +1146,8 @@ arguments: arguments COMMA logic_expression
 				print_line();
 				fp2<<"arguments : logic_expression\n"<<endl;
 				fp2<<$1->getName()<<endl;
+
+				arg_list.push_back($1->get_data_type());
  			} 
 	      ;
 	      
