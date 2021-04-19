@@ -1,13 +1,4 @@
-Error At Line No: 6 multiple declaration of variable c
+Error At Line No: 12 function foodefinition not consistent with declaration
 
-Error At Line No: 7 array index not integer
+Error At Line No: 20 Type mismatch
 
-Error At Line No: 8 operands of assignment operations are not compatible
-
-Error At Line No: 9 operands of the modulus operation have to be integer
-
-Error At Line No: 10 c not an array
-
-Error At Line No: 10 array index not integer
-
-Error At Line No: 13 variable b not declared

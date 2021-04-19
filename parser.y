@@ -146,6 +146,59 @@ bool check_func_declared(string name)
 		return false;
 }
 
+bool check_func_definition(string func_name, string return_type)
+{
+	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+	SymbolInfo* s = st.Look_up(func_name);
+	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+	func_param* f = s->get_func();
+	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+
+	for(auto x:param_list)
+	{
+		fp2<<x.first<<" "<<x.second<<endl;
+		
+	}
+
+	if(f != NULL)
+	{
+		cout<<"here"<<endl;
+	}
+	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+
+
+
+	if(return_type != f->getReturn_type())
+	{
+		fp2<<"rt: "<<return_type<<" "<<"prev_return_type: "<<f->getReturn_type()<<endl<<endl;
+		return false;
+	}
+
+	if((int)param_list.size() != f->getNumber_of_param())
+	{
+		fp2<<"r_size: "<<param_list.size()<<" "<<"prev_size: "<<f->getNumber_of_param()<<endl<<endl;
+		return false;
+	}
+
+	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+
+	vector<pair<string,string>> p_list = f->getParam_list();
+
+	int i = 0;
+	for(auto x:param_list)
+	{
+		fp2<<x.first<<" "<<x.first<<endl;
+		if(x.second != p_list[i].second)
+		{
+			return false;
+		}
+		i++;
+	}
+
+	return true;
+
+}
+
 void set_data_type(SymbolInfo* s1, SymbolInfo* s2)
 {
 	s1->set_data_type(s2->get_data_type());
@@ -318,6 +371,7 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 
 			if(!ok)
 			{
+				fp2<<"loop 1"<<endl<<endl;
 				//check if declared before
 				bool declared = check_func_declared($2->getName());
 
@@ -327,7 +381,24 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 					error_print_line();
 					fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
 				}
+
+				else	//check if declaration and definition are consistent
+				{
+					fp2<<"loop 2"<<endl<<endl;
+					bool is_consistent = check_func_definition($2->getName(),$1->getName());
+
+					if(!is_consistent)
+					{
+						fp2<<"loop 3"<<endl<<endl;
+						error_cnt++;
+						error_print_line();
+						fp3<<"function " + $2->getName() + "definition not consistent with declaration" <<endl<<endl;
+					}
+
+				}
+				
 			}
+			param_list.clear();
 
 		}
 		| type_specifier id LPAREN RPAREN compound_statement
@@ -342,6 +413,7 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 
 			if(!ok)
 			{
+				fp2<<"loop 1"<<endl<<endl;
 				//check if declared before
 				bool declared = check_func_declared($2->getName());
 
@@ -351,7 +423,23 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 					error_print_line();
 					fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
 				}
+
+				else	//check if declaration and definition are consistent
+				{
+					fp2<<"loop 2"<<endl<<endl;
+					bool is_consistent = check_func_definition($2->getName(),$1->getName());
+
+					if(!is_consistent)
+					{
+						fp2<<"loop 3"<<endl<<endl;
+						error_cnt++;
+						error_print_line();
+						fp3<<"function " + $2->getName() + "definition not consistent with declaration" <<endl<<endl;
+					}
+
+				}
 			}
+			param_list.clear();
 
 		}
  		;				
@@ -430,7 +518,6 @@ dummy_token_begin:
 dummy_token_end:
 				 {
 					 fp2<<"here in dummy token end"<<endl;
-					 param_list.clear();
 					 exitScope_parser();
 				 }
 				 ;
@@ -659,6 +746,18 @@ variable: id
 				error_print_line();
 				fp3<<"variable "<<$1->getName()<<" not declared"<<endl;
 			}
+
+			else
+			{
+				SymbolInfo *s = st.Look_up($1->getName());
+				if(s->get_array())
+				{
+					error_cnt++;
+					error_print_line();
+					fp3<<$1->getName()+" is an array"<<endl<<endl;
+
+				}	
+			}
 			
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 			//set variable data type according to id's data type
@@ -740,7 +839,7 @@ variable: id
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"operands of assignment operations are not compatible"<<endl<<endl;
+				fp3<<"Type mismatch"<<endl<<endl;
 			}
 
  		} 	
@@ -760,7 +859,8 @@ logic_expression: rel_expression
 		 {
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of logic expression
-			set_data_type($$,$1);
+			//set_data_type($$,$1);
+			$$->set_data_type("int");
  		  	print_line();
 			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -781,7 +881,8 @@ rel_expression: simple_expression
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of rel expression
-			set_data_type($$,$1);
+			//set_data_type($$,$1);
+			$$->set_data_type("int");
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -881,6 +982,7 @@ factor: variable
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 			//set data type of factor
 			set_data_type($$,$1);
+
  		  	print_line();
 			fp2<<"factor: variable\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
