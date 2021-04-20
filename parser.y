@@ -32,7 +32,7 @@ void print_line()
 
 void error_print_line()
 {
-	fp3<<"Error At Line No: "<<yylineno<<" ";
+	fp3<<"Error at Line "<<yylineno<<" : ";
 }
 
 vector<string> spiltWord(string str)
@@ -62,21 +62,6 @@ void yyerror(char *s)
 {
 	//write your code
 }
-
-//mapping of variable and types for a specific scope
-
-map<string,string> global_type_mapper;
-map<string,int> declare_mapper;
-
-map<string,string> prev_global_type_mapper;
-map<string,int> prev_declare_mapper;
-
-//local mappers
-map<string,int> mapper;
-map<string,string> type_mapper;
-
-
-vector<string> scope_var;
 
 //declaration_list vector
 vector<pair<string,int>> decl_list;
@@ -222,24 +207,11 @@ void enterScope_parser()
 		SymbolInfo* si = st.Look_up(x.first);
 		si->set_data_type(x.second);
 	}
-
-	prev_global_type_mapper = global_type_mapper;
-	prev_declare_mapper = declare_mapper;
 }
 
 void exitScope_parser()
 {
 	cout<<"exited scope"<<endl;
-	//remove scope variables from declare_mapper
-	//remove scope variable from global_type_mapper
-
-	global_type_mapper = prev_global_type_mapper;
-	declare_mapper = prev_declare_mapper;
-
-	//clear scope mappers
-	mapper.clear();
-	type_mapper.clear();
-	scope_var.clear();
 	st.exit_scope();
 }
 
@@ -544,23 +516,8 @@ var_declaration: type_specifier declaration_list SEMICOLON
 				{
 					error_cnt++;
 					error_print_line();
-					fp3<<"multiple declaration of variable "<<x.first<<endl<<endl;
+					fp3<<"Multiple Declaration of "<<x.first<<endl<<endl;
 				}
-				
-				// if(mapper[x] == 0)
-				// {
-				// 	scope_var.push_back(x);
-				// 	mapper[x]++;
-				// 	declare_mapper[x]++;
-				// 	type_mapper[x] = $1->getName();
-				// 	global_type_mapper[x] = $1->getName();
-				// }
-				// else
-				// {
-				// 	error_cnt++;
-				// 	error_print_line();
-				// 	fp3<<"multiple declaration of variable "<<x<<endl<<endl;
-				// }
 			}
 			decl_list.clear();
 		}
@@ -747,7 +704,7 @@ variable: id
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"variable "<<$1->getName()<<" not declared"<<endl;
+				fp3<<"Undeclared Variable: "<<$1->getName()<<endl<<endl;
 			}
 
 			else
@@ -801,7 +758,7 @@ variable: id
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"array index not integer"<<endl<<endl;
+				fp3<<"Non-integer Array Index"<<endl<<endl;
 			}
 			
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
@@ -826,7 +783,7 @@ variable: id
 
 
  		} 
-	   | variable ASSIGNOP logic_expression 
+	   | variable ASSIGNOP logic_expression
 	   {
 		   	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -836,9 +793,15 @@ variable: id
 			//set data type of logic expression
 			set_data_type($$,$1);
 
+			if($3->get_data_type() == "void")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
 
 			//find error if operands of assignment operations are not compatible
-			if($1->get_data_type() != $3->get_data_type())
+			else if($1->get_data_type() != $3->get_data_type())
 			{
 				error_cnt++;
 				error_print_line();
@@ -864,6 +827,14 @@ logic_expression: rel_expression
 			//set data type of logic expression
 			//set_data_type($$,$1);
 			$$->set_data_type("int");
+
+			if($1->get_data_type() == "void" | $3->get_data_type() == "void")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
+
  		  	print_line();
 			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -886,6 +857,13 @@ rel_expression: simple_expression
 			//set data type of rel expression
 			//set_data_type($$,$1);
 			$$->set_data_type("int");
+
+			if($1->get_data_type() == "void" | $3->get_data_type() == "void")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()+" "+$3->getName()<<endl<<endl;
@@ -905,7 +883,26 @@ simple_expression: term
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
 			//set data type of simple expression
-			set_data_type($$,$1);
+
+			//type conversion
+			if($1->get_data_type() == "float" | $3->get_data_type() == "float")
+			{
+				$$->set_data_type("float");
+			}
+
+			else
+			{
+				$$->set_data_type("int");
+			}
+
+
+			if($1->get_data_type() == "void" | $3->get_data_type() == "void")
+			{
+				$$->set_data_type("float");
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
 
  		  	print_line();
 			fp2<<"simple_expression ADDOP term\n"<<endl;
@@ -926,8 +923,6 @@ term:	unary_expression
      |  term MULOP unary_expression
      	{
 		 	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+" "+$3->getName(),"NON_TERMINAL");
-			//set data type of term
-			set_data_type($$,$2);
 
 			//check operands of modulus operator
 			if($2->getName() == "%")
@@ -936,11 +931,31 @@ term:	unary_expression
 				{
 					error_cnt++;
 					error_print_line();
-					fp3<<"operands of the modulus operation have to be integer"<<endl<<endl;
+					fp3<<"Integer operand on modulus operator"<<endl<<endl;
 				}
+
+				$$->set_data_type("int");
 
 			}
 
+			//type conversion
+			else if($1->get_data_type() == "float" | $3->get_data_type() == "float")
+			{
+				$$->set_data_type("float");
+			}
+
+			else
+			{
+				$$->set_data_type("int");
+			}
+
+			if($1->get_data_type() == "void" | $3->get_data_type() == "void")
+			{
+				$$->set_data_type("float");
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
 
  		  	print_line();
 			fp2<<"term :term MULOP unary_expression\n"<<endl;
@@ -953,6 +968,14 @@ unary_expression: ADDOP unary_expression
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
 			//set data type of unary expression
 			set_data_type($$,$2);
+
+			if($2->get_data_type() == "void")
+			{
+				$$->set_data_type("float");
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
  		  	print_line();
 			fp2<<"unary_expression : ADDOP unary_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
@@ -963,6 +986,14 @@ unary_expression: ADDOP unary_expression
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName(),"NON_TERMINAL");
 			//set data type of unary expression
 			set_data_type($$,$2);
+
+			if($2->get_data_type() == "void")
+			{
+				$$->set_data_type("float");
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
  		  	print_line();
 			fp2<<"unary_expression : NOT unary_expression\n"<<endl;
 			fp2<<$1->getName()+" "+$2->getName()<<endl<<endl;
@@ -1007,8 +1038,9 @@ factor: variable
 
 		else //is declared
 		{
-			//check if id is really a function
 			func_param* f = s->get_func();
+
+			//check if id is really a function
 			if(f == NULL)
 			{
 				error_cnt++;
@@ -1018,6 +1050,9 @@ factor: variable
 
 			else //is a function
 			{
+				//set type according to return type
+				$$->set_data_type(f->getReturn_type());
+
 				//check if defined
 				if(f->get_flag() != 1)
 				{
@@ -1030,7 +1065,7 @@ factor: variable
 				{
 					//check if arguments are consistent
 					
-
+					//number of arguments
 					if((int)arg_list.size() != f->getNumber_of_param())
 					{
 						error_cnt++;
@@ -1038,13 +1073,15 @@ factor: variable
 						fp3<<$1->getName()+ " func parameters do not match with definition"<<endl<<endl;
 					}
 
-					else
+					else //data types of arguments
 					{
+						fp2<<"here"<<endl;
 						vector<pair<string,string>> p_list = f->getParam_list();
 
 						int i = 0;
 						for(string x:arg_list)
 						{
+							fp2<<x<<" : "<<p_list[i].second<<endl;
 							if(x != p_list[i].second)
 							{
 								error_cnt++;
@@ -1190,7 +1227,9 @@ int main(int argc,char *argv[])
 	
 	yyparse();	
 
-	tok.open("1705025_token.txt");
+	fp3<<"Total Errors: "<<error_cnt<<endl;
+
+	//tok.open("1705025_token.txt");
 	//yylineno = 1;
 
 

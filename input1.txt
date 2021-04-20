@@ -8,7 +8,7 @@ int main(){
 	i=2.3;
 	j=2%3.7;
 	a=4;
-	func(i);
+	func(a);
 	b=8;
 	return 0;
 }

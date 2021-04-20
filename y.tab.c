@@ -101,7 +101,7 @@ void print_line()
 
 void error_print_line()
 {
-	fp3<<"Error At Line No: "<<yylineno<<" ";
+	fp3<<"Error at Line "<<yylineno<<" : ";
 }
 
 vector<string> spiltWord(string str)
@@ -131,21 +131,6 @@ void yyerror(char *s)
 {
 	//write your code
 }
-
-//mapping of variable and types for a specific scope
-
-map<string,string> global_type_mapper;
-map<string,int> declare_mapper;
-
-map<string,string> prev_global_type_mapper;
-map<string,int> prev_declare_mapper;
-
-//local mappers
-map<string,int> mapper;
-map<string,string> type_mapper;
-
-
-vector<string> scope_var;
 
 //declaration_list vector
 vector<pair<string,int>> decl_list;
@@ -291,24 +276,11 @@ void enterScope_parser()
 		SymbolInfo* si = st.Look_up(x.first);
 		si->set_data_type(x.second);
 	}
-
-	prev_global_type_mapper = global_type_mapper;
-	prev_declare_mapper = declare_mapper;
 }
 
 void exitScope_parser()
 {
 	cout<<"exited scope"<<endl;
-	//remove scope variables from declare_mapper
-	//remove scope variable from global_type_mapper
-
-	global_type_mapper = prev_global_type_mapper;
-	declare_mapper = prev_declare_mapper;
-
-	//clear scope mappers
-	mapper.clear();
-	type_mapper.clear();
-	scope_var.clear();
 	st.exit_scope();
 }
 
@@ -318,7 +290,7 @@ void exitScope_parser()
 
 
 
-#line 322 "y.tab.c"
+#line 294 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -442,10 +414,10 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 253 "./parser.y"
+#line 225 "./parser.y"
 int ival;SymbolInfo* si;
 
-#line 449 "y.tab.c"
+#line 421 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -824,13 +796,13 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   275,   275,   284,   291,   300,   307,   314,   323,   343,
-     365,   407,   451,   463,   473,   483,   496,   503,   513,   522,
-     528,   569,   576,   583,   592,   601,   610,   620,   632,   640,
-     650,   659,   666,   674,   682,   690,   698,   706,   714,   725,
-     733,   743,   775,   818,   829,   851,   861,   874,   883,   895,
-     904,   917,   926,   951,   961,   971,   983,   993,  1071,  1080,
-    1088,  1096,  1105,  1116,  1124,  1133,  1143,  1154
+       0,   247,   247,   256,   263,   272,   279,   286,   295,   315,
+     337,   379,   423,   435,   445,   455,   468,   475,   485,   494,
+     500,   526,   533,   540,   549,   558,   567,   577,   589,   597,
+     607,   616,   623,   631,   639,   647,   655,   663,   671,   682,
+     690,   700,   732,   775,   786,   814,   824,   845,   854,   873,
+     882,   914,   923,   966,   984,  1002,  1014,  1024,  1108,  1117,
+    1125,  1133,  1142,  1153,  1161,  1170,  1180,  1191
 };
 #endif
 
@@ -1716,73 +1688,73 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 276 "./parser.y"
+#line 248 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
 		print_line();
 		fp2<<"start : program\n"<<endl;
 		fp2<<(yyval.si)->getName()<<endl<<endl;
 	}
-#line 1727 "y.tab.c"
+#line 1699 "y.tab.c"
     break;
 
   case 3:
-#line 285 "./parser.y"
+#line 257 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
 			fp2<<"program : program unit\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1738 "y.tab.c"
+#line 1710 "y.tab.c"
     break;
 
   case 4:
-#line 292 "./parser.y"
+#line 264 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
 			fp2<<"program : unit\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1749 "y.tab.c"
+#line 1721 "y.tab.c"
     break;
 
   case 5:
-#line 301 "./parser.y"
+#line 273 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
 			fp2<<"unit : var_declaration\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1760 "y.tab.c"
+#line 1732 "y.tab.c"
     break;
 
   case 6:
-#line 308 "./parser.y"
+#line 280 "./parser.y"
         {	
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
 			fp2<<"unit : func_declaration\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1771 "y.tab.c"
+#line 1743 "y.tab.c"
     break;
 
   case 7:
-#line 315 "./parser.y"
+#line 287 "./parser.y"
         {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
 		 	print_line();
 			fp2<<"unit : func_definition\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1782 "y.tab.c"
+#line 1754 "y.tab.c"
     break;
 
   case 8:
-#line 324 "./parser.y"
+#line 296 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-5].si)->getName()+" "+(yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -1802,11 +1774,11 @@ yyreduce:
 			//clear the parameter list
 			param_list.clear();
 		}
-#line 1806 "y.tab.c"
+#line 1778 "y.tab.c"
     break;
 
   case 9:
-#line 344 "./parser.y"
+#line 316 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -1826,11 +1798,11 @@ yyreduce:
 			//clear the parameter list
 			param_list.clear();
 		}
-#line 1830 "y.tab.c"
+#line 1802 "y.tab.c"
     break;
 
   case 10:
-#line 366 "./parser.y"
+#line 338 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-5].si)->getName()+" "+(yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -1872,11 +1844,11 @@ yyreduce:
 			param_list.clear();
 
 		}
-#line 1876 "y.tab.c"
+#line 1848 "y.tab.c"
     break;
 
   case 11:
-#line 408 "./parser.y"
+#line 380 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -1917,11 +1889,11 @@ yyreduce:
 			param_list.clear();
 
 		}
-#line 1921 "y.tab.c"
+#line 1893 "y.tab.c"
     break;
 
   case 12:
-#line 452 "./parser.y"
+#line 424 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -1933,11 +1905,11 @@ yyreduce:
 
 			
 		}
-#line 1937 "y.tab.c"
+#line 1909 "y.tab.c"
     break;
 
   case 13:
-#line 464 "./parser.y"
+#line 436 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -1947,11 +1919,11 @@ yyreduce:
 			//add to param list
 			param_list.push_back(make_pair("",(yyvsp[0].si)->getName()));
 		}
-#line 1951 "y.tab.c"
+#line 1923 "y.tab.c"
     break;
 
   case 14:
-#line 474 "./parser.y"
+#line 446 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -1961,11 +1933,11 @@ yyreduce:
 			//add to param_list
 			param_list.push_back(make_pair((yyvsp[0].si)->getName(),(yyvsp[-1].si)->getName()));
 		}
-#line 1965 "y.tab.c"
+#line 1937 "y.tab.c"
     break;
 
   case 15:
-#line 484 "./parser.y"
+#line 456 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -1975,53 +1947,53 @@ yyreduce:
 			//add to param list
 			param_list.push_back(make_pair("",(yyvsp[0].si)->getName()));
 		}
-#line 1979 "y.tab.c"
+#line 1951 "y.tab.c"
     break;
 
   case 16:
-#line 497 "./parser.y"
+#line 469 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-4].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName(), "NON_TERMINAL");
 				print_line();
 				fp2<<"compound_statement: LCURL dum statements RCURL dum\n"<<endl;
 				fp2<<(yyval.si)->getName()<<endl<<endl;
 			}
-#line 1990 "y.tab.c"
+#line 1962 "y.tab.c"
     break;
 
   case 17:
-#line 504 "./parser.y"
+#line 476 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+" "+(yyvsp[-1].si)->getName(), "NON_TERMINAL");
 				print_line();
 				fp2<<"compound_statement: LCURL RCURL\n"<<endl;
 				fp2<<(yyval.si)->getName()<<endl<<endl;
 			}
-#line 2001 "y.tab.c"
+#line 1973 "y.tab.c"
     break;
 
   case 18:
-#line 513 "./parser.y"
+#line 485 "./parser.y"
                                  {
 					 fp2<<"here in dummy token begin"<<endl;
 					 enterScope_parser();
 					 //add_function_param();
 
 				 }
-#line 2012 "y.tab.c"
+#line 1984 "y.tab.c"
     break;
 
   case 19:
-#line 522 "./parser.y"
+#line 494 "./parser.y"
                                  {
 					 fp2<<"here in dummy token end"<<endl;
 					 exitScope_parser();
 				 }
-#line 2021 "y.tab.c"
+#line 1993 "y.tab.c"
     break;
 
   case 20:
-#line 529 "./parser.y"
+#line 501 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -2040,64 +2012,49 @@ yyreduce:
 				{
 					error_cnt++;
 					error_print_line();
-					fp3<<"multiple declaration of variable "<<x.first<<endl<<endl;
+					fp3<<"Multiple Declaration of "<<x.first<<endl<<endl;
 				}
-				
-				// if(mapper[x] == 0)
-				// {
-				// 	scope_var.push_back(x);
-				// 	mapper[x]++;
-				// 	declare_mapper[x]++;
-				// 	type_mapper[x] = $1->getName();
-				// 	global_type_mapper[x] = $1->getName();
-				// }
-				// else
-				// {
-				// 	error_cnt++;
-				// 	error_print_line();
-				// 	fp3<<"multiple declaration of variable "<<x<<endl<<endl;
-				// }
 			}
 			decl_list.clear();
 		}
-#line 2064 "y.tab.c"
+#line 2021 "y.tab.c"
     break;
 
   case 21:
-#line 570 "./parser.y"
+#line 527 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo("int","NON_TERMINAL");
 				print_line();
 				fp2<<"type_specifier: "<<"INT\n"<<endl;
 				fp2<<"int\n"<<endl;
 			}
-#line 2075 "y.tab.c"
+#line 2032 "y.tab.c"
     break;
 
   case 22:
-#line 577 "./parser.y"
+#line 534 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo("float","NON_TERMINAL");
 			print_line();
 			fp2<<"type_specifier: "<<"FLOAT\n"<<endl;
 			fp2<<"float\n"<<endl;
 		}
-#line 2086 "y.tab.c"
+#line 2043 "y.tab.c"
     break;
 
   case 23:
-#line 584 "./parser.y"
+#line 541 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo("void","NON_TERMINAL");
 			print_line();
 			fp2<<"type_specifier: "<<"VOID\n"<<endl;
 			fp2<<"void\n"<<endl;
 		}
-#line 2097 "y.tab.c"
+#line 2054 "y.tab.c"
     break;
 
   case 24:
-#line 593 "./parser.y"
+#line 550 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 				print_line();
@@ -2106,11 +2063,11 @@ yyreduce:
 
 				decl_list.push_back(make_pair((yyvsp[0].si)->getName(),0));
 			}
-#line 2110 "y.tab.c"
+#line 2067 "y.tab.c"
     break;
 
   case 25:
-#line 602 "./parser.y"
+#line 559 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-5].si)->getName()+" "+(yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 				print_line();
@@ -2119,11 +2076,11 @@ yyreduce:
 
 				decl_list.push_back(make_pair((yyvsp[-3].si)->getName(),1));
 			}
-#line 2123 "y.tab.c"
+#line 2080 "y.tab.c"
     break;
 
   case 26:
-#line 611 "./parser.y"
+#line 568 "./parser.y"
                   {
  		  		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  		print_line();
@@ -2133,11 +2090,11 @@ yyreduce:
 				//decl_list.clear();
 				decl_list.push_back(make_pair((yyvsp[0].si)->getName(),0));
  		  }
-#line 2137 "y.tab.c"
+#line 2094 "y.tab.c"
     break;
 
   case 27:
-#line 621 "./parser.y"
+#line 578 "./parser.y"
                   {
 			    (yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  		print_line();
@@ -2147,22 +2104,22 @@ yyreduce:
 				//decl_list.clear();
 				decl_list.push_back(make_pair((yyvsp[-3].si)->getName(),1));
  		  }
-#line 2151 "y.tab.c"
+#line 2108 "y.tab.c"
     break;
 
   case 28:
-#line 633 "./parser.y"
+#line 590 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  		print_line();
 				fp2<<"statements : statement\n"<<endl;
 				fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		  	}
-#line 2162 "y.tab.c"
+#line 2119 "y.tab.c"
     break;
 
   case 29:
-#line 641 "./parser.y"
+#line 598 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2170,11 +2127,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2174 "y.tab.c"
+#line 2131 "y.tab.c"
     break;
 
   case 30:
-#line 651 "./parser.y"
+#line 608 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2182,22 +2139,22 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2186 "y.tab.c"
+#line 2143 "y.tab.c"
     break;
 
   case 31:
-#line 660 "./parser.y"
+#line 617 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"statement : expression_statement\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2197 "y.tab.c"
+#line 2154 "y.tab.c"
     break;
 
   case 32:
-#line 667 "./parser.y"
+#line 624 "./parser.y"
           {
 		  	(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2205,11 +2162,11 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2209 "y.tab.c"
+#line 2166 "y.tab.c"
     break;
 
   case 33:
-#line 675 "./parser.y"
+#line 632 "./parser.y"
           {
 			(yyval.si) = new SymbolInfo((yyvsp[-6].si)->getName()+" "+(yyvsp[-5].si)->getName()+" "+(yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2217,11 +2174,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2221 "y.tab.c"
+#line 2178 "y.tab.c"
     break;
 
   case 34:
-#line 683 "./parser.y"
+#line 640 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo((yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2229,11 +2186,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2233 "y.tab.c"
+#line 2190 "y.tab.c"
     break;
 
   case 35:
-#line 691 "./parser.y"
+#line 648 "./parser.y"
           {
 		  	(yyval.si) = new SymbolInfo((yyvsp[-6].si)->getName()+" "+(yyvsp[-5].si)->getName()+" "+(yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2241,11 +2198,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2245 "y.tab.c"
+#line 2202 "y.tab.c"
     break;
 
   case 36:
-#line 699 "./parser.y"
+#line 656 "./parser.y"
           {
 		  	(yyval.si) = new SymbolInfo((yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2253,11 +2210,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2257 "y.tab.c"
+#line 2214 "y.tab.c"
     break;
 
   case 37:
-#line 707 "./parser.y"
+#line 664 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo((yyvsp[-4].si)->getName()+" "+(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2265,11 +2222,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2269 "y.tab.c"
+#line 2226 "y.tab.c"
     break;
 
   case 38:
-#line 715 "./parser.y"
+#line 672 "./parser.y"
                 {
 			fp2<<"RETURN symbol->name: "<<(yyvsp[-2].si)->getName()<<endl<<endl;
 		  	(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
@@ -2278,11 +2235,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2282 "y.tab.c"
+#line 2239 "y.tab.c"
     break;
 
   case 39:
-#line 726 "./parser.y"
+#line 683 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2290,11 +2247,11 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2294 "y.tab.c"
+#line 2251 "y.tab.c"
     break;
 
   case 40:
-#line 734 "./parser.y"
+#line 691 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 	 		  	print_line();
@@ -2302,18 +2259,18 @@ yyreduce:
 				fp2<<(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName()<<endl<<endl;
 
  			}
-#line 2306 "y.tab.c"
+#line 2263 "y.tab.c"
     break;
 
   case 41:
-#line 744 "./parser.y"
+#line 701 "./parser.y"
                 {
 			//check if ID is declared or not
 			if(!check_var_declared((yyvsp[0].si)->getName()))
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"variable "<<(yyvsp[0].si)->getName()<<" not declared"<<endl;
+				fp3<<"Undeclared Variable: "<<(yyvsp[0].si)->getName()<<endl<<endl;
 			}
 
 			else
@@ -2338,11 +2295,11 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2342 "y.tab.c"
+#line 2299 "y.tab.c"
     break;
 
   case 42:
-#line 776 "./parser.y"
+#line 733 "./parser.y"
                 {
 			//check if ID is declared or not
 			if(!check_var_declared((yyvsp[-3].si)->getName()))
@@ -2371,7 +2328,7 @@ yyreduce:
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"array index not integer"<<endl<<endl;
+				fp3<<"Non-integer Array Index"<<endl<<endl;
 			}
 			
 			(yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
@@ -2383,11 +2340,11 @@ yyreduce:
 			fp2<<"variable : ID LTHIRD expression RTHIRD\n"<<endl;
 			fp2<<(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2387 "y.tab.c"
+#line 2344 "y.tab.c"
     break;
 
   case 43:
-#line 819 "./parser.y"
+#line 776 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of expression
@@ -2398,11 +2355,11 @@ yyreduce:
 
 
  		}
-#line 2402 "y.tab.c"
+#line 2359 "y.tab.c"
     break;
 
   case 44:
-#line 830 "./parser.y"
+#line 787 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2412,9 +2369,15 @@ yyreduce:
 			//set data type of logic expression
 			set_data_type((yyval.si),(yyvsp[-2].si));
 
+			if((yyvsp[0].si)->get_data_type() == "void")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
 
 			//find error if operands of assignment operations are not compatible
-			if((yyvsp[-2].si)->get_data_type() != (yyvsp[0].si)->get_data_type())
+			else if((yyvsp[-2].si)->get_data_type() != (yyvsp[0].si)->get_data_type())
 			{
 				error_cnt++;
 				error_print_line();
@@ -2422,11 +2385,11 @@ yyreduce:
 			}
 
  		}
-#line 2426 "y.tab.c"
+#line 2389 "y.tab.c"
     break;
 
   case 45:
-#line 852 "./parser.y"
+#line 815 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of logic expression
@@ -2436,26 +2399,34 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2440 "y.tab.c"
+#line 2403 "y.tab.c"
     break;
 
   case 46:
-#line 862 "./parser.y"
+#line 825 "./parser.y"
                  {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of logic expression
 			//set_data_type($$,$1);
 			(yyval.si)->set_data_type("int");
+
+			if((yyvsp[-2].si)->get_data_type() == "void" | (yyvsp[0].si)->get_data_type() == "void")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
+
  		  	print_line();
 			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
 			fp2<<(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2455 "y.tab.c"
+#line 2426 "y.tab.c"
     break;
 
   case 47:
-#line 875 "./parser.y"
+#line 846 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of rel expression
@@ -2464,25 +2435,32 @@ yyreduce:
 			fp2<<"rel_expression	: simple_expression\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2468 "y.tab.c"
+#line 2439 "y.tab.c"
     break;
 
   case 48:
-#line 884 "./parser.y"
+#line 855 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of rel expression
 			//set_data_type($$,$1);
 			(yyval.si)->set_data_type("int");
+
+			if((yyvsp[-2].si)->get_data_type() == "void" | (yyvsp[0].si)->get_data_type() == "void")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
  		  	print_line();
 			fp2<<"rel_expression	: simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2482 "y.tab.c"
+#line 2460 "y.tab.c"
     break;
 
   case 49:
-#line 896 "./parser.y"
+#line 874 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of simple expression
@@ -2491,25 +2469,44 @@ yyreduce:
 			fp2<<"simple_expression : term\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2495 "y.tab.c"
+#line 2473 "y.tab.c"
     break;
 
   case 50:
-#line 905 "./parser.y"
+#line 883 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of simple expression
-			set_data_type((yyval.si),(yyvsp[-2].si));
+
+			//type conversion
+			if((yyvsp[-2].si)->get_data_type() == "float" | (yyvsp[0].si)->get_data_type() == "float")
+			{
+				(yyval.si)->set_data_type("float");
+			}
+
+			else
+			{
+				(yyval.si)->set_data_type("int");
+			}
+
+
+			if((yyvsp[-2].si)->get_data_type() == "void" | (yyvsp[0].si)->get_data_type() == "void")
+			{
+				(yyval.si)->set_data_type("float");
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
 
  		  	print_line();
 			fp2<<"simple_expression ADDOP term\n"<<endl;
 			fp2<<(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2509 "y.tab.c"
+#line 2506 "y.tab.c"
     break;
 
   case 51:
-#line 918 "./parser.y"
+#line 915 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of term
@@ -2518,15 +2515,13 @@ yyreduce:
 			fp2<<"term :unary_expression\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2522 "y.tab.c"
+#line 2519 "y.tab.c"
     break;
 
   case 52:
-#line 927 "./parser.y"
+#line 924 "./parser.y"
         {
 		 	(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
-			//set data type of term
-			set_data_type((yyval.si),(yyvsp[-1].si));
 
 			//check operands of modulus operator
 			if((yyvsp[-1].si)->getName() == "%")
@@ -2535,49 +2530,85 @@ yyreduce:
 				{
 					error_cnt++;
 					error_print_line();
-					fp3<<"operands of the modulus operation have to be integer"<<endl<<endl;
+					fp3<<"Integer operand on modulus operator"<<endl<<endl;
 				}
+
+				(yyval.si)->set_data_type("int");
 
 			}
 
+			//type conversion
+			else if((yyvsp[-2].si)->get_data_type() == "float" | (yyvsp[0].si)->get_data_type() == "float")
+			{
+				(yyval.si)->set_data_type("float");
+			}
+
+			else
+			{
+				(yyval.si)->set_data_type("int");
+			}
+
+			if((yyvsp[-2].si)->get_data_type() == "void" | (yyvsp[0].si)->get_data_type() == "void")
+			{
+				(yyval.si)->set_data_type("float");
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
 
  		  	print_line();
 			fp2<<"term :term MULOP unary_expression\n"<<endl;
 			fp2<<(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2549 "y.tab.c"
+#line 2564 "y.tab.c"
     break;
 
   case 53:
-#line 952 "./parser.y"
+#line 967 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of unary expression
 			set_data_type((yyval.si),(yyvsp[0].si));
+
+			if((yyvsp[0].si)->get_data_type() == "void")
+			{
+				(yyval.si)->set_data_type("float");
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
  		  	print_line();
 			fp2<<"unary_expression : ADDOP unary_expression\n"<<endl;
 			fp2<<(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2563 "y.tab.c"
+#line 2586 "y.tab.c"
     break;
 
   case 54:
-#line 962 "./parser.y"
+#line 985 "./parser.y"
                  {
 			(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of unary expression
 			set_data_type((yyval.si),(yyvsp[0].si));
+
+			if((yyvsp[0].si)->get_data_type() == "void")
+			{
+				(yyval.si)->set_data_type("float");
+				error_cnt++;
+				error_print_line();
+				fp3<<"void type function in a expression"<<endl<<endl;
+			}
  		  	print_line();
 			fp2<<"unary_expression : NOT unary_expression\n"<<endl;
 			fp2<<(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2577 "y.tab.c"
+#line 2608 "y.tab.c"
     break;
 
   case 55:
-#line 972 "./parser.y"
+#line 1003 "./parser.y"
                  {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of unary expression
@@ -2587,11 +2618,11 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2591 "y.tab.c"
+#line 2622 "y.tab.c"
     break;
 
   case 56:
-#line 984 "./parser.y"
+#line 1015 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of factor
@@ -2601,11 +2632,11 @@ yyreduce:
 			fp2<<"factor: variable\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2605 "y.tab.c"
+#line 2636 "y.tab.c"
     break;
 
   case 57:
-#line 994 "./parser.y"
+#line 1025 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 
@@ -2622,8 +2653,9 @@ yyreduce:
 
 		else //is declared
 		{
-			//check if id is really a function
 			func_param* f = s->get_func();
+
+			//check if id is really a function
 			if(f == NULL)
 			{
 				error_cnt++;
@@ -2633,6 +2665,9 @@ yyreduce:
 
 			else //is a function
 			{
+				//set type according to return type
+				(yyval.si)->set_data_type(f->getReturn_type());
+
 				//check if defined
 				if(f->get_flag() != 1)
 				{
@@ -2645,7 +2680,7 @@ yyreduce:
 				{
 					//check if arguments are consistent
 					
-
+					//number of arguments
 					if((int)arg_list.size() != f->getNumber_of_param())
 					{
 						error_cnt++;
@@ -2653,13 +2688,15 @@ yyreduce:
 						fp3<<(yyvsp[-3].si)->getName()+ " func parameters do not match with definition"<<endl<<endl;
 					}
 
-					else
+					else //data types of arguments
 					{
+						fp2<<"here"<<endl;
 						vector<pair<string,string>> p_list = f->getParam_list();
 
 						int i = 0;
 						for(string x:arg_list)
 						{
+							fp2<<x<<" : "<<p_list[i].second<<endl;
 							if(x != p_list[i].second)
 							{
 								error_cnt++;
@@ -2683,11 +2720,11 @@ yyreduce:
 		fp2<<"factor: id LPAREN argument_list RPAREN\n"<<endl;
 		fp2<<(yyvsp[-3].si)->getName()+" "+(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl;
  	}
-#line 2687 "y.tab.c"
+#line 2724 "y.tab.c"
     break;
 
   case 58:
-#line 1072 "./parser.y"
+#line 1109 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 		set_data_type((yyval.si),(yyvsp[-1].si));
@@ -2696,11 +2733,11 @@ yyreduce:
 		fp2<<(yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
 
 	}
-#line 2700 "y.tab.c"
+#line 2737 "y.tab.c"
     break;
 
   case 59:
-#line 1081 "./parser.y"
+#line 1118 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 		(yyval.si)->set_data_type("int");
@@ -2708,11 +2745,11 @@ yyreduce:
 		fp2<<"factor: CONST_INT\n"<<endl;
 		fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 	}
-#line 2712 "y.tab.c"
+#line 2749 "y.tab.c"
     break;
 
   case 60:
-#line 1089 "./parser.y"
+#line 1126 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 		(yyval.si)->set_data_type("float");
@@ -2720,11 +2757,11 @@ yyreduce:
 		fp2<<"factor: CONST_FLOAT\n"<<endl;
 		fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  	}
-#line 2724 "y.tab.c"
+#line 2761 "y.tab.c"
     break;
 
   case 61:
-#line 1097 "./parser.y"
+#line 1134 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 		//set data type of factor
@@ -2733,11 +2770,11 @@ yyreduce:
 		fp2<<"factor: variable INCOP\n"<<endl;
 		fp2<<(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
  	}
-#line 2737 "y.tab.c"
+#line 2774 "y.tab.c"
     break;
 
   case 62:
-#line 1106 "./parser.y"
+#line 1143 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 		//set data type of factor
@@ -2746,22 +2783,22 @@ yyreduce:
 		fp2<<"factor: variable INCOP\n"<<endl;
 		fp2<<(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName()<<endl<<endl;
  	}
-#line 2750 "y.tab.c"
+#line 2787 "y.tab.c"
     break;
 
   case 63:
-#line 1117 "./parser.y"
+#line 1154 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"argument_list : arguments\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl;
  		}
-#line 2761 "y.tab.c"
+#line 2798 "y.tab.c"
     break;
 
   case 64:
-#line 1124 "./parser.y"
+#line 1161 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo("", "NON_TERMINAL");
  		  	print_line();
@@ -2769,11 +2806,11 @@ yyreduce:
 			fp2<<""<<endl<<endl;
 
  		}
-#line 2773 "y.tab.c"
+#line 2810 "y.tab.c"
     break;
 
   case 65:
-#line 1134 "./parser.y"
+#line 1171 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 				print_line();
@@ -2783,11 +2820,11 @@ yyreduce:
 				arg_list.push_back((yyvsp[-2].si)->get_data_type());
 
  			}
-#line 2787 "y.tab.c"
+#line 2824 "y.tab.c"
     break;
 
   case 66:
-#line 1144 "./parser.y"
+#line 1181 "./parser.y"
                 {
 				(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 				print_line();
@@ -2796,22 +2833,22 @@ yyreduce:
 
 				arg_list.push_back((yyvsp[0].si)->get_data_type());
  			}
-#line 2800 "y.tab.c"
+#line 2837 "y.tab.c"
     break;
 
   case 67:
-#line 1155 "./parser.y"
+#line 1192 "./parser.y"
         {		
 		//st.Insert($1->getName(),$1->getType());
 		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());		
 		//print_line();
 		//fp2<<"id: ID"<<endl;
 	}
-#line 2811 "y.tab.c"
+#line 2848 "y.tab.c"
     break;
 
 
-#line 2815 "y.tab.c"
+#line 2852 "y.tab.c"
 
       default: break;
     }
@@ -3043,7 +3080,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1165 "./parser.y"
+#line 1202 "./parser.y"
 
 int main(int argc,char *argv[])
 {
@@ -3072,7 +3109,9 @@ int main(int argc,char *argv[])
 	
 	yyparse();	
 
-	tok.open("1705025_token.txt");
+	fp3<<"Total Errors: "<<error_cnt<<endl;
+
+	//tok.open("1705025_token.txt");
 	//yylineno = 1;
 
 

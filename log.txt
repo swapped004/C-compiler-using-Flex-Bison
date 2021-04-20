@@ -348,76 +348,78 @@ int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 
 
 At Line No: 11 variable : ID
 
-i
+a
 
 At Line No: 11 factor: variable
 
-i
+a
 
 At Line No: 11 unary_expression : factor
 
-i
+a
 
 At Line No: 11 term :unary_expression
 
-i
+a
 
 At Line No: 11 simple_expression : term
 
-i
+a
 
 At Line No: 11 rel_expression	: simple_expression
 
-i
+a
 
 At Line No: 11 logic_expression : rel_expression
 
-i
+a
 
 At Line No: 11 arguments : logic_expression
 
-i
+a
 At Line No: 11 argument_list : arguments
 
-i
+a
+here
+int : int
 At Line No: 11 factor: id LPAREN argument_list RPAREN
 
-func ( i )
+func ( a )
 At Line No: 11 unary_expression : factor
 
-func ( i )
+func ( a )
 
 At Line No: 11 term :unary_expression
 
-func ( i )
+func ( a )
 
 At Line No: 11 simple_expression : term
 
-func ( i )
+func ( a )
 
 At Line No: 11 rel_expression	: simple_expression
 
-func ( i )
+func ( a )
 
 At Line No: 11 logic_expression : rel_expression
 
-func ( i )
+func ( a )
 
 At Line No: 11 expression : logic_expression
 
-func ( i )
+func ( a )
 
 At Line No: 11 expression SEMICOLON
 
-func ( i );
+func ( a );
 
 At Line No: 11 statement : expression_statement
 
-func ( i ) ;
+func ( a ) ;
 
 At Line No: 11 statements : statements statement
 
-int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( i ) ;
+int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( a ) ;
 
 At Line No: 12 variable : ID
 
@@ -461,7 +463,7 @@ b = 8 ;
 
 At Line No: 12 statements : statements statement
 
-int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( i ) ; b = 8 ;
+int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( a ) ; b = 8 ;
 
 here
 At Line No: 13 factor: CONST_INT
@@ -499,26 +501,26 @@ return 0 ;
 
 At Line No: 13 statements : statements statement
 
-int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( i ) ; b = 8 ; return 0 ;
+int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( a ) ; b = 8 ; return 0 ;
 
 here in dummy token end
 At Line No: 14 compound_statement: LCURL dum statements RCURL dum
 
-{ int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( i ) ; b = 8 ; return 0 ; }
+{ int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( a ) ; b = 8 ; return 0 ; }
 
 At Line No: 14 func_definition : type_specifier ID LPAREN RPAREN compound_statement
 
-int main ( ) { int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( i ) ; b = 8 ; return 0 ; }
+int main ( ) { int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( a ) ; b = 8 ; return 0 ; }
 
 At Line No: 14 unit : func_definition
 
-int main ( ) { int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( i ) ; b = 8 ; return 0 ; }
+int main ( ) { int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( a ) ; b = 8 ; return 0 ; }
 
 At Line No: 14 program : program unit
 
-int func ( int a ) { return a ; } int main ( ) { int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( i ) ; b = 8 ; return 0 ; }
+int func ( int a ) { return a ; } int main ( ) { int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( a ) ; b = 8 ; return 0 ; }
 
 At Line No: 15 start : program
 
-int func ( int a ) { return a ; } int main ( ) { int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( i ) ; b = 8 ; return 0 ; }
+int func ( int a ) { return a ; } int main ( ) { int a [ 2 ] , c , i , j ; float c ; a [ 2.5 ] = 1 ; i = 2.3 ; j = 2 % 3.7 ; a = 4 ; func ( a ) ; b = 8 ; return 0 ; }
 
