@@ -43,7 +43,6 @@ all ([^A-Z]|[A-Z])
 
 %%
 {ws}+	{}
-(\n)+ 	{}
 
 if		{return IF;}
 else	{return ELSE;}

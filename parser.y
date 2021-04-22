@@ -21,6 +21,7 @@ extern ofstream tok;
 extern long long int error_cnt;
 
 
+
 SymbolTable st(30);
 ofstream fp2,fp3;
 
@@ -32,7 +33,7 @@ void print_line()
 
 void error_print_line()
 {
-	fp3<<"Error at line "<<yylineno<<" : ";
+	fp3<<"Error at line "<<yylineno<<": ";
 }
 
 void yyerror(char *s)
@@ -48,6 +49,9 @@ vector<pair<string,string>> param_list;
 
 //function call argument list
 vector<string> arg_list;
+
+//keep track of where function started
+int temp_line;
 
 
 bool insert_ID(string name, string data_type, int is_array)
@@ -113,35 +117,42 @@ bool check_func_declared(string name)
 
 bool check_func_definition(string func_name, string return_type)
 {
-	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+	//fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
 	SymbolInfo* s = st.Look_up(func_name);
-	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+	//fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
 	func_param* f = s->get_func();
-	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+	//fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
 
-	for(auto x:param_list)
-	{
-		fp2<<x.first<<" "<<x.second<<endl;
+	// for(auto x:param_list)
+	// {
+	// 	fp2<<x.first<<" "<<x.second<<endl;
 		
-	}
+	// }
 
-	if(f != NULL)
-	{
-		cout<<"here"<<endl;
-	}
-	fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
+	// if(f != NULL)
+	// {
+	// 	cout<<"here"<<endl;
+	// }
+
+	//fp2<<"here: "<<func_name<<" "<<return_type<<endl<<endl;
 
 
 
 	if(return_type != f->getReturn_type())
 	{
-		fp2<<"rt: "<<return_type<<" "<<"prev_return_type: "<<f->getReturn_type()<<endl<<endl;
+		error_cnt++;
+		fp3<<"Error at line "<<temp_line<<": ";
+		fp3<<"Return type mismatch with function declaration in function "<<func_name<<endl<<endl;
+		//fp2<<"rt: "<<return_type<<" "<<"prev_return_type: "<<f->getReturn_type()<<endl<<endl;
 		return false;
 	}
 
 	if((int)param_list.size() != f->getNumber_of_param())
 	{
-		fp2<<"r_size: "<<param_list.size()<<" "<<"prev_size: "<<f->getNumber_of_param()<<endl<<endl;
+		error_cnt++;
+		fp3<<"Error at line "<<temp_line<<": ";
+		fp3<<"Total number of arguments mismatch with declaration in function "<<func_name<<endl<<endl;
+		//fp2<<"r_size: "<<param_list.size()<<" "<<"prev_size: "<<f->getNumber_of_param()<<endl<<endl;
 		return false;
 	}
 
@@ -152,9 +163,12 @@ bool check_func_definition(string func_name, string return_type)
 	int i = 0;
 	for(auto x:param_list)
 	{
-		fp2<<x.first<<" "<<x.first<<endl;
+		//fp2<<x.first<<" "<<x.first<<endl;
 		if(x.second != p_list[i].second)
 		{
+			error_cnt++;
+			fp3<<"Error at line "<<temp_line<<": ";
+			fp3<<i+1<<"th argument mismatch in function "<<func_name<<endl<<endl;
 			return false;
 		}
 		i++;
@@ -340,7 +354,8 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 				if(s->get_func() == NULL)
 				{
 					error_cnt++;
-					error_print_line();
+					//error_print_line();
+					fp3<<"Error at line "<<temp_line<<": ";
 					fp3<<"previously declared as a variable " <<$2->getName()<<endl<<endl;
 
 				}
@@ -356,7 +371,8 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 					if(!declared)
 					{
 						error_cnt++;
-						error_print_line();
+						//error_print_line();
+						fp3<<"Error at line "<<temp_line<<": ";
 						fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
 					}
 
@@ -364,14 +380,6 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 					{
 						fp2<<"loop 2"<<endl<<endl;
 						bool is_consistent = check_func_definition($2->getName(),$1->getName());
-
-						if(!is_consistent)
-						{
-							fp2<<"loop 3"<<endl<<endl;
-							error_cnt++;
-							error_print_line();
-							fp3<<"function " + $2->getName() + "definition not consistent with declaration" <<endl<<endl;
-						}
 					}
 				}
 			}
@@ -400,7 +408,8 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 				if(s->get_func() == NULL)
 				{
 					error_cnt++;
-					error_print_line();
+					//error_print_line();
+					fp3<<"Error at line "<<temp_line<<": ";
 					fp3<<"previously declared as a variable " <<$2->getName()<<endl<<endl;
 
 				}
@@ -416,7 +425,8 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 					if(!declared)
 					{
 						error_cnt++;
-						error_print_line();
+						//error_print_line();
+						fp3<<"Error at line "<<temp_line<<": ";
 						fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
 					}
 
@@ -429,7 +439,8 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 						{
 							fp2<<"loop 3"<<endl<<endl;
 							error_cnt++;
-							error_print_line();
+							//error_print_line();
+							fp3<<"Error at line "<<temp_line<<": ";
 							fp3<<"function " + $2->getName() + "definition not consistent with declaration" <<endl<<endl;
 						}
 					}
@@ -438,7 +449,8 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 			param_list.clear();
 
 		}
- 		;				
+ 		;	
+		
 
 
 parameter_list: parameter_list COMMA type_specifier id
@@ -450,6 +462,7 @@ parameter_list: parameter_list COMMA type_specifier id
 
 			//add to param list
 			param_list.push_back(make_pair($4->getName(),$3->getName()));
+			temp_line = yylineno;
 
 			
 		}
@@ -462,6 +475,7 @@ parameter_list: parameter_list COMMA type_specifier id
 
 			//add to param list
 			param_list.push_back(make_pair("",$3->getName()));
+			temp_line = yylineno;
 		}
  		| type_specifier id
 		{
@@ -472,6 +486,7 @@ parameter_list: parameter_list COMMA type_specifier id
 
 			//add to param_list
 			param_list.push_back(make_pair($2->getName(),$1->getName()));
+			temp_line = yylineno;
 		}
 		| type_specifier
 		{
@@ -482,6 +497,7 @@ parameter_list: parameter_list COMMA type_specifier id
 
 			//add to param list
 			param_list.push_back(make_pair("",$1->getName()));
+			temp_line = yylineno;
 		}
  		;
 
@@ -522,19 +538,27 @@ var_declaration: type_specifier declaration_list SEMICOLON
 			fp2<<"var_declaration : type_specifier declaration_list SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
-
-			//mapping the types of all variables in declaration list
-			for(auto x:decl_list)
+			if($1->getName() == "void")
 			{
-				cout<<x.first<<" : "<<x.second<<endl;
-				
-				bool val = insert_ID(x.first,$1->getName(),x.second);
+				error_cnt++;
+				error_print_line();
+				fp3<<"Variable type cannot be void"<<endl<<endl;
+			}
 
-				if(!val)
+			else
+			{
+				for(auto x:decl_list)
 				{
-					error_cnt++;
-					error_print_line();
-					fp3<<"Multiple Declaration of "<<x.first<<endl<<endl;
+					cout<<x.first<<" : "<<x.second<<endl;
+					
+					bool val = insert_ID(x.first,$1->getName(),x.second);
+
+					if(!val)
+					{
+						error_cnt++;
+						error_print_line();
+						fp3<<"Multiple Declaration of "<<x.first<<endl<<endl;
+					}
 				}
 			}
 			decl_list.clear();
@@ -680,7 +704,15 @@ statement: var_declaration
  		}
 	  | PRINTLN LPAREN id RPAREN SEMICOLON
 	   {
+		   	
 		   	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+$4->getName()+$5->getName(), "NON_TERMINAL");
+			bool ok = st.Look_up($3->getName());
+			if(!ok)
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"Undeclared variable "<<$3->getName()<<endl<<endl;
+			}
  		  	print_line();
 			fp2<<"statement : PRINTLN LPAREN id RPAREN SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
@@ -717,6 +749,8 @@ expression_statement: SEMICOLON
 	  
 variable: id
 		{
+			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+
 			//check if ID is declared or not
 			if(!check_var_declared($1->getName()))
 			{
@@ -732,12 +766,12 @@ variable: id
 				{
 					error_cnt++;
 					error_print_line();
-					fp3<<$1->getName()+" is an array"<<endl<<endl;
-
+					fp3<<"Type Mismatch, "+$1->getName()+" is an array"<<endl<<endl;
+					$$->setType("array");
 				}	
 			}
 			
-			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			
 			//set variable data type according to id's data type
 			SymbolInfo* s = st.Look_up($1->getName());
 			if(s != NULL)
@@ -776,7 +810,7 @@ variable: id
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"Non-integer Array Index"<<endl<<endl;
+				fp3<<"Expression inside third brackets not an integer"<<endl<<endl;
 			}
 			
 			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+$4->getName(), "NON_TERMINAL");
@@ -792,7 +826,7 @@ variable: id
 	 
  expression: logic_expression	
  		{
-			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of expression
 			set_data_type($$,$1);
  		  	print_line();
@@ -814,12 +848,12 @@ variable: id
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"void type function in a expression"<<endl<<endl;
+				fp3<<"Void function used in expression"<<endl<<endl;
 			}
 
 			else if($3->get_data_type() == "int" && $1->get_data_type() == "float")
 			{
-				//type convert
+				//type convert -> no error
 			}
 
 			//find error if operands of assignment operations are not compatible
@@ -827,7 +861,7 @@ variable: id
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"Type mismatch"<<endl<<endl;
+				fp3<<"Type Mismatch"<<endl<<endl;
 			}
 
  		} 	
@@ -835,7 +869,7 @@ variable: id
 			
 logic_expression: rel_expression 	
  		{
-			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of logic expression
 			set_data_type($$,$1);
  		  	print_line();
@@ -854,7 +888,7 @@ logic_expression: rel_expression
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"void type function in a expression"<<endl<<endl;
+				fp3<<"Void function used in expression"<<endl<<endl;
 			}
 
  		  	print_line();
@@ -866,7 +900,7 @@ logic_expression: rel_expression
 			
 rel_expression: simple_expression 
 		{
-			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of rel expression
 			set_data_type($$,$1);
  		  	print_line();
@@ -884,7 +918,7 @@ rel_expression: simple_expression
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<"void type function in a expression"<<endl<<endl;
+				fp3<<"Void function used in expression"<<endl<<endl;
 			}
  		  	print_line();
 			fp2<<"rel_expression : simple_expression RELOP simple_expression\n"<<endl;
@@ -894,7 +928,7 @@ rel_expression: simple_expression
 				
 simple_expression: term 
 		{
-			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of simple expression
 			set_data_type($$,$1);
  		  	print_line();
@@ -906,58 +940,12 @@ simple_expression: term
 			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
 			//set data type of simple expression
 
-			//type conversion
-			if($1->get_data_type() == "float" | $3->get_data_type() == "float")
-			{
-				$$->set_data_type("float");
-			}
-
-			else
-			{
-				$$->set_data_type("int");
-			}
-
-
 			if($1->get_data_type() == "void" | $3->get_data_type() == "void")
 			{
-				$$->set_data_type("float");
+				$$->set_data_type("int");
 				error_cnt++;
 				error_print_line();
-				fp3<<"void type function in a expression"<<endl<<endl;
-			}
-
- 		  	print_line();
-			fp2<<"simple_expression : simple_expression ADDOP term\n"<<endl;
-			fp2<<$$->getName()<<endl<<endl;
- 		} 
-		  
-		  ;
-					
-term:	unary_expression
-		{
-			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
-			//set data type of term
-			set_data_type($$,$1);
- 		  	print_line();
-			fp2<<"term : unary_expression\n"<<endl;
-			fp2<<$1->getName()<<endl<<endl;
- 		}
-     |  term MULOP unary_expression
-     	{
-		 	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
-
-			//check operands of modulus operator
-			if($2->getName() == "%")
-			{
-				if($1->get_data_type() != "int" | $3->get_data_type() != "int")
-				{
-					error_cnt++;
-					error_print_line();
-					fp3<<"Integer operand on modulus operator"<<endl<<endl;
-				}
-
-				$$->set_data_type("int");
-
+				fp3<<"Void function used in expression"<<endl<<endl;
 			}
 
 			//type conversion
@@ -971,12 +959,74 @@ term:	unary_expression
 				$$->set_data_type("int");
 			}
 
+
+ 		  	print_line();
+			fp2<<"simple_expression : simple_expression ADDOP term\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
+ 		} 
+		  
+		  ;
+					
+term:	unary_expression
+		{
+			$$ = new SymbolInfo($1->getName(),$1->getType());
+			//set data type of term
+			set_data_type($$,$1);
+ 		  	print_line();
+			fp2<<"term : unary_expression\n"<<endl;
+			fp2<<$1->getName()<<endl<<endl;
+ 		}
+     |  term MULOP unary_expression
+     	{
+		 	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
+
+			
 			if($1->get_data_type() == "void" | $3->get_data_type() == "void")
 			{
-				$$->set_data_type("float");
+				$$->set_data_type("int");
 				error_cnt++;
 				error_print_line();
-				fp3<<"void type function in a expression"<<endl<<endl;
+				fp3<<"Void function used in expression"<<endl<<endl;
+			}
+
+			//type conversion
+			else if($1->get_data_type() == "float" | $3->get_data_type() == "float")
+			{
+				$$->set_data_type("float");
+			}
+
+			else
+			{
+				$$->set_data_type("int");
+			}
+
+			//check operands of modulus operator
+			if($2->getName() == "/" && $3->getType() == "zero")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"Divided by Zero"<<endl<<endl;
+			}
+
+			if($2->getName() == "%" && $3->getType() == "zero")
+			{
+				error_cnt++;
+				error_print_line();
+				fp3<<"Modulus by Zero"<<endl<<endl;
+
+				$$->set_data_type("int");
+			}
+
+			else if($2->getName() == "%")
+			{
+				if($1->get_data_type() != "int" | $3->get_data_type() != "int")
+				{
+					error_cnt++;
+					error_print_line();
+					fp3<<"Non-Integer operand on modulus operator"<<endl<<endl;
+				}
+
+				$$->set_data_type("int");
 			}
 
  		  	print_line();
@@ -987,16 +1037,16 @@ term:	unary_expression
 
 unary_expression: ADDOP unary_expression
  		{
-			$$ = new SymbolInfo($1->getName()+$2->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName()+$2->getName(),$2->getType());
 			//set data type of unary expression
 			set_data_type($$,$2);
 
 			if($2->get_data_type() == "void")
 			{
-				$$->set_data_type("float");
+				$$->set_data_type("int");
 				error_cnt++;
 				error_print_line();
-				fp3<<"void type function in a expression"<<endl<<endl;
+				fp3<<"Void function used in expression"<<endl<<endl;
 			}
  		  	print_line();
 			fp2<<"unary_expression : ADDOP unary_expression\n"<<endl;
@@ -1005,16 +1055,16 @@ unary_expression: ADDOP unary_expression
  		}  
 		 | NOT unary_expression
 		 {
-			$$ = new SymbolInfo($1->getName()+$2->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName()+$2->getName(),$2->getType());
 			//set data type of unary expression
 			set_data_type($$,$2);
 
 			if($2->get_data_type() == "void")
 			{
-				$$->set_data_type("float");
+				$$->set_data_type("int");
 				error_cnt++;
 				error_print_line();
-				fp3<<"void type function in a expression"<<endl<<endl;
+				fp3<<"Void function used in expression"<<endl<<endl;
 			}
  		  	print_line();
 			fp2<<"unary_expression : NOT unary_expression\n"<<endl;
@@ -1023,7 +1073,7 @@ unary_expression: ADDOP unary_expression
  		}   
 		 | factor 
 		 {
-			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of unary expression
 			set_data_type($$,$1);
  		  	print_line();
@@ -1035,7 +1085,7 @@ unary_expression: ADDOP unary_expression
 	
 factor: variable 
  		{
-			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of factor
 			set_data_type($$,$1);
 
@@ -1054,7 +1104,7 @@ factor: variable
 		{
 			error_cnt++;
 			error_print_line();
-			fp3<<$1->getName() + " has not been declared"<<endl<<endl;
+			fp3<<"Undeclared function "<<$1->getName()<<endl<<endl;
 
 		}
 
@@ -1067,7 +1117,7 @@ factor: variable
 			{
 				error_cnt++;
 				error_print_line();
-				fp3<<$1->getName() + " not a function"<<endl<<endl;
+				fp3<<$1->getName() + " is not a function"<<endl<<endl;
 			}
 
 			else //is a function
@@ -1092,24 +1142,27 @@ factor: variable
 					{
 						error_cnt++;
 						error_print_line();
-						fp3<<$1->getName()+ " func parameters do not match with definition"<<endl<<endl;
+						fp3<<"Total number of arguments mismatch with definition in function "+$1->getName()<<endl<<endl;
 					}
 
 					else //data types of arguments
 					{
-						fp2<<"here"<<endl;
+						//fp2<<"here"<<endl;
 						vector<pair<string,string>> p_list = f->getParam_list();
 
 						int i = 0;
 						for(string x:arg_list)
 						{
-							fp2<<x<<" : "<<p_list[i].second<<endl;
+							//fp2<<x<<" : "<<p_list[i].second<<endl;
 							if(x != p_list[i].second)
 							{
-								error_cnt++;
-								error_print_line();
-								fp3<<$1->getName()+ " func parameters do not match with definition"<<endl<<endl;
-								break;
+								if(x != "array")
+								{
+									error_cnt++;
+									error_print_line();
+									fp3<<i+1<<"th argument mismatch in function " + $1->getName()<<endl<<endl;
+									break;
+								}
 							}
 							i++;
 						}
@@ -1129,7 +1182,7 @@ factor: variable
  	} 
 	| LPAREN expression RPAREN
 	{
-		$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(), "NON_TERMINAL");
+		$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(), $2->getType());
 		set_data_type($$,$2);
  		print_line();
 		fp2<<"factor : LPAREN expression RPAREN\n"<<endl;
@@ -1140,6 +1193,11 @@ factor: variable
 	{
 		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 		$$->set_data_type("int");
+
+		if($1->getName() == "0")
+		{
+			$$->setType("zero");
+		}
  		print_line();
 		fp2<<"factor : CONST_INT\n"<<endl;
 		fp2<<$1->getName()<<endl<<endl;
@@ -1154,7 +1212,7 @@ factor: variable
  	} 
 	| variable INCOP
 	{
-		$$ = new SymbolInfo($1->getName()+$2->getName(),"NON_TERMINAL");
+		$$ = new SymbolInfo($1->getName()+$2->getName(),$1->getType());
 		//set data type of factor
 		set_data_type($$,$1);
  	  	print_line();
@@ -1163,7 +1221,7 @@ factor: variable
  	}  
 	| variable DECOP
 	{
-		$$ = new SymbolInfo($1->getName()+$2->getName(),"NON_TERMINAL");
+		$$ = new SymbolInfo($1->getName()+$2->getName(),$1->getType());
 		//set data type of factor
 		set_data_type($$,$1);
  	  	print_line();
@@ -1195,7 +1253,11 @@ arguments: arguments COMMA logic_expression
 				fp2<<"arguments : arguments COMMA logic_expression\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
 
-				arg_list.push_back($1->get_data_type());
+				if($3->getType() != "array")
+					arg_list.push_back($3->get_data_type());
+				else
+					arg_list.push_back("array");
+
 
  			} 
 	      | logic_expression
@@ -1205,7 +1267,10 @@ arguments: arguments COMMA logic_expression
 				fp2<<"arguments : logic_expression\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
 
-				arg_list.push_back($1->get_data_type());
+				if($1->getType() != "array")
+					arg_list.push_back($1->get_data_type());
+				else
+					arg_list.push_back("array");
  			} 
 	      ;
 	      
