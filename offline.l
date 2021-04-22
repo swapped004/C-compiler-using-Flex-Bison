@@ -64,14 +64,17 @@ void	{
 			
 			return VOID;
 		}
-"return"	{
-				fp2<<"here"<<endl;
+return	{
 				SymbolInfo* si = new SymbolInfo(yytext,"RETURN");
 			 	yylval.si = si; 
 				return RETURN;
 			}
 continue {return CONTINUE;}
-println {return PRINTLN;}
+printf {
+			SymbolInfo* si = new SymbolInfo(yytext,"PRINTLN");
+			yylval.si = si;
+			return PRINTLN;
+		}
 
 
 {digit}+	 {

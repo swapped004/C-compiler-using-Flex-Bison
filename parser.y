@@ -27,36 +27,13 @@ ofstream fp2,fp3;
 
 void print_line()
 {
-	fp2<<"At Line No: "<<yylineno<<" ";
+	fp2<<"Line "<<yylineno<<": ";
 }
 
 void error_print_line()
 {
-	fp3<<"Error at Line "<<yylineno<<" : ";
+	fp3<<"Error at line "<<yylineno<<" : ";
 }
-
-vector<string> spiltWord(string str)
-{
-	vector<string> res;
-    string word = "";
-    for (auto x : str) 
-    {
-        if (x == ' ')
-        {
-            //cout << word << endl;
-			res.push_back(word);
-            word = "";
-        }
-        else {
-            word = word + x;
-        }
-    }
-	//cout << word << endl;
-	res.push_back(word);
-
-	return res;
-}
-
 
 void yyerror(char *s)
 {
@@ -96,7 +73,7 @@ bool insert_function(string name, string return_type,int flag)
 
 	if(s == NULL)
 	{
-		st.Insert(name,"func");
+		st.Insert(name,"ID");
 		SymbolInfo* temp = st.Look_up_current(name);
 		temp->set_func((int)param_list.size(),return_type,param_list,flag);
 
@@ -203,21 +180,28 @@ void enterScope_parser()
 		cout<<"("<<x.first<<", "<<x.second<<")"<<endl;
 		fp2<<"("<<x.first<<", "<<x.second<<")"<<endl;
 		
-		st.Insert(x.first, "ID");
-		SymbolInfo* si = st.Look_up(x.first);
-		si->set_data_type(x.second);
+		bool ok = st.Insert(x.first, "ID");
+
+		if(ok)
+		{
+			SymbolInfo* si = st.Look_up(x.first);
+			si->set_data_type(x.second);
+		}
+		else //check multiple declaration in the parameter
+		{
+			error_cnt++;
+			error_print_line();
+			fp3<<"Multiple declaration of "+x.first +" in parameter"<<endl<<endl;
+		}
 	}
 }
 
 void exitScope_parser()
 {
 	cout<<"exited scope"<<endl;
+	//st.Print_all(fp2);
 	st.exit_scope();
 }
-
-
-
-
 
 
 %}
@@ -236,7 +220,7 @@ void exitScope_parser()
 %type <si> statement statements compound_statement
 %type <si> parameter_list func_definition func_declaration
 %type <si> start program unit
-%type <si> dummy_token_begin dummy_token_end
+%type <si> dummy_token_begin
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
@@ -337,41 +321,59 @@ func_declaration: type_specifier id LPAREN parameter_list RPAREN SEMICOLON
 func_definition: type_specifier id LPAREN parameter_list RPAREN compound_statement
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName()+$4->getName()+$5->getName()+$6->getName(), "NON_TERMINAL");
+		
+			//insert into symbol table
+			bool ok = insert_function($2->getName(),$1->getName(),1);
+
+			st.Print_all(fp2);
 			print_line();
 			fp2<<"func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
-			//insert into symbol table
-			bool ok = insert_function($2->getName(),$1->getName(),1);
-
 			if(!ok)
 			{
 				fp2<<"loop 1"<<endl<<endl;
-				//check if declared before
-				bool declared = check_func_declared($2->getName());
 
-				if(!declared)
+				//check if actually was declared as a function
+				SymbolInfo* s = st.Look_up($2->getName());
+				fp2<<"loop 1"<<endl<<endl;
+				if(s->get_func() == NULL)
 				{
 					error_cnt++;
 					error_print_line();
-					fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
+					fp3<<"previously declared as a variable " <<$2->getName()<<endl<<endl;
+
 				}
 
-				else	//check if declaration and definition are consistent
+				else
 				{
 					fp2<<"loop 2"<<endl<<endl;
-					bool is_consistent = check_func_definition($2->getName(),$1->getName());
+					//check if declared before
+					bool declared = check_func_declared($2->getName());
 
-					if(!is_consistent)
+					fp2<<"loop 3"<<endl<<endl;
+
+					if(!declared)
 					{
-						fp2<<"loop 3"<<endl<<endl;
 						error_cnt++;
 						error_print_line();
-						fp3<<"function " + $2->getName() + "definition not consistent with declaration" <<endl<<endl;
+						fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
 					}
 
+					else	//check if declaration and definition are consistent
+					{
+						fp2<<"loop 2"<<endl<<endl;
+						bool is_consistent = check_func_definition($2->getName(),$1->getName());
+
+						if(!is_consistent)
+						{
+							fp2<<"loop 3"<<endl<<endl;
+							error_cnt++;
+							error_print_line();
+							fp3<<"function " + $2->getName() + "definition not consistent with declaration" <<endl<<endl;
+						}
+					}
 				}
-				
 			}
 			param_list.clear();
 
@@ -379,39 +381,58 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 		| type_specifier id LPAREN RPAREN compound_statement
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName()+$4->getName()+$5->getName(), "NON_TERMINAL");
-			print_line();
-			fp2<<"func_definition : type_specifier ID LPAREN RPAREN compound_statement\n"<<endl;
-			fp2<<$$->getName()<<endl<<endl;
 
 			//insert into symbol table
 			bool ok = insert_function($2->getName(),$1->getName(),1);
 
+			st.Print_all(fp2);
+			print_line();
+			fp2<<"func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n"<<endl;
+			fp2<<$$->getName()<<endl<<endl;
+
 			if(!ok)
 			{
 				fp2<<"loop 1"<<endl<<endl;
-				//check if declared before
-				bool declared = check_func_declared($2->getName());
 
-				if(!declared)
+				//check if actually was declared as a function
+				SymbolInfo* s = st.Look_up($2->getName());
+				fp2<<"loop 1"<<endl<<endl;
+				if(s->get_func() == NULL)
 				{
 					error_cnt++;
 					error_print_line();
-					fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
+					fp3<<"previously declared as a variable " <<$2->getName()<<endl<<endl;
+
 				}
 
-				else	//check if declaration and definition are consistent
+				else
 				{
 					fp2<<"loop 2"<<endl<<endl;
-					bool is_consistent = check_func_definition($2->getName(),$1->getName());
+					//check if declared before
+					bool declared = check_func_declared($2->getName());
 
-					if(!is_consistent)
+					fp2<<"loop 3"<<endl<<endl;
+
+					if(!declared)
 					{
-						fp2<<"loop 3"<<endl<<endl;
 						error_cnt++;
 						error_print_line();
-						fp3<<"function " + $2->getName() + "definition not consistent with declaration" <<endl<<endl;
+						fp3<<"function already declared:" <<$2->getName()<<endl<<endl;
 					}
 
+					else	//check if declaration and definition are consistent
+					{
+						fp2<<"loop 2"<<endl<<endl;
+						bool is_consistent = check_func_definition($2->getName(),$1->getName());
+
+						if(!is_consistent)
+						{
+							fp2<<"loop 3"<<endl<<endl;
+							error_cnt++;
+							error_print_line();
+							fp3<<"function " + $2->getName() + "definition not consistent with declaration" <<endl<<endl;
+						}
+					}
 				}
 			}
 			param_list.clear();
@@ -422,9 +443,9 @@ func_definition: type_specifier id LPAREN parameter_list RPAREN compound_stateme
 
 parameter_list: parameter_list COMMA type_specifier id
 		{
-			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+$4->getName(), "NON_TERMINAL");
+			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
 			print_line();
-			fp2<<"parameter_list: parameter_list COMMA type_specifier id\n"<<endl;
+			fp2<<"parameter_list : parameter_list COMMA type_specifier ID\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
 			//add to param list
@@ -436,7 +457,7 @@ parameter_list: parameter_list COMMA type_specifier id
 		{
 			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(), "NON_TERMINAL");
 			print_line();
-			fp2<<"parameter_list: parameter_list COMMA type_specifier\n"<<endl;
+			fp2<<"parameter_list : parameter_list COMMA type_specifier\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
 			//add to param list
@@ -446,7 +467,7 @@ parameter_list: parameter_list COMMA type_specifier id
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName(), "NON_TERMINAL");
 			print_line();
-			fp2<<"parameter_list: type_specifier id\n"<<endl;
+			fp2<<"parameter_list : type_specifier ID\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
 			//add to param_list
@@ -456,7 +477,7 @@ parameter_list: parameter_list COMMA type_specifier id
 		{
 			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
 			print_line();
-			fp2<<"parameter_list: type_specifier\n"<<endl;
+			fp2<<"parameter_list : type_specifier\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
 			//add to param list
@@ -465,35 +486,32 @@ parameter_list: parameter_list COMMA type_specifier id
  		;
 
  		
-compound_statement: LCURL dummy_token_begin statements RCURL dummy_token_end
+compound_statement: LCURL dummy_token_begin statements RCURL
 			{
 				$$ = new SymbolInfo($1->getName()+"\n"+$3->getName()+$4->getName(), "NON_TERMINAL");
 				print_line();
-				fp2<<"compound_statement: LCURL dum statements RCURL dum\n"<<endl;
+				fp2<<"compound_statement : LCURL statements RCURL\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
+				st.Print_curr(fp2);
+				exitScope_parser();
 			}
- 		    | LCURL dummy_token_begin RCURL dummy_token_end
+ 		    | LCURL dummy_token_begin RCURL
 			{
 				$$ = new SymbolInfo($1->getName()+" "+$3->getName(), "NON_TERMINAL");
 				print_line();
-				fp2<<"compound_statement: LCURL RCURL\n"<<endl;
+				fp2<<"compound_statement : LCURL RCURL\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
+				st.Print_curr(fp2);
+				exitScope_parser();
 			}
  		    ;
 
 dummy_token_begin:
 				 {
-					 fp2<<"here in dummy token begin"<<endl;
+					 //fp2<<"here in dummy token begin"<<endl;
 					 enterScope_parser();
 					 //add_function_param();
 
-				 }
-				 ;
-
-dummy_token_end:
-				 {
-					 fp2<<"here in dummy token end"<<endl;
-					 exitScope_parser();
 				 }
 				 ;
  		    
@@ -501,7 +519,7 @@ var_declaration: type_specifier declaration_list SEMICOLON
 		{
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName(), "NON_TERMINAL");
 			print_line();
-			fp2<<"var_declaration: type_specifier declaration_list SEMICOLON\n"<<endl;
+			fp2<<"var_declaration : type_specifier declaration_list SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
 
@@ -527,21 +545,21 @@ type_specifier: INT
 			{
 				$$ = new SymbolInfo("int","NON_TERMINAL");
 				print_line();
-				fp2<<"type_specifier: "<<"INT\n"<<endl;
+				fp2<<"type_specifier : "<<"INT\n"<<endl;
 				fp2<<"int\n"<<endl;
 			}
  		| FLOAT
  		{
 			$$ = new SymbolInfo("float","NON_TERMINAL");
 			print_line();
-			fp2<<"type_specifier: "<<"FLOAT\n"<<endl;
+			fp2<<"type_specifier : "<<"FLOAT\n"<<endl;
 			fp2<<"float\n"<<endl;
 		}
  		| VOID
  		{
 			$$ = new SymbolInfo("void","NON_TERMINAL");
 			print_line();
-			fp2<<"type_specifier: "<<"VOID\n"<<endl;
+			fp2<<"type_specifier : "<<"VOID\n"<<endl;
 			fp2<<"void\n"<<endl;
 		}
  		;
@@ -578,7 +596,7 @@ declaration_list: declaration_list COMMA id
  		  {
 			    $$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+$4->getName(), "NON_TERMINAL");
  		  		print_line();
-				fp2<<"declaration_list: ID LTHIRD CONST_INT RTHIRD\n"<<endl;
+				fp2<<"declaration_list : ID LTHIRD CONST_INT RTHIRD\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
 
 				//decl_list.clear();
@@ -632,7 +650,7 @@ statement: var_declaration
 	  {
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName()+", "+$4->getName()+", "+$5->getName()+$6->getName()+"\n"+$7->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement: FOR LPAREN expression_statement expression_statement expression RPAREN statement\n"<<endl;
+			fp2<<"statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
@@ -640,7 +658,7 @@ statement: var_declaration
 	   {
 		   	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName()+$4->getName()+"\n"+$5->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement: IF LPAREN expression RPAREN statement\n"<<endl;
+			fp2<<"statement : IF LPAREN expression RPAREN statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
@@ -648,7 +666,7 @@ statement: var_declaration
 	  {
 		  	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName()+$4->getName()+"\n"+$5->getName()+"\n"+$6->getName()+"\n"+$7->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement: IF LPAREN expression RPAREN statement ELSE statement\n"<<endl;
+			fp2<<"statement : IF LPAREN expression RPAREN statement ELSE statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
@@ -656,7 +674,7 @@ statement: var_declaration
 	  {
 		  	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName()+$4->getName()+"\n"+$5->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement: WHILE LPAREN expression RPAREN statement\n"<<endl;
+			fp2<<"statement : WHILE LPAREN expression RPAREN statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
@@ -664,7 +682,7 @@ statement: var_declaration
 	   {
 		   	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+$4->getName()+$5->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement: PRINTLN LPAREN id RPAREN SEMICOLON\n"<<endl;
+			fp2<<"statement : PRINTLN LPAREN id RPAREN SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
@@ -673,7 +691,7 @@ statement: var_declaration
 			//fp2<<"RETURN symbol->name: "<<$1->getName()<<endl<<endl;
 		  	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement: RETURN expression SEMICOLON"<<endl;
+			fp2<<"statement : RETURN expression SEMICOLON"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
@@ -683,7 +701,7 @@ expression_statement: SEMICOLON
 		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
-			fp2<<"expression_statement: SEMICOLON\n"<<endl;
+			fp2<<"expression_statement : SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}		
@@ -691,7 +709,7 @@ expression_statement: SEMICOLON
 			{
 				$$ = new SymbolInfo($1->getName()+$2->getName(),"NON_TERMINAL");
 	 		  	print_line();
-				fp2<<"expression SEMICOLON\n"<<endl;
+				fp2<<"expression_statement : expression SEMICOLON\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
 
  			}
@@ -799,6 +817,11 @@ variable: id
 				fp3<<"void type function in a expression"<<endl<<endl;
 			}
 
+			else if($3->get_data_type() == "int" && $1->get_data_type() == "float")
+			{
+				//type convert
+			}
+
 			//find error if operands of assignment operations are not compatible
 			else if($1->get_data_type() != $3->get_data_type())
 			{
@@ -847,7 +870,7 @@ rel_expression: simple_expression
 			//set data type of rel expression
 			set_data_type($$,$1);
  		  	print_line();
-			fp2<<"rel_expression	: simple_expression\n"<<endl;
+			fp2<<"rel_expression : simple_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
  		} 	
 		| simple_expression RELOP simple_expression	
@@ -864,7 +887,7 @@ rel_expression: simple_expression
 				fp3<<"void type function in a expression"<<endl<<endl;
 			}
  		  	print_line();
-			fp2<<"rel_expression	: simple_expression RELOP simple_expression\n"<<endl;
+			fp2<<"rel_expression : simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
  		} 
 		;
@@ -904,7 +927,7 @@ simple_expression: term
 			}
 
  		  	print_line();
-			fp2<<"simple_expression ADDOP term\n"<<endl;
+			fp2<<"simple_expression : simple_expression ADDOP term\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
  		} 
 		  
@@ -916,7 +939,7 @@ term:	unary_expression
 			//set data type of term
 			set_data_type($$,$1);
  		  	print_line();
-			fp2<<"term :unary_expression\n"<<endl;
+			fp2<<"term : unary_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
  		}
      |  term MULOP unary_expression
@@ -957,7 +980,7 @@ term:	unary_expression
 			}
 
  		  	print_line();
-			fp2<<"term :term MULOP unary_expression\n"<<endl;
+			fp2<<"term : term MULOP unary_expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
  		}
      ;
@@ -1017,7 +1040,7 @@ factor: variable
 			set_data_type($$,$1);
 
  		  	print_line();
-			fp2<<"factor: variable\n"<<endl;
+			fp2<<"factor : variable\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
  		} 
 	| id LPAREN argument_list RPAREN
@@ -1101,7 +1124,7 @@ factor: variable
 
 		arg_list.clear();
  	  	print_line();
-		fp2<<"factor: id LPAREN argument_list RPAREN\n"<<endl;
+		fp2<<"factor : ID LPAREN argument_list RPAREN\n"<<endl;
 		fp2<<$$->getName()<<endl;
  	} 
 	| LPAREN expression RPAREN
@@ -1109,7 +1132,7 @@ factor: variable
 		$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(), "NON_TERMINAL");
 		set_data_type($$,$2);
  		print_line();
-		fp2<<"factor: LPAREN expression RPAREN\n"<<endl;
+		fp2<<"factor : LPAREN expression RPAREN\n"<<endl;
 		fp2<<$$->getName()<<endl<<endl;
 
 	} 
@@ -1118,7 +1141,7 @@ factor: variable
 		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 		$$->set_data_type("int");
  		print_line();
-		fp2<<"factor: CONST_INT\n"<<endl;
+		fp2<<"factor : CONST_INT\n"<<endl;
 		fp2<<$1->getName()<<endl<<endl;
 	} 
 	| CONST_FLOAT
@@ -1126,7 +1149,7 @@ factor: variable
 		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 		$$->set_data_type("float");
 	  	print_line();
-		fp2<<"factor: CONST_FLOAT\n"<<endl;
+		fp2<<"factor : CONST_FLOAT\n"<<endl;
 		fp2<<$1->getName()<<endl<<endl;
  	} 
 	| variable INCOP
@@ -1135,7 +1158,7 @@ factor: variable
 		//set data type of factor
 		set_data_type($$,$1);
  	  	print_line();
-		fp2<<"factor: variable INCOP\n"<<endl;
+		fp2<<"factor : variable INCOP\n"<<endl;
 		fp2<<$$->getName()<<endl<<endl;
  	}  
 	| variable DECOP
@@ -1144,7 +1167,7 @@ factor: variable
 		//set data type of factor
 		set_data_type($$,$1);
  	  	print_line();
-		fp2<<"factor: variable INCOP\n"<<endl;
+		fp2<<"factor : variable INCOP\n"<<endl;
 		fp2<<$$->getName()<<endl<<endl;
  	} 
 	;
@@ -1211,14 +1234,16 @@ int main(int argc,char *argv[])
 	
 	fp2.open(argv[2]);
 	fp3.open(argv[3]);
+	cout<<argv[2]<<endl;
 
 	yylineno = 1;
+	
 	
 	yyparse();	
 
 	fp3<<"Total Errors: "<<error_cnt<<endl;
 
-	st.Print_all();
+	st.Print_all(fp2);
 
 	fp2<<"Total lines: "<<yylineno<<endl<<endl;
 	fp2<<"Total errors: "<<error_cnt<<endl;

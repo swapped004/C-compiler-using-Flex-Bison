@@ -11,6 +11,7 @@ using namespace std;
 #define INF 999999
 
 
+
 class func_param{
     int number_of_param;
     string return_type;
@@ -71,6 +72,7 @@ class SymbolInfo{
 
     string data_type;
     func_param* func;
+    int val;
 
     
 
@@ -94,6 +96,7 @@ public:
         data_type = "int";
         func = NULL;
         is_array = false;
+        val = 0;
     }
 
     void set_data_type(string dt)
@@ -118,11 +121,13 @@ public:
 
     void set_func(int num_of_param, string return_type, vector<pair<string,string>> param_list,int flag)
     {
+        val = 1;
         func = new func_param(num_of_param, return_type, param_list, flag);
     }
 
     func_param* get_func()
     {
+        cout<<"here"<<val<<endl;
         return func;
     }
 
@@ -407,10 +412,10 @@ public:
 
 
 
-    void Print()
+    void Print(ofstream &out) const
     {
-        cout<<"ScopeTable # "<<get_id()<<endl;
-        //out<<"ScopeTable # "<<get_id()<<endl;
+        cout<<"ScopeTable # "<<current_id<<endl;
+        out<<"ScopeTable # "<<current_id<<endl;
 
         for(int i=0;i<total_buckets;i++)
         {
@@ -421,22 +426,22 @@ public:
             	continue;
             
             cout<<" "<<i<<" --> ";
-            //out<<" "<<i<<" --> ";
+            out<<" "<<i<<" --> ";
 
             while(x != NULL)
             {
-                cout<<"< "<<x->getName()<<" : "<<x->getType()<<"> ";
-                //out<<"< "<<x->getName()<<" : "<<x->getType()<<"> ";
+                cout<<"< "<<x->getName()<<" , "<<x->getType()<<" > ";
+                out<<"< "<<x->getName()<<" , "<<x->getType()<<" > ";
 
            
                 x = x->getNext();
             }
 
             cout<<" "<<endl;
-            //out<<endl;
+            out<<endl;
         }
         
-        //out<<endl;
+        out<<endl;
 
     }
 
@@ -468,6 +473,7 @@ class SymbolTable
 {
     ScopeTable* curr;
     int total_buckets;
+    
 public:
     SymbolTable()
     {
@@ -478,6 +484,8 @@ public:
         total_buckets = n;
         curr = new ScopeTable(total_buckets);
     }
+
+
     void enter_scope()
     {
         curr->setNum_of_children(curr->getNum_of_children() + 1);
@@ -548,17 +556,17 @@ public:
 
     }
 
-    void Print_curr()
+    void Print_curr(ofstream &out) const
     {
-        curr->Print();
+        curr->Print(out);
     }
 
-    void Print_all()
+    void Print_all(ofstream &out) const
     {
         ScopeTable *x = curr;
         while(x != NULL)
         {
-            x->Print();
+            x->Print(out);
             x = x->get_parent_scope();
         }
     }
@@ -576,5 +584,3 @@ public:
 };
 
 #endif
-
-
