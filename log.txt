@@ -2,269 +2,139 @@ Line 1: type_specifier : INT
 
 int
 
-Line 1: type_specifier : INT
+Line 1: declaration_list : ID
+
+x
+
+Line 1: declaration_list : declaration_list COMMA ID
+
+x,y
+
+Line 1: declaration_list : declaration_list COMMA ID
+
+x,y,z
+
+Line 1: var_declaration : type_specifier declaration_list SEMICOLON
+
+int x,y,z;
+
+Line 1: unit : var_declaration
+
+int x,y,z;
+
+
+Line 1: program : unit
+
+int x,y,z;
+
+
+Line 1: type_specifier : FLOAT
+
+float
+
+Line 1: declaration_list : ID
+
+a
+
+Line 1: var_declaration : type_specifier declaration_list SEMICOLON
+
+float a;
+
+Line 1: unit : var_declaration
+
+float a;
+
+
+Line 1: program : program unit
+
+int x,y,z;
+float a;
+
+
+Line 3: type_specifier : INT
 
 int
 
-Line 1: parameter_list : type_specifier ID
+here
+var
+Line 3: type_specifier : INT
 
-int a
+int
 
-(a, int)
-Line 2: variable : ID
+Line 3: parameter_list : type_specifier
 
-a
+int
 
-Line 2: factor : variable
+Error at line 3: syntax error
 
-a
+(, int)
+Line 4: compound_statement : LCURL RCURL
 
-Line 2: unary_expression : factor
-
-a
-
-Line 2: term : unary_expression
-
-a
-
-Line 2: simple_expression : term
-
-a
-
-Line 2: rel_expression : simple_expression
-
-a
-
-Line 2: logic_expression : rel_expression
-
-a
-
-Line 2: expression : logic_expression
-
-a
-
-Line 2: statement : RETURN expression SEMICOLON
-return a;
-
-Line 2: statements : statement
-
-return a;
-
-Line 3: compound_statement : LCURL statements RCURL
-
-{
-return a;
-}
+{ }
 
 ScopeTable # 1.1
- 7 --> < a , ID > 
+ 0 --> <  , ID > 
 
 ScopeTable # 1
- 8 --> < func , ID > 
+ 0 --> < x , ID > 
+ 1 --> < y , ID > 
+ 2 --> < z , ID > 
+ 7 --> < a , ID > 
+ 29 --> < var , ID > 
 
-Line 3: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+Line 4: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
 
-int func(int a){
-return a;
-}
+int var(){ }
 
-Line 3: unit : func_definition
+Line 4: unit : func_definition
 
-int func(int a){
-return a;
-}
-
-
-Line 3: program : unit
-
-int func(int a){
-return a;
-}
+int var(){ }
 
 
-Line 5: type_specifier : INT
+Line 4: program : program unit
 
-int
+int x,y,z;
+float a;
+int var(){ }
 
-Line 6: type_specifier : INT
+
+Line 7: type_specifier : INT
 
 int
 
-Line 6: declaration_list : ID LTHIRD CONST_INT RTHIRD
+here
+main
+Line 8: type_specifier : INT
 
-a[2]
+int
 
-Line 6: declaration_list : declaration_list COMMA ID
+Line 8: declaration_list : ID
 
-a[2],c
+x
 
-Line 6: declaration_list : declaration_list COMMA ID
+Error at line 8: Syntax error
 
-a[2],c,i
+Error at line 8: Syntax error
 
-Line 6: declaration_list : declaration_list COMMA ID
+Line 8: declaration_list : declaration_list COMMA ID
 
-a[2],c,i,j
+,z
 
-Line 6: var_declaration : type_specifier declaration_list SEMICOLON
+Line 8: var_declaration : type_specifier declaration_list SEMICOLON
 
-int a[2],c,i,j;
+int ,z;
 
-Line 6: statement : var_declaration
+Line 8: statement : var_declaration
 
-int a[2],c,i,j;
+int ,z;
 
-Line 6: statements : statement
+Line 8: statements : statement
 
-int a[2],c,i,j;
-
-Line 6: type_specifier : FLOAT
-
-float
-
-Line 6: declaration_list : ID
-
-c
-
-Line 6: var_declaration : type_specifier declaration_list SEMICOLON
-
-float c;
-
-Line 6: statement : var_declaration
-
-float c;
-
-Line 6: statements : statements statement
-
-int a[2],c,i,j;
-float c;
-
-Line 7: factor : CONST_FLOAT
-
-2.5
-
-Line 7: unary_expression : factor
-
-2.5
-
-Line 7: term : unary_expression
-
-2.5
-
-Line 7: simple_expression : term
-
-2.5
-
-Line 7: rel_expression : simple_expression
-
-2.5
-
-Line 7: logic_expression : rel_expression
-
-2.5
-
-Line 7: expression : logic_expression
-
-2.5
-
-float
-
-Line 7: variable : ID LTHIRD expression RTHIRD
-
-a[2.5]
-
-Line 7: factor : CONST_INT
-
-1
-
-Line 7: unary_expression : factor
-
-1
-
-Line 7: term : unary_expression
-
-1
-
-Line 7: simple_expression : term
-
-1
-
-Line 7: rel_expression : simple_expression
-
-1
-
-Line 7: logic_expression : rel_expression
-
-1
-
-Line 7: expression : variable ASSIGNOP logic_expression
-
-a[2.5]=1
-
-Line 7: expression_statement : expression SEMICOLON
-
-a[2.5]=1;
-
-Line 7: statement : expression_statement
-
-a[2.5]=1;
-
-Line 7: statements : statements statement
-
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-
-Line 8: variable : ID
-
-i
-
-Line 8: factor : CONST_FLOAT
-
-2.3
-
-Line 8: unary_expression : factor
-
-2.3
-
-Line 8: term : unary_expression
-
-2.3
-
-Line 8: simple_expression : term
-
-2.3
-
-Line 8: rel_expression : simple_expression
-
-2.3
-
-Line 8: logic_expression : rel_expression
-
-2.3
-
-Line 8: expression : variable ASSIGNOP logic_expression
-
-i=2.3
-
-Line 8: expression_statement : expression SEMICOLON
-
-i=2.3;
-
-Line 8: statement : expression_statement
-
-i=2.3;
-
-Line 8: statements : statements statement
-
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
+int ,z;
 
 Line 9: variable : ID
 
-j
+a
 
 Line 9: factor : CONST_INT
 
@@ -278,366 +148,173 @@ Line 9: term : unary_expression
 
 2
 
-Line 9: factor : CONST_FLOAT
-
-3.7
-
-Line 9: unary_expression : factor
-
-3.7
-
-Line 9: term : term MULOP unary_expression
-
-2%3.7
-
 Line 9: simple_expression : term
 
-2%3.7
+2
 
-Line 9: rel_expression : simple_expression
+Error at line 9: syntax error
 
-2%3.7
+Error at line 9: syntax error
 
-Line 9: logic_expression : rel_expression
-
-2%3.7
-
-Line 9: expression : variable ASSIGNOP logic_expression
-
-j=2%3.7
-
-Line 9: expression_statement : expression SEMICOLON
-
-j=2%3.7;
-
-Line 9: statement : expression_statement
-
-j=2%3.7;
-
-Line 9: statements : statements statement
-
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-
-Line 10: variable : ID
-
-a
-
-Line 10: factor : CONST_INT
-
-4
-
-Line 10: unary_expression : factor
-
-4
-
-Line 10: term : unary_expression
-
-4
-
-Line 10: simple_expression : term
-
-4
-
-Line 10: rel_expression : simple_expression
-
-4
-
-Line 10: logic_expression : rel_expression
-
-4
-
-Line 10: expression : variable ASSIGNOP logic_expression
-
-a=4
+Error at line 10: Unrecognized character #
 
 Line 10: expression_statement : expression SEMICOLON
 
-a=4;
+#
 
 Line 10: statement : expression_statement
 
-a=4;
+#
 
 Line 10: statements : statements statement
 
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
+int ,z;
+#
 
 Line 11: variable : ID
 
-a
+x
 
-Line 11: factor : variable
+Line 11: factor : CONST_INT
 
-a
+2
 
 Line 11: unary_expression : factor
 
-a
+2
 
 Line 11: term : unary_expression
 
-a
+2
 
 Line 11: simple_expression : term
 
-a
+2
 
 Line 11: rel_expression : simple_expression
 
-a
+2
 
 Line 11: logic_expression : rel_expression
 
-a
+2
 
-Line 11: arguments : logic_expression
+Line 11: expression : variable ASSIGNOP logic_expression
 
-a
-
-Line 11: argument_list : arguments
-
-a
-Line 11: factor : ID LPAREN argument_list RPAREN
-
-func(a)
-Line 11: unary_expression : factor
-
-func(a)
-
-Line 11: term : unary_expression
-
-func(a)
-
-Line 11: simple_expression : term
-
-func(a)
-
-Line 11: rel_expression : simple_expression
-
-func(a)
-
-Line 11: logic_expression : rel_expression
-
-func(a)
-
-Line 11: expression : logic_expression
-
-func(a)
+x=2
 
 Line 11: expression_statement : expression SEMICOLON
 
-func(a);
+x=2;
 
 Line 11: statement : expression_statement
 
-func(a);
+x=2;
 
 Line 11: statements : statements statement
 
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
-func(a);
+int ,z;
+#
+x=2;
 
-Line 12: variable : ID
-
-b
-
-Line 12: factor : CONST_INT
-
-8
-
-Line 12: unary_expression : factor
-
-8
-
-Line 12: term : unary_expression
-
-8
-
-Line 12: simple_expression : term
-
-8
-
-Line 12: rel_expression : simple_expression
-
-8
-
-Line 12: logic_expression : rel_expression
-
-8
-
-Line 12: expression : variable ASSIGNOP logic_expression
-
-b=8
-
-Line 12: expression_statement : expression SEMICOLON
-
-b=8;
-
-Line 12: statement : expression_statement
-
-b=8;
-
-Line 12: statements : statements statement
-
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
-func(a);
-b=8;
-
-Line 13: factor : CONST_INT
+Line 14: factor : CONST_INT
 
 0
 
-Line 13: unary_expression : factor
+Line 14: unary_expression : factor
 
 0
 
-Line 13: term : unary_expression
+Line 14: term : unary_expression
 
 0
 
-Line 13: simple_expression : term
+Line 14: simple_expression : term
 
 0
 
-Line 13: rel_expression : simple_expression
+Line 14: rel_expression : simple_expression
 
 0
 
-Line 13: logic_expression : rel_expression
+Line 14: logic_expression : rel_expression
 
 0
 
-Line 13: expression : logic_expression
+Line 14: expression : logic_expression
 
 0
 
-Line 13: statement : RETURN expression SEMICOLON
+Line 14: statement : RETURN expression SEMICOLON
 return 0;
 
-Line 13: statements : statements statement
+Line 14: statements : statements statement
 
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
-func(a);
-b=8;
+int ,z;
+#
+x=2;
 return 0;
 
-Line 14: compound_statement : LCURL statements RCURL
+Line 15: compound_statement : LCURL statements RCURL
 
 {
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
-func(a);
-b=8;
+int ,z;
+#
+x=2;
 return 0;
 }
 
 ScopeTable # 1.2
- 7 --> < a , ID > 
- 9 --> < c , ID > 
- 15 --> < i , ID > 
- 16 --> < j , ID > 
+ 0 --> < x , ID > 
+ 2 --> < z , ID > 
 
 ScopeTable # 1
- 1 --> < main , ID > 
- 8 --> < func , ID > 
+ 0 --> < x , ID > 
+ 1 --> < y , ID > < main , ID > 
+ 2 --> < z , ID > 
+ 7 --> < a , ID > 
+ 29 --> < var , ID > 
 
-Line 14: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+Line 15: func_definition : type_specifier ID LPAREN RPAREN compound_statement
 
 int main(){
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
-func(a);
-b=8;
+int ,z;
+#
+x=2;
 return 0;
 }
 
-Line 14: unit : func_definition
+Line 15: unit : func_definition
 
 int main(){
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
-func(a);
-b=8;
+int ,z;
+#
+x=2;
 return 0;
 }
 
 
-Line 14: program : program unit
+Line 15: program : program unit
 
-int func(int a){
-return a;
-}
+int x,y,z;
+float a;
+int var(){ }
 int main(){
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
-func(a);
-b=8;
+int ,z;
+#
+x=2;
 return 0;
 }
 
 
 Line 15: start : program
 
-int func(int a){
-return a;
-}
-int main(){
-int a[2],c,i,j;
-float c;
-a[2.5]=1;
-i=2.3;
-j=2%3.7;
-a=4;
-func(a);
-b=8;
-return 0;
-}
-
-
 ScopeTable # 1
- 1 --> < main , ID > 
- 8 --> < func , ID > 
+ 0 --> < x , ID > 
+ 1 --> < y , ID > < main , ID > 
+ 2 --> < z , ID > 
+ 7 --> < a , ID > 
+ 29 --> < var , ID > 
 
 Total lines: 15
-
-Total errors: 7
+Total errors: 6

@@ -32,6 +32,8 @@ public:
 
         //flag = 0 -> declared
         // flag = 1 -> defined
+        //flag = -1 -> neither declared or defined
+
         dec_or_def = flag; 
     }
 
@@ -72,8 +74,6 @@ class SymbolInfo{
 
     string data_type;
     func_param* func;
-    int val;
-
     
 
 public:
@@ -96,7 +96,6 @@ public:
         data_type = "int";
         func = NULL;
         is_array = false;
-        val = 0;
     }
 
     void set_data_type(string dt)
@@ -121,13 +120,11 @@ public:
 
     void set_func(int num_of_param, string return_type, vector<pair<string,string>> param_list,int flag)
     {
-        val = 1;
         func = new func_param(num_of_param, return_type, param_list, flag);
     }
 
     func_param* get_func()
     {
-        cout<<"here"<<val<<endl;
         return func;
     }
 

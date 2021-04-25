@@ -23,12 +23,16 @@ extern SymbolTable st;   // SymbolTable variable referencing the SymbolTable obj
 ofstream tok;
 //number of errors
 extern ofstream fp2;
+extern ofstream fp3;
+
+
 long long int error_cnt = 0;
 //tracking string and comments
 string temp = "";
 long long int line_begin = 0;
 extern void enterScope_parser();
 extern void exitScope_parser();
+extern void error_print_line();
 
 
 
@@ -67,13 +71,9 @@ return	{
 				SymbolInfo* si = new SymbolInfo(yytext,"RETURN");
 			 	yylval.si = si; 
 				return RETURN;
-			}
-continue {return CONTINUE;}
-printf {
-			SymbolInfo* si = new SymbolInfo(yytext,"PRINTLN");
-			yylval.si = si;
-			return PRINTLN;
 		}
+continue {return CONTINUE;}
+printf {return PRINTLN;}
 
 
 {digit}+	 {
@@ -190,6 +190,38 @@ printf {
 		 							yylval.si = si; 
     	 							return ID;
     	 							}
+
+{digit}+[.]{digit}*([.]{digit}*)+([Ee]{digit}+)?		{error_print_line();error_cnt++;
+										fp3<<"Too many decimal points "<<yytext<<endl<<endl;
+										fp2<<"Too many decimal points "<<yytext<<endl<<endl;
+										SymbolInfo* si = new SymbolInfo(yytext,"CONST_FLOAT");
+			 							yylval.si = si; 
+										return CONST_FLOAT;
+										}
+({digit}+([.]{digit}*)*[Ee]({digit})*([.]{digit}*)+)|({digit}+[.])	{error_print_line();error_cnt++;
+										fp3<<"Ill formed number "<<yytext<<endl<<endl;
+										fp2<<"Ill formed number "<<yytext<<endl<<endl;
+										SymbolInfo* si = new SymbolInfo(yytext,"CONST_FLOAT");
+			 							yylval.si = si; 
+										return CONST_FLOAT;}
+{digit}+([.]{digit}+)?({letter}|(_))({AlphaNumeric}|(_))*			{error_print_line();error_cnt++;
+											fp3<<
+											"Invalid prefix on ID or invalid suffix on Number ";
+									 		fp3<<yytext<<endl<<endl;
+											fp2<<
+											"Invalid prefix on ID or invalid suffix on Number ";
+									 		fp2<<yytext<<endl<<endl;
+											SymbolInfo* si = new SymbolInfo(yytext,"CONST_FLOAT");
+			 								yylval.si = si; 
+											return CONST_FLOAT;}	
+
+						
+. 		{error_print_line();error_cnt++;
+		fp3<<"Unrecognized character "<<yytext<<endl<<endl;
+		fp2<<"Unrecognized character "<<yytext<<endl<<endl;
+		SymbolInfo* si = new SymbolInfo(yytext,"SEMICOLON");
+		yylval.si = si;
+     	return SEMICOLON;}
 									 
 
 

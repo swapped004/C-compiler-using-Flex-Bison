@@ -1,15 +1,13 @@
-Error at line 6: Multiple Declaration of c
+Error at line 3: syntax error
 
-Error at line 7: Expression inside third brackets not an integer
+Error at line 8: Syntax error
 
-Error at line 8: Type Mismatch
+Error at line 8: Syntax error
 
-Error at line 9: Non-Integer operand on modulus operator
+Error at line 9: syntax error
 
-Error at line 10: Type Mismatch, a is an array
+Error at line 9: syntax error
 
-Error at line 11: Type Mismatch, a is an array
+Error at line 10: Unrecognized character #
 
-Error at line 12: Undeclared Variable: b
-
-Total Errors: 7
+Total Errors: 6
