@@ -39,7 +39,9 @@ void error_print_line()
 
 void yyerror(char *s)
 {
-	//write your code
+	 error_print_line();
+	 fp2<<s<<endl;
+	 fp3<<s<<endl;
 }
 
 //declaration_list vector
@@ -131,8 +133,8 @@ void enterScope_parser()
 	//add func parameters int the new scope
 	for(auto x:param_list)
 	{
-		cout<<"("<<x.first<<", "<<x.second<<")"<<endl;
-		fp2<<"("<<x.first<<", "<<x.second<<")"<<endl;
+		//cout<<"("<<x.first<<", "<<x.second<<")"<<endl;
+		//fp2<<"("<<x.first<<", "<<x.second<<")"<<endl;
 		
 		bool ok = st.Insert(x.first, "ID");
 
@@ -179,6 +181,7 @@ void exitScope_parser()
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
+
 
 
 %%
@@ -442,9 +445,9 @@ func_begin:
 			//save the line for error reporting 
 			temp_line = yylineno;
 
-			fp2<<"here"<<endl;
+			//fp2<<"here"<<endl;
 			//last id -> temp_id
-			fp2<<temp_id<<endl;
+			//fp2<<temp_id<<endl;
 
 			SymbolInfo* s = st.Look_up(temp_id);
 			if(s == NULL)
@@ -494,7 +497,12 @@ func_begin:
 
 parameter_list: parameter_list COMMA type_specifier id
 		{
-			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
+			if($1->getName() != "")
+				$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+" "+$4->getName(), "NON_TERMINAL");
+			else
+				$$ = new SymbolInfo($3->getName()+" "+$4->getName(), "NON_TERMINAL");
+
+
 			print_line();
 			fp2<<"parameter_list : parameter_list COMMA type_specifier ID\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
@@ -507,7 +515,11 @@ parameter_list: parameter_list COMMA type_specifier id
 		}
 		| parameter_list COMMA type_specifier
 		{
-			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(), "NON_TERMINAL");
+			if($1->getName() != "")
+				$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(), "NON_TERMINAL");
+			else
+				$$ = new SymbolInfo($3->getName(), "NON_TERMINAL");
+
 			print_line();
 			fp2<<"parameter_list : parameter_list COMMA type_specifier\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
@@ -539,17 +551,16 @@ parameter_list: parameter_list COMMA type_specifier id
 			temp_line = yylineno;
 		}
 
-		| error
+		| type_specifier error 
 		{
 			$$ = new SymbolInfo("", "NON_TERMINAL");
 			error_cnt++;
-			error_print_line();
-			fp3<<"syntax error"<<endl<<endl;
-			fp2<<"syntax error"<<endl<<endl;
-
+			//error_print_line();
+			//yyerror("parameter name not found");
+			//yyerrok;
 			yyclearin;
-			yyerror;
 		}
+		
  		;
 
  		
@@ -585,8 +596,7 @@ var_declaration: type_specifier declaration_list SEMICOLON
 			$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName(), "NON_TERMINAL");
 			print_line();
 			fp2<<"var_declaration : type_specifier declaration_list SEMICOLON\n"<<endl;
-			fp2<<$$->getName()<<endl<<endl;
-
+			
 			if($1->getName() == "void")
 			{
 				error_cnt++;
@@ -613,6 +623,9 @@ var_declaration: type_specifier declaration_list SEMICOLON
 				}
 			}
 			decl_list.clear();
+
+			fp2<<$$->getName()<<endl<<endl;
+
 		}
  		;
  		 
@@ -677,16 +690,15 @@ declaration_list: declaration_list COMMA id
 				//decl_list.clear();
 				decl_list.push_back(make_pair($1->getName(),1));
  		  }
-		  | error 
+		  | declaration_list error COMMA id
         	{
-				$$ = new SymbolInfo("","NON_TERMINAL");
+				$$ = new SymbolInfo($1->getName()+$3->getName()+$4->getName(),"NON_TERMINAL");
 				error_cnt++;
-				error_print_line();
-				fp2<<"Syntax error"<<endl<<endl;
-				fp3<<"Syntax error"<<endl<<endl;
+				//error_print_line();
+				//yyerror("syntax error 1");
+				decl_list.push_back(make_pair($4->getName(),0));
 
-				yyclearin;
-				yyerror;
+				yyerrok;
 		    }
 		   
  		  ;
@@ -779,7 +791,7 @@ statement: var_declaration
 				fp2<<"Undeclared variable "<<$3->getName()<<endl<<endl;
 			}
  		  	print_line();
-			fp2<<"statement : PRINTLN LPAREN id RPAREN SEMICOLON\n"<<endl;
+			fp2<<"statement : PRINTLN LPAREN ID RPAREN SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
@@ -788,11 +800,10 @@ statement: var_declaration
 			//fp2<<"RETURN symbol->name: "<<$1->getName()<<endl<<endl;
 		  	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName(), "NON_TERMINAL");
  		  	print_line();
-			fp2<<"statement : RETURN expression SEMICOLON"<<endl;
+			fp2<<"statement : RETURN expression SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
-		
 		
 	  ;
 	  
@@ -812,11 +823,27 @@ expression_statement: SEMICOLON
 				fp2<<$$->getName()<<endl<<endl;
 
  			}
+
+			| error SEMICOLON
+
+			{
+				$$ = new SymbolInfo("","NON_TERMINAL");
+				error_cnt++;
+				//error_print_line();
+				//yyerror("syntax error exp");
+
+				//yyerror("invalid expression");
+				yyerrok;
+				yyclearin;
+			}
 			;
 	  
 variable: id
 		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+
+			print_line();
+			fp2<<"variable : ID\n"<<endl;
 
 			//check if ID is declared or not
 			if(!check_var_declared($1->getName()))
@@ -845,13 +872,15 @@ variable: id
 			SymbolInfo* s = st.Look_up($1->getName());
 			if(s != NULL)
 				set_data_type($$,s);
-			print_line();
-			fp2<<"variable : ID\n"<<endl;
+			
 			fp2<<$1->getName()<<endl<<endl;
 
  		}		
 	 	| id LTHIRD expression RTHIRD
 	 	{
+			print_line();
+			fp2<<"variable : ID LTHIRD expression RTHIRD\n"<<endl;
+
 			//check if ID is declared or not
 			if(!check_var_declared($1->getName()))
 			{
@@ -876,7 +905,7 @@ variable: id
 			}
 
 			//check array's index is integer type
-			fp2<<$3->get_data_type()<<endl<<endl;
+			//fp2<<$3->get_data_type()<<endl<<endl;
 			if($3->get_data_type() != "int")
 			{
 				error_cnt++;
@@ -890,8 +919,7 @@ variable: id
 			SymbolInfo* s = st.Look_up($1->getName());
 			if(s != NULL)
 				set_data_type($$,s);
-			print_line();
-			fp2<<"variable : ID LTHIRD expression RTHIRD\n"<<endl;
+			
 			fp2<<$$->getName()<<endl<<endl;
  		} 
 	 ;
@@ -902,7 +930,7 @@ variable: id
 			//set data type of expression
 			set_data_type($$,$1);
  		  	print_line();
-			fp2<<"expression : logic_expression\n"<<endl;
+			fp2<<"expression : logic expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
 
 
@@ -912,7 +940,7 @@ variable: id
 		   	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"expression : variable ASSIGNOP logic_expression\n"<<endl;
-			fp2<<$$->getName()<<endl<<endl;
+			
 			//set data type of logic expression
 			set_data_type($$,$1);
 
@@ -938,18 +966,10 @@ variable: id
 				fp2<<"Type Mismatch"<<endl<<endl;
 			}
 
- 		} 
-		 | error
-		{
-			$$ = new SymbolInfo("", "error");
-			error_cnt++;
-			error_print_line();
-			fp3<<"syntax error"<<endl<<endl;
-			fp2<<"syntax error"<<endl<<endl;
+			fp2<<$$->getName()<<endl<<endl;
 
-			yyclearin;
-			yyerror;
-		}	
+ 		} 
+		 
 	   ;
 			
 logic_expression: rel_expression 	
@@ -1068,6 +1088,8 @@ term:	unary_expression
      	{
 		 	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
 
+			print_line();
+			fp2<<"term : term MULOP unary_expression\n"<<endl;
 			
 			if($1->get_data_type() == "void" | $3->get_data_type() == "void")
 			{
@@ -1121,8 +1143,8 @@ term:	unary_expression
 				$$->set_data_type("int");
 			}
 
- 		  	print_line();
-			fp2<<"term : term MULOP unary_expression\n"<<endl;
+ 		  	
+			
 			fp2<<$$->getName()<<endl<<endl;
  		}
      ;
@@ -1142,7 +1164,7 @@ unary_expression: ADDOP unary_expression
 				fp2<<"Void function used in expression"<<endl<<endl;
 			}
  		  	print_line();
-			fp2<<"unary_expression : ADDOP unary_expression\n"<<endl;
+			fp2<<"unary_expression : ADDOP unary expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}  
@@ -1161,7 +1183,7 @@ unary_expression: ADDOP unary_expression
 				fp2<<"Void function used in expression"<<endl<<endl;
 			}
  		  	print_line();
-			fp2<<"unary_expression : NOT unary_expression\n"<<endl;
+			fp2<<"unary_expression : NOT unary expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
  		}   
@@ -1190,6 +1212,8 @@ factor: variable
 	| id LPAREN argument_list RPAREN
 	{
 		$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+$4->getName(), "NON_TERMINAL");
+		print_line();
+		fp2<<"factor : ID LPAREN argument_list RPAREN\n"<<endl;
 
 		
 		//check if declared
@@ -1274,8 +1298,7 @@ factor: variable
 		}
 
 		arg_list.clear();
- 	  	print_line();
-		fp2<<"factor : ID LPAREN argument_list RPAREN\n"<<endl;
+ 	  	
 		fp2<<$$->getName()<<endl;
  	} 
 	| LPAREN expression RPAREN
@@ -1323,7 +1346,7 @@ factor: variable
 		//set data type of factor
 		set_data_type($$,$1);
  	  	print_line();
-		fp2<<"factor : variable INCOP\n"<<endl;
+		fp2<<"factor : variable DECOP\n"<<endl;
 		fp2<<$$->getName()<<endl<<endl;
  	} 
 	;
@@ -1408,6 +1431,8 @@ int main(int argc,char *argv[])
 	fp3<<"Total Errors: "<<error_cnt<<endl;
 
 	st.Print_all(fp2);
+
+	fp2<<endl;
 
 	fp2<<"Total lines: "<<yylineno<<endl;
 	fp2<<"Total errors: "<<error_cnt<<endl;
