@@ -1,5 +1,7 @@
 %option noyywrap yylineno
 
+%x single_comment
+%x multi_comment
 
 %{
 
@@ -214,6 +216,32 @@ printf {return PRINTLN;}
 											SymbolInfo* si = new SymbolInfo(yytext,"CONST_FLOAT");
 			 								yylval.si = si; 
 											return CONST_FLOAT;}	
+
+
+
+([/][/])			{BEGIN single_comment;yymore();line_begin = yylineno;}	
+
+<single_comment>[^\\\n(\r\n)] {yymore();}
+<single_comment>[\\][\n]	{yymore();}
+<single_comment>[\\][\r][\n]	{yymore();}
+<single_comment>[\\]	{yymore();}
+<single_comment>[\n]	{BEGIN INITIAL;}	
+<single_comment>([\r][\n])	{BEGIN INITIAL;}
+
+
+
+([/][*])			{yymore();BEGIN multi_comment;line_begin = yylineno;temp=yytext;}
+
+<multi_comment>[*][/] {yymore();BEGIN INITIAL;temp=yytext;}
+<multi_comment>[\n]	{yymore();temp=yytext;}
+<multi_comment>([\r][\n])	{yymore();temp=yytext;}
+<multi_comment><<EOF>>	{error_cnt++;
+						 string s = temp;
+						 s.erase(s.end()-1);
+						 temp="";
+						 BEGIN INITIAL;
+						 }
+<multi_comment>.	{yymore();}
 
 						
 . 		{error_print_line();error_cnt++;
