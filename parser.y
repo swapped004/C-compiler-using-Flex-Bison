@@ -254,8 +254,8 @@ func_declaration: type_specifier id func_begin LPAREN parameter_list RPAREN SEMI
 				{
 					error_cnt++;
 					fp3<<"Error at line "<<temp_line<<": ";
-					fp3<<"Multiple declaration of  " <<$2->getName()<<endl<<endl;
-					fp2<<"Multiple declaration of  " <<$2->getName()<<endl<<endl;
+					fp3<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
+					fp2<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
 				}
 
 				else if(f->get_flag() == 0)
@@ -493,6 +493,7 @@ func_definition: type_specifier id func_begin LPAREN parameter_list RPAREN compo
 			fp2<<$$->getName()<<endl<<endl;
 
 		}
+
 		
  		;	
 		
@@ -515,6 +516,16 @@ func_begin:
 				//initialize with dummy arguments
 				s1->set_func(0,"",temp_param,-1);
 			}
+
+			// fp2<<"id: "<<st.get_curr()->get_id()<<endl<<endl;
+
+			// if(st.get_curr()->get_id() != "1")
+			// {
+			// 	error_cnt++;
+			// 	error_print_line();
+			// 	fp2<<"function declaration inside another function\n"<<endl;
+			// 	fp3<<"function declaration inside another function\n"<<endl;
+			// }
 			// else
 			// {
 			// 	func_param* f =s->get_func();
@@ -862,6 +873,23 @@ statement: var_declaration
 			fp2<<$$->getName()<<endl<<endl;
 
  		}
+	  | func_declaration
+		{
+			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
+			error_cnt++;
+			error_print_line();
+			fp2<<"Illegal scoping, function declared inside a function\n"<<endl;
+			fp3<<"Illegal scoping, function declared inside a function\n"<<endl;
+		}
+
+	  | func_definition
+		{
+			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
+			error_cnt++;
+			error_print_line();
+			fp2<<"Illegal scoping, function defined inside a function\n"<<endl;
+			fp3<<"Illegal scoping, function defined inside a function\n"<<endl;
+		}
 		
 	  ;
 	  
@@ -1007,8 +1035,9 @@ variable: id
 			//set data type of logic expression
 			set_data_type($$,$1);
 
-			if($3->get_data_type() == "void")
+			if($3->get_data_type() == "void" | $1->get_data_type() == "void")
 			{
+				mismatch_map[yylineno]++;
 				error_cnt++;
 				error_print_line();
 				fp3<<"Void function used in expression"<<endl<<endl;
@@ -1328,7 +1357,7 @@ factor: variable
 				//check if defined
 				if(f->get_flag() != 1)
 				{
-					mismatch_map[yylineno]++;
+					//mismatch_map[yylineno]++;
 					error_cnt++;
 					error_print_line();
 					fp3<<$1->getName() + " function declared but not defined"<<endl<<endl;
@@ -1342,7 +1371,7 @@ factor: variable
 					//number of arguments
 					if((int)arg_list.size() != f->getNumber_of_param())
 					{
-						mismatch_map[yylineno]++;
+						//mismatch_map[yylineno]++;
 						error_cnt++;
 						error_print_line();
 						fp3<<"Total number of arguments mismatch in function "+$1->getName()<<endl<<endl;
@@ -1362,7 +1391,7 @@ factor: variable
 							{
 								if(x != "array")
 								{
-									mismatch_map[yylineno]++;
+									//mismatch_map[yylineno]++;
 									error_cnt++;
 									error_print_line();
 									fp3<<i+1<<"th argument mismatch in function " + $1->getName()<<endl<<endl;

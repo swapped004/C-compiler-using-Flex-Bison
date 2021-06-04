@@ -681,14 +681,14 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   192
+#define YYLAST   180
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  37
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  27
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  70
+#define YYNRULES  72
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  127
 
@@ -742,13 +742,13 @@ static const yytype_int8 yytranslate[] =
 static const yytype_int16 yyrline[] =
 {
        0,   193,   193,   202,   209,   218,   225,   232,   241,   290,
-     341,   422,   501,   556,   574,   589,   600,   612,   625,   633,
-     644,   652,   690,   697,   704,   713,   722,   731,   741,   751,
-     764,   772,   783,   792,   799,   807,   815,   823,   831,   839,
-     856,   868,   876,   885,   899,   939,   990,  1001,  1045,  1055,
-    1078,  1087,  1108,  1117,  1151,  1160,  1229,  1249,  1269,  1281,
-    1291,  1388,  1397,  1410,  1418,  1427,  1438,  1446,  1454,  1468,
-    1482
+     341,   422,   502,   567,   585,   600,   611,   623,   636,   644,
+     655,   663,   701,   708,   715,   724,   733,   742,   752,   762,
+     775,   783,   794,   803,   810,   818,   826,   834,   842,   850,
+     867,   876,   885,   896,   904,   913,   927,   967,  1018,  1029,
+    1074,  1084,  1107,  1116,  1137,  1146,  1180,  1189,  1258,  1278,
+    1298,  1310,  1320,  1417,  1426,  1439,  1447,  1456,  1467,  1475,
+    1483,  1497,  1511
 };
 #endif
 
@@ -784,7 +784,7 @@ static const yytype_int16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF (-70)
+#define YYPACT_NINF (-69)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -798,19 +798,19 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-     112,   -70,   -70,   -70,    44,   112,   -70,   -70,   -70,   -70,
-      45,   -70,   -70,   -70,    12,    -7,    30,    45,   -70,    70,
-      53,    45,    54,    55,     8,   -70,    87,   -70,    -8,     2,
-      23,    60,   -70,   -70,   -70,    25,   112,   -70,   -70,   -70,
-      68,   -70,   -70,    45,    57,   -70,   -70,    67,    69,    72,
-     164,    73,   164,   164,   164,   -70,   -70,   -70,   -70,    45,
-     101,   -70,   -70,    39,    71,   -70,    88,   -16,    84,   -70,
-     -70,    59,   -70,   -70,   164,   153,   164,    79,    45,    56,
-     -70,   -70,    94,    92,   -70,   -70,   164,   -70,   -70,   -70,
-     164,   164,   164,   164,   164,   164,    96,   153,    97,   -70,
-      99,   -70,   -70,   -70,   104,    84,   -70,   -70,   105,   110,
-     100,   134,   164,   134,   117,   -70,   164,   -70,   126,   116,
-     -70,   -70,   -70,   134,   134,   -70,   -70
+     114,   -69,   -69,   -69,    22,   114,   -69,   -69,   -69,   -69,
+      18,   -69,   -69,   -69,     2,    19,    -2,    18,   -69,    35,
+      33,    18,    38,    39,    85,   -69,    94,   -69,   -14,    26,
+      28,    92,   -69,   -69,   -69,    23,   114,   -69,   -69,   -69,
+      70,   -69,   -69,    18,    73,   -69,   -69,    88,    98,    99,
+     152,   100,   152,   152,   152,   -69,   -69,   -69,   -69,   -69,
+     -69,   103,   -69,   -69,    -8,    78,   -69,   106,    64,   105,
+     -69,   -69,    67,   -69,   -69,   152,    24,   152,   101,    18,
+      80,   -69,   -69,   112,   -69,   -69,   152,   -69,   -69,   -69,
+     152,   152,   152,   152,   152,   152,   117,    24,   118,   -69,
+     120,   -69,   -69,   -69,   109,   105,   -69,   -69,   125,   126,
+     128,   136,   152,   136,   124,   -69,   152,   -69,   150,   138,
+     -69,   -69,   -69,   136,   136,   -69,   -69
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -819,34 +819,34 @@ static const yytype_int16 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,    22,    23,    24,     0,     2,     4,     6,     7,     5,
-       0,     1,     3,    70,     0,    27,     0,     0,    21,     0,
+       0,     1,     3,    72,     0,    27,     0,     0,    21,     0,
        0,     0,    25,     0,     0,    29,     0,    28,     0,     0,
        0,     0,    20,     9,    11,     0,     0,    17,    15,    26,
-       0,     8,    10,    14,     0,    62,    63,     0,     0,     0,
-       0,     0,     0,     0,     0,    19,    41,    34,    32,     0,
-       0,    30,    33,    59,     0,    46,    48,    50,    52,    54,
-      58,    44,    13,    43,     0,     0,     0,     0,     0,    59,
-      57,    56,     0,    27,    18,    31,     0,    64,    65,    42,
-       0,     0,     0,     0,    67,     0,     0,     0,     0,    40,
-       0,    61,    47,    49,    51,    53,    55,    69,     0,    66,
-       0,     0,     0,     0,     0,    60,     0,    45,    36,     0,
-      38,    39,    68,     0,     0,    37,    35
+       0,     8,    10,    14,     0,    64,    65,     0,     0,     0,
+       0,     0,     0,     0,     0,    19,    43,    41,    42,    34,
+      32,     0,    30,    33,    61,     0,    48,    50,    52,    54,
+      56,    60,    46,    13,    45,     0,     0,     0,     0,     0,
+      61,    59,    58,     0,    18,    31,     0,    66,    67,    44,
+       0,     0,     0,     0,    69,     0,     0,     0,     0,    40,
+       0,    63,    49,    51,    53,    55,    57,    71,     0,    68,
+       0,     0,     0,     0,     0,    62,     0,    47,    36,     0,
+      38,    39,    70,     0,     0,    37,    35
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-     -70,   -70,   -70,   142,   -70,   -70,   -70,   -70,    -5,   -70,
-      58,    14,   -70,   -70,   -57,   -69,   -51,   -42,   -68,    63,
-      74,    66,   -48,   -70,   -70,   -70,   -10
+     -69,   -69,   -69,   160,    63,    75,   -69,   -69,   -22,   -69,
+      83,   -19,   -69,   -69,   -57,   -66,   -51,   -31,   -68,    79,
+      77,    82,   -44,   -69,   -69,   -69,   -10
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     6,     7,     8,    20,    29,    57,    40,
-      58,    59,    14,    60,    61,    62,    63,    64,    65,    66,
-      67,    68,    69,    70,   108,   109,    71
+      -1,     4,     5,     6,    57,    58,    20,    29,    59,    40,
+      60,    10,    14,    61,    62,    63,    64,    65,    66,    67,
+      68,    69,    70,    71,   108,   109,    72
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -854,50 +854,48 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      15,    79,    79,    85,    80,    81,    97,    22,    77,    91,
-      92,    25,    82,    16,    10,     1,     2,     3,   102,    10,
-      38,   -12,    32,    34,    37,    19,   107,    33,   112,    13,
-      42,    35,    96,    72,    98,    79,    36,    28,    30,    79,
-      79,    79,    79,    79,    11,   106,    17,    18,   122,    83,
-      43,    13,   -16,   110,   118,    32,   120,   -16,     9,    86,
-      41,    87,    88,     9,    21,    79,   125,   126,   100,    44,
-     119,    45,    46,    23,    13,     1,     2,     3,    87,    88,
-      47,    24,    48,    49,    50,    51,    26,    94,    27,    52,
-      31,    95,    73,    39,    53,    74,    54,    75,    32,    55,
-      76,    78,    44,    56,    45,    46,    89,    13,     1,     2,
-       3,    93,    90,    47,    99,    48,    49,    50,    51,     1,
-       2,     3,    52,   101,    19,   111,   113,    53,   114,    54,
-      92,    32,    84,   117,   115,    44,    56,    45,    46,   123,
-      13,     1,     2,     3,   116,   124,    47,    12,    48,    49,
-      50,    51,   121,   103,    44,    52,    45,    46,   105,    13,
-      53,     0,    54,     0,    32,   104,     0,    45,    46,    56,
-      13,     0,     0,     0,    52,     0,     0,     0,     0,    53,
-       0,    54,     0,     0,     0,    52,     0,     0,    56,     0,
-      53,     0,    54
+      15,    80,    80,    16,    85,    30,    34,    22,    81,    82,
+      97,    25,    86,    42,    87,    88,    32,    43,   102,    78,
+      38,    33,    11,    83,    13,    44,   107,    45,    46,    37,
+      13,   112,    21,    73,    13,    80,    17,    18,    23,    80,
+      80,    80,    80,    80,    96,    52,    98,   -12,   122,   106,
+      53,    19,    54,    32,   118,    35,   120,   -16,    41,    56,
+      36,    24,   -16,     7,   110,    80,   125,   126,     7,   100,
+      26,    44,    27,    45,    46,     8,    13,     1,     2,     3,
+       8,   119,    47,     9,    48,    49,    50,    51,     9,    91,
+      92,    52,     1,     2,     3,    94,    53,    31,    54,    95,
+      32,    55,    87,    88,    44,    56,    45,    46,    74,    13,
+       1,     2,     3,    89,    28,    47,    75,    48,    49,    50,
+      51,     1,     2,     3,    52,    39,    76,    77,    79,    53,
+      90,    54,    93,    32,    84,    92,    99,    44,    56,    45,
+      46,   101,    13,     1,     2,     3,   111,   113,    47,   114,
+      48,    49,    50,    51,   115,    45,    46,    52,    13,   121,
+     116,   117,    53,   123,    54,    12,    32,   124,   104,   103,
+       0,    56,     0,    52,   105,     0,     0,     0,    53,     0,
+      54
 };
 
 static const yytype_int8 yycheck[] =
 {
-      10,    52,    53,    60,    52,    53,    75,    17,    50,    25,
-      26,    21,    54,     1,     0,     7,     8,     9,    86,     5,
-      30,    28,    30,    28,     1,    32,    94,    35,    97,     6,
-      35,    29,    74,    43,    76,    86,    34,    29,    24,    90,
-      91,    92,    93,    94,     0,    93,    34,    35,   116,    59,
-      36,     6,    29,    95,   111,    30,   113,    34,     0,    20,
-      35,    22,    23,     5,    34,   116,   123,   124,    78,     1,
-     112,     3,     4,     3,     6,     7,     8,     9,    22,    23,
-      12,    28,    14,    15,    16,    17,    32,    28,    33,    21,
-       3,    32,    35,    33,    26,    28,    28,    28,    30,    31,
-      28,    28,     1,    35,     3,     4,    35,     6,     7,     8,
-       9,    27,    24,    12,    35,    14,    15,    16,    17,     7,
-       8,     9,    21,    29,    32,    29,    29,    26,    29,    28,
-      26,    30,    31,    33,    29,     1,    35,     3,     4,    13,
-       6,     7,     8,     9,    34,    29,    12,     5,    14,    15,
-      16,    17,    35,    90,     1,    21,     3,     4,    92,     6,
-      26,    -1,    28,    -1,    30,    91,    -1,     3,     4,    35,
-       6,    -1,    -1,    -1,    21,    -1,    -1,    -1,    -1,    26,
-      -1,    28,    -1,    -1,    -1,    21,    -1,    -1,    35,    -1,
-      26,    -1,    28
+      10,    52,    53,     1,    61,    24,    28,    17,    52,    53,
+      76,    21,    20,    35,    22,    23,    30,    36,    86,    50,
+      30,    35,     0,    54,     6,     1,    94,     3,     4,     1,
+       6,    97,    34,    43,     6,    86,    34,    35,     3,    90,
+      91,    92,    93,    94,    75,    21,    77,    28,   116,    93,
+      26,    32,    28,    30,   111,    29,   113,    29,    35,    35,
+      34,    28,    34,     0,    95,   116,   123,   124,     5,    79,
+      32,     1,    33,     3,     4,     0,     6,     7,     8,     9,
+       5,   112,    12,     0,    14,    15,    16,    17,     5,    25,
+      26,    21,     7,     8,     9,    28,    26,     3,    28,    32,
+      30,    31,    22,    23,     1,    35,     3,     4,    35,     6,
+       7,     8,     9,    35,    29,    12,    28,    14,    15,    16,
+      17,     7,     8,     9,    21,    33,    28,    28,    28,    26,
+      24,    28,    27,    30,    31,    26,    35,     1,    35,     3,
+       4,    29,     6,     7,     8,     9,    29,    29,    12,    29,
+      14,    15,    16,    17,    29,     3,     4,    21,     6,    35,
+      34,    33,    26,    13,    28,     5,    30,    29,    91,    90,
+      -1,    35,    -1,    21,    92,    -1,    -1,    -1,    26,    -1,
+      28
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -909,10 +907,10 @@ static const yytype_int8 yystos[] =
       43,    34,    63,     3,    28,    63,    32,    33,    29,    44,
       48,     3,    30,    35,    45,    29,    34,     1,    63,    33,
       46,    35,    45,    48,     1,     3,     4,    12,    14,    15,
-      16,    17,    21,    26,    28,    31,    35,    45,    47,    48,
-      50,    51,    52,    53,    54,    55,    56,    57,    58,    59,
-      60,    63,    63,    35,    28,    28,    28,    54,    28,    53,
-      59,    59,    54,    63,    31,    51,    20,    22,    23,    35,
+      16,    17,    21,    26,    28,    31,    35,    41,    42,    45,
+      47,    50,    51,    52,    53,    54,    55,    56,    57,    58,
+      59,    60,    63,    63,    35,    28,    28,    28,    54,    28,
+      53,    59,    59,    54,    31,    51,    20,    22,    23,    35,
       24,    25,    26,    27,    28,    32,    54,    52,    54,    35,
       63,    29,    55,    56,    57,    58,    59,    55,    61,    62,
       54,    29,    52,    29,    29,    29,    34,    33,    51,    54,
@@ -926,10 +924,10 @@ static const yytype_int8 yyr1[] =
       42,    42,    43,    44,    44,    44,    44,    44,    45,    45,
       46,    47,    48,    48,    48,    49,    49,    49,    49,    49,
       50,    50,    51,    51,    51,    51,    51,    51,    51,    51,
-      51,    52,    52,    52,    53,    53,    54,    54,    55,    55,
-      56,    56,    57,    57,    58,    58,    59,    59,    59,    60,
-      60,    60,    60,    60,    60,    60,    61,    61,    62,    62,
-      63
+      51,    51,    51,    52,    52,    52,    53,    53,    54,    54,
+      55,    55,    56,    56,    57,    57,    58,    58,    59,    59,
+      59,    60,    60,    60,    60,    60,    60,    60,    61,    61,
+      62,    62,    63
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -939,10 +937,10 @@ static const yytype_int8 yyr2[] =
        7,     6,     0,     4,     3,     2,     1,     2,     4,     3,
        0,     3,     1,     1,     1,     3,     6,     1,     4,     4,
        1,     2,     1,     1,     1,     7,     5,     7,     5,     5,
-       3,     1,     2,     2,     1,     4,     1,     3,     1,     3,
-       1,     3,     1,     3,     1,     3,     2,     2,     1,     1,
-       4,     3,     1,     1,     2,     2,     1,     0,     3,     1,
-       1
+       3,     1,     1,     1,     2,     2,     1,     4,     1,     3,
+       1,     3,     1,     3,     1,     3,     1,     3,     2,     2,
+       1,     1,     4,     3,     1,     1,     2,     2,     1,     0,
+       3,     1,     1
 };
 
 
@@ -1645,7 +1643,7 @@ yyreduce:
 		fp2<<"start : program\n"<<endl;
 		//fp2<<$$->getName()<<endl<<endl;
 	}
-#line 1649 "y.tab.c"
+#line 1647 "y.tab.c"
     break;
 
   case 3:
@@ -1656,7 +1654,7 @@ yyreduce:
 			fp2<<"program : program unit\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1660 "y.tab.c"
+#line 1658 "y.tab.c"
     break;
 
   case 4:
@@ -1667,7 +1665,7 @@ yyreduce:
 			fp2<<"program : unit\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1671 "y.tab.c"
+#line 1669 "y.tab.c"
     break;
 
   case 5:
@@ -1678,7 +1676,7 @@ yyreduce:
 			fp2<<"unit : var_declaration\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1682 "y.tab.c"
+#line 1680 "y.tab.c"
     break;
 
   case 6:
@@ -1689,7 +1687,7 @@ yyreduce:
 			fp2<<"unit : func_declaration\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1693 "y.tab.c"
+#line 1691 "y.tab.c"
     break;
 
   case 7:
@@ -1700,7 +1698,7 @@ yyreduce:
 			fp2<<"unit : func_definition\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1704 "y.tab.c"
+#line 1702 "y.tab.c"
     break;
 
   case 8:
@@ -1720,8 +1718,8 @@ yyreduce:
 				{
 					error_cnt++;
 					fp3<<"Error at line "<<temp_line<<": ";
-					fp3<<"Multiple declaration of  " <<(yyvsp[-5].si)->getName()<<endl<<endl;
-					fp2<<"Multiple declaration of  " <<(yyvsp[-5].si)->getName()<<endl<<endl;
+					fp3<<"Multiple declaration of " <<(yyvsp[-5].si)->getName()<<endl<<endl;
+					fp2<<"Multiple declaration of " <<(yyvsp[-5].si)->getName()<<endl<<endl;
 				}
 
 				else if(f->get_flag() == 0)
@@ -1753,7 +1751,7 @@ yyreduce:
 
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1757 "y.tab.c"
+#line 1755 "y.tab.c"
     break;
 
   case 9:
@@ -1806,7 +1804,7 @@ yyreduce:
 
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 		}
-#line 1810 "y.tab.c"
+#line 1808 "y.tab.c"
     break;
 
   case 10:
@@ -1891,7 +1889,7 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
 		}
-#line 1895 "y.tab.c"
+#line 1893 "y.tab.c"
     break;
 
   case 11:
@@ -1969,11 +1967,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
 		}
-#line 1973 "y.tab.c"
+#line 1971 "y.tab.c"
     break;
 
   case 12:
-#line 501 "./parser.y"
+#line 502 "./parser.y"
                 {
 			//save the line for error reporting 
 			temp_line = yylineno;
@@ -1991,6 +1989,16 @@ yyreduce:
 				//initialize with dummy arguments
 				s1->set_func(0,"",temp_param,-1);
 			}
+
+			// fp2<<"id: "<<st.get_curr()->get_id()<<endl<<endl;
+
+			// if(st.get_curr()->get_id() != "1")
+			// {
+			// 	error_cnt++;
+			// 	error_print_line();
+			// 	fp2<<"function declaration inside another function\n"<<endl;
+			// 	fp3<<"function declaration inside another function\n"<<endl;
+			// }
 			// else
 			// {
 			// 	func_param* f =s->get_func();
@@ -2027,11 +2035,11 @@ yyreduce:
 
 			//temp_id = "";
 		}
-#line 2031 "y.tab.c"
+#line 2039 "y.tab.c"
     break;
 
   case 13:
-#line 557 "./parser.y"
+#line 568 "./parser.y"
                 {
 			if((yyvsp[-3].si)->getName() != "")
 				(yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
@@ -2049,11 +2057,11 @@ yyreduce:
 
 			
 		}
-#line 2053 "y.tab.c"
+#line 2061 "y.tab.c"
     break;
 
   case 14:
-#line 575 "./parser.y"
+#line 586 "./parser.y"
                 {
 			if((yyvsp[-2].si)->getName() != "")
 				(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
@@ -2068,11 +2076,11 @@ yyreduce:
 			param_list.push_back(make_pair("",(yyvsp[0].si)->getName()));
 			temp_line = yylineno;
 		}
-#line 2072 "y.tab.c"
+#line 2080 "y.tab.c"
     break;
 
   case 15:
-#line 590 "./parser.y"
+#line 601 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -2083,11 +2091,11 @@ yyreduce:
 			param_list.push_back(make_pair((yyvsp[0].si)->getName(),(yyvsp[-1].si)->getName()));
 			temp_line = yylineno;
 		}
-#line 2087 "y.tab.c"
+#line 2095 "y.tab.c"
     break;
 
   case 16:
-#line 601 "./parser.y"
+#line 612 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -2098,11 +2106,11 @@ yyreduce:
 			param_list.push_back(make_pair("",(yyvsp[0].si)->getName()));
 			temp_line = yylineno;
 		}
-#line 2102 "y.tab.c"
+#line 2110 "y.tab.c"
     break;
 
   case 17:
-#line 613 "./parser.y"
+#line 624 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo("", "NON_TERMINAL");
 			error_cnt++;
@@ -2111,11 +2119,11 @@ yyreduce:
 			//yyerrok;
 			yyclearin;
 		}
-#line 2115 "y.tab.c"
+#line 2123 "y.tab.c"
     break;
 
   case 18:
-#line 626 "./parser.y"
+#line 637 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+"\n"+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 				print_line();
@@ -2123,11 +2131,11 @@ yyreduce:
 				fp2<<(yyval.si)->getName()<<endl<<endl;
 				exitScope_parser();
 			}
-#line 2127 "y.tab.c"
+#line 2135 "y.tab.c"
     break;
 
   case 19:
-#line 634 "./parser.y"
+#line 645 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 				print_line();
@@ -2135,22 +2143,22 @@ yyreduce:
 				fp2<<(yyval.si)->getName()<<endl<<endl;
 				exitScope_parser();
 			}
-#line 2139 "y.tab.c"
+#line 2147 "y.tab.c"
     break;
 
   case 20:
-#line 644 "./parser.y"
+#line 655 "./parser.y"
                                  {
 					 //fp2<<"here in dummy token begin"<<endl;
 					 enterScope_parser();
 					 //add_function_param();
 
 				 }
-#line 2150 "y.tab.c"
+#line 2158 "y.tab.c"
     break;
 
   case 21:
-#line 653 "./parser.y"
+#line 664 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 			print_line();
@@ -2186,44 +2194,44 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
 		}
-#line 2190 "y.tab.c"
+#line 2198 "y.tab.c"
     break;
 
   case 22:
-#line 691 "./parser.y"
+#line 702 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo("int","NON_TERMINAL");
 				print_line();
 				fp2<<"type_specifier : "<<"INT\n"<<endl;
 				fp2<<"int\n"<<endl;
 			}
-#line 2201 "y.tab.c"
+#line 2209 "y.tab.c"
     break;
 
   case 23:
-#line 698 "./parser.y"
+#line 709 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo("float","NON_TERMINAL");
 			print_line();
 			fp2<<"type_specifier : "<<"FLOAT\n"<<endl;
 			fp2<<"float\n"<<endl;
 		}
-#line 2212 "y.tab.c"
+#line 2220 "y.tab.c"
     break;
 
   case 24:
-#line 705 "./parser.y"
+#line 716 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo("void","NON_TERMINAL");
 			print_line();
 			fp2<<"type_specifier : "<<"VOID\n"<<endl;
 			fp2<<"void\n"<<endl;
 		}
-#line 2223 "y.tab.c"
+#line 2231 "y.tab.c"
     break;
 
   case 25:
-#line 714 "./parser.y"
+#line 725 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 				print_line();
@@ -2232,11 +2240,11 @@ yyreduce:
 
 				decl_list.push_back(make_pair((yyvsp[0].si)->getName(),0));
 			}
-#line 2236 "y.tab.c"
+#line 2244 "y.tab.c"
     break;
 
   case 26:
-#line 723 "./parser.y"
+#line 734 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-5].si)->getName()+(yyvsp[-4].si)->getName()+(yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 				print_line();
@@ -2245,11 +2253,11 @@ yyreduce:
 
 				decl_list.push_back(make_pair((yyvsp[-3].si)->getName(),1));
 			}
-#line 2249 "y.tab.c"
+#line 2257 "y.tab.c"
     break;
 
   case 27:
-#line 732 "./parser.y"
+#line 743 "./parser.y"
                   {
  		  		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  		print_line();
@@ -2259,11 +2267,11 @@ yyreduce:
 				//decl_list.clear();
 				decl_list.push_back(make_pair((yyvsp[0].si)->getName(),0));
  		  }
-#line 2263 "y.tab.c"
+#line 2271 "y.tab.c"
     break;
 
   case 28:
-#line 742 "./parser.y"
+#line 753 "./parser.y"
                   {
 			    (yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  		print_line();
@@ -2273,11 +2281,11 @@ yyreduce:
 				//decl_list.clear();
 				decl_list.push_back(make_pair((yyvsp[-3].si)->getName(),1));
  		  }
-#line 2277 "y.tab.c"
+#line 2285 "y.tab.c"
     break;
 
   case 29:
-#line 752 "./parser.y"
+#line 763 "./parser.y"
                 {
 				(yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 				error_cnt++;
@@ -2287,22 +2295,22 @@ yyreduce:
 
 				yyerrok;
 		    }
-#line 2291 "y.tab.c"
+#line 2299 "y.tab.c"
     break;
 
   case 30:
-#line 765 "./parser.y"
+#line 776 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName()+"\n","NON_TERMINAL");
  		  		print_line();
 				fp2<<"statements : statement\n"<<endl;
 				fp2<<(yyval.si)->getName()<<endl;
  		  	}
-#line 2302 "y.tab.c"
+#line 2310 "y.tab.c"
     break;
 
   case 31:
-#line 773 "./parser.y"
+#line 784 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName()+"\n","NON_TERMINAL");
  		  	print_line();
@@ -2310,11 +2318,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl;
 
  		}
-#line 2314 "y.tab.c"
+#line 2322 "y.tab.c"
     break;
 
   case 32:
-#line 784 "./parser.y"
+#line 795 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2322,22 +2330,22 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2326 "y.tab.c"
+#line 2334 "y.tab.c"
     break;
 
   case 33:
-#line 793 "./parser.y"
+#line 804 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"statement : expression_statement\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
  		}
-#line 2337 "y.tab.c"
+#line 2345 "y.tab.c"
     break;
 
   case 34:
-#line 800 "./parser.y"
+#line 811 "./parser.y"
           {
 		  	(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2345,11 +2353,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2349 "y.tab.c"
+#line 2357 "y.tab.c"
     break;
 
   case 35:
-#line 808 "./parser.y"
+#line 819 "./parser.y"
           {
 			(yyval.si) = new SymbolInfo("for"+(yyvsp[-5].si)->getName()+(yyvsp[-4].si)->getName()+(yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2357,11 +2365,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2361 "y.tab.c"
+#line 2369 "y.tab.c"
     break;
 
   case 36:
-#line 816 "./parser.y"
+#line 827 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo("if "+(yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2369,11 +2377,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2373 "y.tab.c"
+#line 2381 "y.tab.c"
     break;
 
   case 37:
-#line 824 "./parser.y"
+#line 835 "./parser.y"
           {
 		  	(yyval.si) = new SymbolInfo("if "+(yyvsp[-5].si)->getName()+(yyvsp[-4].si)->getName()+(yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+"\nelse\n"+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2381,11 +2389,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2385 "y.tab.c"
+#line 2393 "y.tab.c"
     break;
 
   case 38:
-#line 832 "./parser.y"
+#line 843 "./parser.y"
           {
 		  	(yyval.si) = new SymbolInfo("while "+(yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
  		  	print_line();
@@ -2393,11 +2401,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2397 "y.tab.c"
+#line 2405 "y.tab.c"
     break;
 
   case 39:
-#line 840 "./parser.y"
+#line 851 "./parser.y"
            {
 		   	
 		   	(yyval.si) = new SymbolInfo("printf"+(yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
@@ -2414,11 +2422,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2418 "y.tab.c"
+#line 2426 "y.tab.c"
     break;
 
   case 40:
-#line 857 "./parser.y"
+#line 868 "./parser.y"
                 {
 			//fp2<<"RETURN symbol->name: "<<$1->getName()<<endl<<endl;
 		  	(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+" "+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
@@ -2427,11 +2435,35 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2431 "y.tab.c"
+#line 2439 "y.tab.c"
     break;
 
   case 41:
-#line 869 "./parser.y"
+#line 877 "./parser.y"
+                {
+			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
+			error_cnt++;
+			error_print_line();
+			fp2<<"Illegal scoping, function declared inside a function\n"<<endl;
+			fp3<<"Illegal scoping, function declared inside a function\n"<<endl;
+		}
+#line 2451 "y.tab.c"
+    break;
+
+  case 42:
+#line 886 "./parser.y"
+                {
+			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(), "NON_TERMINAL");
+			error_cnt++;
+			error_print_line();
+			fp2<<"Illegal scoping, function defined inside a function\n"<<endl;
+			fp3<<"Illegal scoping, function defined inside a function\n"<<endl;
+		}
+#line 2463 "y.tab.c"
+    break;
+
+  case 43:
+#line 897 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2439,11 +2471,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2443 "y.tab.c"
+#line 2475 "y.tab.c"
     break;
 
-  case 42:
-#line 877 "./parser.y"
+  case 44:
+#line 905 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 	 		  	print_line();
@@ -2451,11 +2483,11 @@ yyreduce:
 				fp2<<(yyval.si)->getName()<<endl<<endl;
 
  			}
-#line 2455 "y.tab.c"
+#line 2487 "y.tab.c"
     break;
 
-  case 43:
-#line 887 "./parser.y"
+  case 45:
+#line 915 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo("","NON_TERMINAL");
 				error_cnt++;
@@ -2466,11 +2498,11 @@ yyreduce:
 				yyerrok;
 				yyclearin;
 			}
-#line 2470 "y.tab.c"
+#line 2502 "y.tab.c"
     break;
 
-  case 44:
-#line 900 "./parser.y"
+  case 46:
+#line 928 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 
@@ -2510,11 +2542,11 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2514 "y.tab.c"
+#line 2546 "y.tab.c"
     break;
 
-  case 45:
-#line 940 "./parser.y"
+  case 47:
+#line 968 "./parser.y"
                 {
 			print_line();
 			fp2<<"variable : ID LTHIRD expression RTHIRD\n"<<endl;
@@ -2563,11 +2595,11 @@ yyreduce:
 			
 			fp2<<(yyval.si)->getName()<<endl<<endl;
  		}
-#line 2567 "y.tab.c"
+#line 2599 "y.tab.c"
     break;
 
-  case 46:
-#line 991 "./parser.y"
+  case 48:
+#line 1019 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of expression
@@ -2578,11 +2610,11 @@ yyreduce:
 
 
  		}
-#line 2582 "y.tab.c"
+#line 2614 "y.tab.c"
     break;
 
-  case 47:
-#line 1002 "./parser.y"
+  case 49:
+#line 1030 "./parser.y"
            {
 		   	(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
@@ -2591,8 +2623,9 @@ yyreduce:
 			//set data type of logic expression
 			set_data_type((yyval.si),(yyvsp[-2].si));
 
-			if((yyvsp[0].si)->get_data_type() == "void")
+			if((yyvsp[0].si)->get_data_type() == "void" | (yyvsp[-2].si)->get_data_type() == "void")
 			{
+				mismatch_map[yylineno]++;
 				error_cnt++;
 				error_print_line();
 				fp3<<"Void function used in expression"<<endl<<endl;
@@ -2623,11 +2656,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2627 "y.tab.c"
+#line 2660 "y.tab.c"
     break;
 
-  case 48:
-#line 1046 "./parser.y"
+  case 50:
+#line 1075 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of logic expression
@@ -2637,11 +2670,11 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2641 "y.tab.c"
+#line 2674 "y.tab.c"
     break;
 
-  case 49:
-#line 1056 "./parser.y"
+  case 51:
+#line 1085 "./parser.y"
                  {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of logic expression
@@ -2662,11 +2695,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2666 "y.tab.c"
+#line 2699 "y.tab.c"
     break;
 
-  case 50:
-#line 1079 "./parser.y"
+  case 52:
+#line 1108 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of rel expression
@@ -2675,11 +2708,11 @@ yyreduce:
 			fp2<<"rel_expression : simple_expression\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2679 "y.tab.c"
+#line 2712 "y.tab.c"
     break;
 
-  case 51:
-#line 1088 "./parser.y"
+  case 53:
+#line 1117 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of rel expression
@@ -2698,11 +2731,11 @@ yyreduce:
 			fp2<<"rel_expression : simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
  		}
-#line 2702 "y.tab.c"
+#line 2735 "y.tab.c"
     break;
 
-  case 52:
-#line 1109 "./parser.y"
+  case 54:
+#line 1138 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of simple expression
@@ -2711,11 +2744,11 @@ yyreduce:
 			fp2<<"simple_expression : term\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2715 "y.tab.c"
+#line 2748 "y.tab.c"
     break;
 
-  case 53:
-#line 1118 "./parser.y"
+  case 55:
+#line 1147 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 			//set data type of simple expression
@@ -2746,11 +2779,11 @@ yyreduce:
 			fp2<<"simple_expression : simple_expression ADDOP term\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl<<endl;
  		}
-#line 2750 "y.tab.c"
+#line 2783 "y.tab.c"
     break;
 
-  case 54:
-#line 1152 "./parser.y"
+  case 56:
+#line 1181 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of term
@@ -2759,11 +2792,11 @@ yyreduce:
 			fp2<<"term : unary_expression\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2763 "y.tab.c"
+#line 2796 "y.tab.c"
     break;
 
-  case 55:
-#line 1161 "./parser.y"
+  case 57:
+#line 1190 "./parser.y"
         {
 		 	(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),"NON_TERMINAL");
 
@@ -2830,11 +2863,11 @@ yyreduce:
 			
 			fp2<<(yyval.si)->getName()<<endl<<endl;
  		}
-#line 2834 "y.tab.c"
+#line 2867 "y.tab.c"
     break;
 
-  case 56:
-#line 1230 "./parser.y"
+  case 58:
+#line 1259 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of unary expression
@@ -2854,11 +2887,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2858 "y.tab.c"
+#line 2891 "y.tab.c"
     break;
 
-  case 57:
-#line 1250 "./parser.y"
+  case 59:
+#line 1279 "./parser.y"
                  {
 			(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of unary expression
@@ -2878,11 +2911,11 @@ yyreduce:
 			fp2<<(yyval.si)->getName()<<endl<<endl;
 
  		}
-#line 2882 "y.tab.c"
+#line 2915 "y.tab.c"
     break;
 
-  case 58:
-#line 1270 "./parser.y"
+  case 60:
+#line 1299 "./parser.y"
                  {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of unary expression
@@ -2892,11 +2925,11 @@ yyreduce:
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 
  		}
-#line 2896 "y.tab.c"
+#line 2929 "y.tab.c"
     break;
 
-  case 59:
-#line 1282 "./parser.y"
+  case 61:
+#line 1311 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());
 			//set data type of factor
@@ -2906,11 +2939,11 @@ yyreduce:
 			fp2<<"factor : variable\n"<<endl;
 			fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  		}
-#line 2910 "y.tab.c"
+#line 2943 "y.tab.c"
     break;
 
-  case 60:
-#line 1292 "./parser.y"
+  case 62:
+#line 1321 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[-3].si)->getName()+(yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 		print_line();
@@ -2950,7 +2983,7 @@ yyreduce:
 				//check if defined
 				if(f->get_flag() != 1)
 				{
-					mismatch_map[yylineno]++;
+					//mismatch_map[yylineno]++;
 					error_cnt++;
 					error_print_line();
 					fp3<<(yyvsp[-3].si)->getName() + " function declared but not defined"<<endl<<endl;
@@ -2964,7 +2997,7 @@ yyreduce:
 					//number of arguments
 					if((int)arg_list.size() != f->getNumber_of_param())
 					{
-						mismatch_map[yylineno]++;
+						//mismatch_map[yylineno]++;
 						error_cnt++;
 						error_print_line();
 						fp3<<"Total number of arguments mismatch in function "+(yyvsp[-3].si)->getName()<<endl<<endl;
@@ -2984,7 +3017,7 @@ yyreduce:
 							{
 								if(x != "array")
 								{
-									mismatch_map[yylineno]++;
+									//mismatch_map[yylineno]++;
 									error_cnt++;
 									error_print_line();
 									fp3<<i+1<<"th argument mismatch in function " + (yyvsp[-3].si)->getName()<<endl<<endl;
@@ -3007,11 +3040,11 @@ yyreduce:
  	  	
 		fp2<<(yyval.si)->getName()<<endl;
  	}
-#line 3011 "y.tab.c"
+#line 3044 "y.tab.c"
     break;
 
-  case 61:
-#line 1389 "./parser.y"
+  case 63:
+#line 1418 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), (yyvsp[-1].si)->getType());
 		set_data_type((yyval.si),(yyvsp[-1].si));
@@ -3020,11 +3053,11 @@ yyreduce:
 		fp2<<(yyval.si)->getName()<<endl<<endl;
 
 	}
-#line 3024 "y.tab.c"
+#line 3057 "y.tab.c"
     break;
 
-  case 62:
-#line 1398 "./parser.y"
+  case 64:
+#line 1427 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 		(yyval.si)->set_data_type("int");
@@ -3037,11 +3070,11 @@ yyreduce:
 		fp2<<"factor : CONST_INT\n"<<endl;
 		fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
 	}
-#line 3041 "y.tab.c"
+#line 3074 "y.tab.c"
     break;
 
-  case 63:
-#line 1411 "./parser.y"
+  case 65:
+#line 1440 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 		(yyval.si)->set_data_type("float");
@@ -3049,11 +3082,11 @@ yyreduce:
 		fp2<<"factor : CONST_FLOAT\n"<<endl;
 		fp2<<(yyvsp[0].si)->getName()<<endl<<endl;
  	}
-#line 3053 "y.tab.c"
+#line 3086 "y.tab.c"
     break;
 
-  case 64:
-#line 1419 "./parser.y"
+  case 66:
+#line 1448 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),(yyvsp[-1].si)->getType());
 		//set data type of factor
@@ -3062,11 +3095,11 @@ yyreduce:
 		fp2<<"factor : variable INCOP\n"<<endl;
 		fp2<<(yyval.si)->getName()<<endl<<endl;
  	}
-#line 3066 "y.tab.c"
+#line 3099 "y.tab.c"
     break;
 
-  case 65:
-#line 1428 "./parser.y"
+  case 67:
+#line 1457 "./parser.y"
         {
 		(yyval.si) = new SymbolInfo((yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(),(yyvsp[-1].si)->getType());
 		//set data type of factor
@@ -3075,33 +3108,33 @@ yyreduce:
 		fp2<<"factor : variable DECOP\n"<<endl;
 		fp2<<(yyval.si)->getName()<<endl<<endl;
  	}
-#line 3079 "y.tab.c"
+#line 3112 "y.tab.c"
     break;
 
-  case 66:
-#line 1439 "./parser.y"
+  case 68:
+#line 1468 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
  		  	print_line();
 			fp2<<"argument_list : arguments\n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl;
  		}
-#line 3090 "y.tab.c"
+#line 3123 "y.tab.c"
     break;
 
-  case 67:
-#line 1446 "./parser.y"
+  case 69:
+#line 1475 "./parser.y"
                 {
 			(yyval.si) = new SymbolInfo("", "NON_TERMINAL");
  		  	print_line();
 			fp2<<"argument_list : \n"<<endl;
 			fp2<<(yyval.si)->getName()<<endl;
  		}
-#line 3101 "y.tab.c"
+#line 3134 "y.tab.c"
     break;
 
-  case 68:
-#line 1455 "./parser.y"
+  case 70:
+#line 1484 "./parser.y"
                         {
 				(yyval.si) = new SymbolInfo((yyvsp[-2].si)->getName()+(yyvsp[-1].si)->getName()+(yyvsp[0].si)->getName(), "NON_TERMINAL");
 				print_line();
@@ -3115,11 +3148,11 @@ yyreduce:
 
 
  			}
-#line 3119 "y.tab.c"
+#line 3152 "y.tab.c"
     break;
 
-  case 69:
-#line 1469 "./parser.y"
+  case 71:
+#line 1498 "./parser.y"
                 {
 				(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),"NON_TERMINAL");
 				print_line();
@@ -3131,22 +3164,22 @@ yyreduce:
 				else
 					arg_list.push_back("array");
  			}
-#line 3135 "y.tab.c"
+#line 3168 "y.tab.c"
     break;
 
-  case 70:
-#line 1483 "./parser.y"
+  case 72:
+#line 1512 "./parser.y"
         {		
 		(yyval.si) = new SymbolInfo((yyvsp[0].si)->getName(),(yyvsp[0].si)->getType());	
 		temp_id = (yyvsp[0].si)->getName();
 		//print_line();
 		//fp2<<"id: ID"<<endl;
 	}
-#line 3146 "y.tab.c"
+#line 3179 "y.tab.c"
     break;
 
 
-#line 3150 "y.tab.c"
+#line 3183 "y.tab.c"
 
       default: break;
     }
@@ -3378,7 +3411,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1493 "./parser.y"
+#line 1522 "./parser.y"
 
 int main(int argc,char *argv[])
 {

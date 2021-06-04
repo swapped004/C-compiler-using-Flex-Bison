@@ -482,6 +482,11 @@ public:
         curr = new ScopeTable(total_buckets);
     }
 
+    ScopeTable* get_curr()
+    {
+        return curr;
+    }
+
 
     void enter_scope()
     {

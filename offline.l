@@ -215,7 +215,7 @@ printf {return PRINTLN;}
 									 		fp2<<yytext<<endl<<endl;
 											SymbolInfo* si = new SymbolInfo(yytext,"CONST_FLOAT");
 			 								yylval.si = si; 
-											return CONST_FLOAT;}	
+											return ID;}	
 
 
 

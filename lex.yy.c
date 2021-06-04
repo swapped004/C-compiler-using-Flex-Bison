@@ -1207,7 +1207,7 @@ YY_RULE_SETUP
 									 		fp2<<yytext<<endl<<endl;
 											SymbolInfo* si = new SymbolInfo(yytext,"CONST_FLOAT");
 			 								yylval.si = si; 
-											return CONST_FLOAT;}	
+											return ID;}	
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
