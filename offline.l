@@ -76,6 +76,7 @@ return	{
 		}
 continue {return CONTINUE;}
 printf {return PRINTLN;}
+println {return PRINTLN;}
 
 
 {digit}+	 {

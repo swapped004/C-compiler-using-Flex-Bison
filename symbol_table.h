@@ -1,10 +1,14 @@
-#ifndef SYMBOL
-#define SYMBOL
-
 
 #include<bits/stdc++.h>
 #include<cstdlib>
 #include<fstream>
+
+
+
+
+#ifndef SYMBOL
+#define SYMBOL
+
 
 using namespace std;
 
@@ -65,22 +69,35 @@ public:
 
 
 class SymbolInfo{
+    //name
     string name;
+    //type-> array or not
     string type;
+    //next pointer
     SymbolInfo *next;
+    //index and position
     int index;
     int pos;
     bool is_array;
+    //for array size
+    int size;
 
+
+    //data type
     string data_type;
+    //function parameters if it is a function
     func_param* func;
+
+    //symbol
+    string symbol;
     
 
 public:
+    string code;
 
     SymbolInfo()
     {
-
+        code = "";
     }
 
     SymbolInfo(string name, string type)
@@ -91,11 +108,43 @@ public:
         this->type = type;
         index = -1;
         pos = -1;
+        size = -1;
+        code = "";
 
         //default data type set to int
         data_type = "int";
         func = NULL;
         is_array = false;
+    }
+
+    void set_symbol(string symbol)
+    {
+        this->symbol = symbol;
+    }
+
+    string get_symbol()
+    {
+        return symbol;
+    }
+
+    void set_size(int size)
+    {
+        this->size = size;
+    }
+
+    int get_size()
+    {
+        return size;
+    }
+
+    void set_code(string code)
+    {
+        this->code = code;
+    }
+
+    string get_code()
+    {
+        return code;
     }
 
     void set_data_type(string dt)
@@ -177,6 +226,8 @@ public:
     {
         return index;
     }
+
+    
 
 
     ~SymbolInfo()

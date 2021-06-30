@@ -1,8 +1,10 @@
 %{
 #include<bits/stdc++.h>
 #include<iostream>
+#include<sstream>
 #include<cstdlib>
 #include<cstring>
+#include<string>
 #include<cmath>
 #include<fstream>
 #include "symbol_table.h"
@@ -23,7 +25,33 @@ extern long long int error_cnt;
 
 
 SymbolTable st(30);
-ofstream fp2,fp3;
+ofstream fp2,fp3,fp4;
+
+int labelCount=0;
+int tempCount=0;
+
+
+char *newLabel()
+{
+	char *lb= new char[4];
+	strcpy(lb,"L");
+	char b[3];
+	sprintf(b,"%d", labelCount);
+	labelCount++;
+	strcat(lb,b);
+	return lb;
+}
+
+char *newTemp()
+{
+	char *t= new char[4];
+	strcpy(t,"t");
+	char b[3];
+	sprintf(b,"%d", tempCount);
+	tempCount++;
+	strcat(t,b);
+	return t;
+}
 
 
 void print_line()
@@ -61,6 +89,12 @@ string temp_id;
 
 map<int,int> mismatch_map;
 
+//code generation
+
+//data segment lines
+vector<string> data_seg;
+//array_index
+
 
 bool insert_ID(string name, string data_type, int is_array)
 {
@@ -71,8 +105,38 @@ bool insert_ID(string name, string data_type, int is_array)
 		st.Insert(name,"ID");
 		SymbolInfo* temp = st.Look_up_current(name);
 		temp->set_data_type(data_type);
-		if(is_array == 1)
+
+		string scope_id = st.get_curr()->get_id();
+		//replace all '.' with '_'
+		for(int i=0;i<scope_id.length();i++)
+		{
+			if(scope_id[i] == '.')
+			{
+				scope_id[i] = '_';
+			}
+		}
+		string var_name = name+scope_id;
+		temp->set_symbol(var_name);
+
+		if(is_array != 0)
+		{
+			//array
 			temp->set_array(true);
+			temp->setType("array");
+			//set size
+			temp->set_size(is_array);
+			//add to data segment
+			string val = var_name+" dw "+ to_string(is_array)+" dup(?)";
+			data_seg.push_back(val);
+		}
+
+		else
+		{
+			//not array
+			
+			//add to data segment
+			data_seg.push_back(var_name+" dw ?");
+		}
 		return true;
 	}
 
@@ -165,7 +229,69 @@ void exitScope_parser()
 }
 
 
+
+
+
+
+
+void print_proc()
+{
+	fp4<<"print PROC"<<endl;
+	fp4<<"\tpush ax"<<endl;
+	fp4<<"\tpush bx"<<endl; 
+	fp4<<"\tpush cx"<<endl;
+	fp4<<"\tpush dx"<<endl;
+	fp4<<"\tmov ax, print_var"<<endl;
+	fp4<<"\tmov bx, 10"<<endl;
+	fp4<<"\tmov cx, 0"<<endl;
+	fp4<<"printLabel1:"<<endl;
+	fp4<<"\tmov dx, 0"<<endl;
+	fp4<<"\tdiv bx"<<endl;
+	fp4<<"\tpush dx"<<endl;
+	fp4<<"\tinc cx"<<endl;
+	fp4<<"\tcmp ax, 0"<<endl;
+	fp4<<"\tjne printLabel1"<<endl;
+	fp4<<"\tprintLabel2:"<<endl;
+	fp4<<"\tmov ah, 2"<<endl;
+	fp4<<"\tpop dx"<<endl;
+	fp4<<"\tadd dl, '0'"<<endl;
+	fp4<<"\tint 21h"<<endl;
+	fp4<<"\tdec cx"<<endl;
+	fp4<<"\tcmp cx, 0"<<endl;
+	fp4<<"\tjne printLabel2"<<endl;
+	fp4<<"\tmov dl, 0Ah"<<endl;
+	fp4<<"\tint 21h"<<endl;
+	fp4<<"\tmov dl, 0Dh"<<endl;
+	fp4<<"\tint 21h"<<endl;
+	fp4<<"\tpop dx"<<endl;
+	fp4<<"\tpop cx"<<endl;
+	fp4<<"\tpop bx"<<endl;
+	fp4<<"\tpop ax"<<endl;
+	fp4<<"\tret"<<endl;
+	fp4<<"print endp"<<endl;
+}
+
+void init()
+{
+	fp4<<".MODEL SMALL"<<endl;
+	fp4<<".STACK 100H"<<endl;
+	fp4<<".DATA"<<endl;
+	fp4<<"print_var dw ?"<<endl;
+	fp4<<"ret_temp dw ?"<<endl;
+
+	for(string x:data_seg)
+	{
+		fp4<<"\t"<<x<<endl;
+	}
+
+	fp4<<".CODE"<<endl;
+	print_proc();
+}
+
+
+
 %}
+
 
 %union{int ival;SymbolInfo* si;}
 
@@ -196,22 +322,39 @@ start: program
 		print_line();
 		fp2<<"start : program\n"<<endl;
 		//fp2<<$$->getName()<<endl<<endl;
+
+		fp4.open("code.asm");
+
+		if(error_cnt == 0) // generate code
+		{	
+			init();
+			fp4<<$1->code<<endl;
+		}
+		// else blank code.asm
+
+		fp2<<$$->get_code()<<endl;
 	}
 	;
 
 program: program unit 
 		{
 			$$ = new SymbolInfo($1->getName()+$2->getName(), "NON_TERMINAL");
+			//add two code segments
+			$$->set_code($1->get_code()+$2->get_code());
 			print_line();
 			fp2<<"program : program unit\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 		}
 	| unit
 		{
 			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
+			//set_code
+			$$->set_code($1->get_code());
 			print_line();
 			fp2<<"program : unit\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 		}
 	;
 	
@@ -232,9 +375,12 @@ unit: var_declaration
      | func_definition
      	{
 			$$ = new SymbolInfo($1->getName()+"\n", "NON_TERMINAL");
+			//set code
+			$$->set_code($1->get_code());
 		 	print_line();
 			fp2<<"unit : func_definition\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 		}
 
      ;
@@ -336,6 +482,7 @@ func_declaration: type_specifier id func_begin LPAREN parameter_list RPAREN SEMI
 			param_list.clear();
 
 			fp2<<$$->getName()<<endl<<endl;
+			
 		}
 		;
 		 
@@ -414,6 +561,7 @@ func_definition: type_specifier id func_begin LPAREN parameter_list RPAREN compo
 				fp3<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
 				fp2<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
 			}			
+		
 				
 			param_list.clear();
 
@@ -486,12 +634,24 @@ func_definition: type_specifier id func_begin LPAREN parameter_list RPAREN compo
 				fp3<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
 				fp2<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
 			}	
+
+
+			//code
+			if($2->getName() == "main")
+			{
+				$$->code +="main proc\n";
+				$$->code+="\tmov ax,@data\n";
+				$$->code+="\tmov ds,ax\n\n\n";
+			}
+
+			$$->code+=$6->get_code();
+			$$->code+="main endp";
 			
 					
-				
 			param_list.clear();
 
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
 		}
 
@@ -650,10 +810,14 @@ parameter_list: parameter_list COMMA type_specifier id
 compound_statement: LCURL dummy_token_begin statements RCURL
 			{
 				$$ = new SymbolInfo($1->getName()+"\n"+$3->getName()+$4->getName(), "NON_TERMINAL");
+				//set_code
+				$$->set_code($3->get_code());
 				print_line();
 				fp2<<"compound_statement : LCURL statements RCURL\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
 				exitScope_parser();
+
+				fp2<<$$->get_code()<<endl;
 			}
  		    | LCURL dummy_token_begin RCURL
 			{
@@ -662,6 +826,8 @@ compound_statement: LCURL dummy_token_begin statements RCURL
 				fp2<<"compound_statement : LCURL RCURL\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
 				exitScope_parser();
+
+				fp2<<$$->get_code()<<endl;
 			}
  		    ;
 
@@ -795,7 +961,13 @@ declaration_list: declaration_list COMMA id
 				fp2<<"declaration_list : declaration_list COMMA ID LTHIRD CONST_INT RTHIRD\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
 
-				decl_list.push_back(make_pair($3->getName(),1));
+
+				//size-> convert string to int
+				int size = 0;
+				stringstream val($5->getName());
+				val >> size;
+
+				decl_list.push_back(make_pair($3->getName(),size));
 			}
  		  | id
  		  {
@@ -814,8 +986,13 @@ declaration_list: declaration_list COMMA id
 				fp2<<"declaration_list : ID LTHIRD CONST_INT RTHIRD\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
 
+				//size-> convert string to int
+				int size = 0;
+				stringstream val($3->getName());
+				val >> size;
+
 				//decl_list.clear();
-				decl_list.push_back(make_pair($1->getName(),1));
+				decl_list.push_back(make_pair($1->getName(),size));
  		  }
 
 			| declaration_list error COMMA id
@@ -833,17 +1010,23 @@ declaration_list: declaration_list COMMA id
 statements: statement
 			{
 				$$ = new SymbolInfo($1->getName()+"\n","NON_TERMINAL");
+				//set_code
+				$$->set_code($1->get_code());
  		  		print_line();
 				fp2<<"statements : statement\n"<<endl;
 				fp2<<$$->getName()<<endl;
+				fp2<<$$->get_code()<<endl;
  		  	}
 		
 	   | statements statement
 	   {
 		   	$$ = new SymbolInfo($1->getName()+$2->getName()+"\n","NON_TERMINAL");
+			//add two code segments
+			$$->set_code($1->get_code()+$2->get_code());
  		  	print_line();
 			fp2<<"statements : statements statement\n"<<endl;
 			fp2<<$$->getName()<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		}
 		
@@ -861,16 +1044,22 @@ statement: var_declaration
 	  | expression_statement
 	   {
 		   	$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set_code
+			$$->set_code($1->get_code());
  		  	print_line();
 			fp2<<"statement : expression_statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		}
 	  | compound_statement
 	  {
 		  	$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+			//set_code
+			$$->set_code($1->get_code());
  		  	print_line();
 			fp2<<"statement : compound_statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		}
 	  | FOR LPAREN expression_statement expression_statement expression RPAREN statement
@@ -943,10 +1132,13 @@ statement: var_declaration
 	  | func_definition
 		{
 			$$ = new SymbolInfo($1->getName(), "NON_TERMINAL");
+			//set_code
+			$$->set_code($1->get_code());
 			error_cnt++;
 			error_print_line();
 			fp2<<"Illegal scoping, function defined inside a function\n"<<endl;
 			fp3<<"Illegal scoping, function defined inside a function\n"<<endl;
+			fp2<<$$->get_code()<<endl;
 		}
 		
 	  ;
@@ -957,14 +1149,21 @@ expression_statement: SEMICOLON
  		  	print_line();
 			fp2<<"expression_statement : SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		}		
 			| expression SEMICOLON 
 			{
 				$$ = new SymbolInfo($1->getName()+$2->getName(),"NON_TERMINAL");
+				//set_code
+				$$->set_code($1->get_code());
+				$$->set_data_type($1->get_data_type());
+				$$->set_symbol($1->get_symbol());
+
 	 		  	print_line();
 				fp2<<"expression_statement : expression SEMICOLON\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
+				fp2<<$$->get_code()<<endl;
 
  			}
 
@@ -1021,12 +1220,22 @@ variable: id
 			}
 			
 			
-			//set variable data type according to id's data type
+			//set variable data type and symbol according to id's data type
 			SymbolInfo* s = st.Look_up($1->getName());
 			if(s != NULL)
+			{
+				//data_type
 				set_data_type($$,s);
+				//type
+				$$->setType(s->getType());
+				//symbol
+				$$->set_symbol(s->get_symbol());
+
+			}
+			
 			
 			fp2<<$1->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		}		
 	 	| id LTHIRD expression RTHIRD
@@ -1074,9 +1283,34 @@ variable: id
 			//set variable data type according to id's data type
 			SymbolInfo* s = st.Look_up($1->getName());
 			if(s != NULL)
+			{
+				//data_type and symbol
 				set_data_type($$,s);
+				$$->set_size(s->get_size());
+				$$->setType("array");
+
+				//index calculation
+				//saving the index in bx
+				$$->code += "\tMOV bx,"+$3->get_symbol()+"\n";
+				//index = index*2
+				$$->code += "\tADD bx,bx\n";
+
+				$$->set_symbol(s->get_symbol());
+
+				/*
+				//added code
+				string temp = newTemp();
+				data_seg.push_back(temp+"dw ?");
+				
+				$$->code +="\tMOV cx,"+$1->get_symbol()+"\n";
+				$$->code +="\tMOV "+temp+",cx[bx]\n";
+
+				$$->set_symbol(temp);
+				*/
+			}
 			
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		} 
 	 ;
 	 
@@ -1084,18 +1318,25 @@ variable: id
  		{
 			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of expression
+			$$->set_code($1->get_code());
+			$$->set_size($1->get_size());
 			set_data_type($$,$1);
+			$$->set_symbol($1->get_symbol());
+
  		  	print_line();
 			fp2<<"expression : logic expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
 
  		} 
 	   | variable ASSIGNOP logic_expression
 	   {
 		   	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
- 		  	print_line();
-			fp2<<"expression : variable ASSIGNOP logic_expression\n"<<endl;
+			//add two code segments
+			$$->set_code($1->get_code()+$3->get_code());
+
+ 		  	
 			
 			//set data type of logic expression
 			set_data_type($$,$1);
@@ -1130,7 +1371,24 @@ variable: id
 
 			mismatch_map.clear();
 
+			//code
+			if($1->getType() == "array")
+			{
+				$$->code += "\tMOV ax,"+$3->get_symbol()+"\n";
+				$$->code += "\tMOV "+$1->get_symbol()+"[bx],ax\n";
+			}
+
+			else
+			{
+				$$->code += "\tMOV ax,"+$3->get_symbol()+"\n";
+				$$->code += "\tMOV "+$1->get_symbol()+",ax\n";
+			}
+			$$->set_symbol($1->get_symbol());
+
+			print_line();
+			fp2<<"expression : variable ASSIGNOP logic_expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		} 
 		 
@@ -1140,15 +1398,22 @@ logic_expression: rel_expression
  		{
 			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of logic expression
+			$$->set_code($1->get_code());
+			$$->set_size($1->get_size());
 			set_data_type($$,$1);
+			$$->set_symbol($1->get_symbol());
+
  		  	print_line();
 			fp2<<"logic_expression : rel_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		} 	
 		 | rel_expression LOGICOP rel_expression 
 		 {
 			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
+			//add two code segments
+			$$->set_code($1->get_code()+$3->get_code());
 			//set data type of logic expression
 			//set_data_type($$,$1);
 			$$->set_data_type("int");
@@ -1162,9 +1427,24 @@ logic_expression: rel_expression
 				fp2<<"Void function used in expression"<<endl<<endl;
 			}
 
+			//code
+			$$->code +="\tMOV ax,"+$3->get_symbol()+"\n";
+			if($2->getName() == "||")
+			{
+				$$->code +="\tOR "+$1->get_symbol()+",ax\n";
+			}
+
+			else if($2->getName() == "&&")
+			{
+				$$->code +="\tAND "+$1->get_symbol()+",ax\n";
+			}
+
+			$$->set_symbol($1->get_symbol());
+
  		  	print_line();
 			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		} 		
 		 ;
@@ -1173,14 +1453,21 @@ rel_expression: simple_expression
 		{
 			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of rel expression
+			$$->set_code($1->get_code());
+			$$->set_size($1->get_size());
 			set_data_type($$,$1);
+			$$->set_symbol($1->get_symbol());
+
  		  	print_line();
 			fp2<<"rel_expression : simple_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		} 	
 		| simple_expression RELOP simple_expression	
 		{
 			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
+			//add two code segments
+			$$->set_code($1->get_code()+$3->get_code());
 			//set data type of rel expression
 			//set_data_type($$,$1);
 			$$->set_data_type("int");
@@ -1193,9 +1480,58 @@ rel_expression: simple_expression
 				fp3<<"Void function used in expression"<<endl<<endl;
 				fp2<<"Void function used in expression"<<endl<<endl;
 			}
+
+			//code
+			string temp = newTemp();
+			string label1 = newLabel();
+			string label2 = newLabel();
+
+			$$->code+="\tMOV ax,"+$1->get_symbol()+"\n";
+			$$->code+="\tCMP ax,"+$3->get_symbol()+"\n";
+
+			if($2->getName() == "==")
+			{
+				$$->code+="\tJE "+label1+"\n";
+			}
+
+			else if($2->getName() == "<")
+			{
+				$$->code+="\tJL "+label1+"\n";
+			}
+
+			else if($2->getName() == ">")
+			{
+				$$->code+="\tJG "+label1+"\n";
+			}
+
+			else if($2->getName() == "<=")
+			{
+				$$->code+="\tJLE "+label1+"\n";
+			}
+
+			else if($2->getName() == ">=")
+			{
+				$$->code+="\tJGE "+label1+"\n";
+			}
+
+			else if($2->getName() == "!=")
+			{
+				$$->code+="\tJNE "+label1+"\n";
+			}
+
+			$$->code+="\tMOV cx,0\n";
+			$$->code+="\tJMP "+label2+"\n";
+			$$->code+=label1+":\n";
+			$$->code+="\tMOV cx,1\n";
+			$$->code+=label2+":\n";
+			$$->code+="\tMOV "+temp+",cx\n";
+
+			$$->set_symbol(temp);
+
  		  	print_line();
 			fp2<<"rel_expression : simple_expression RELOP simple_expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		} 
 		;
 				
@@ -1203,14 +1539,21 @@ simple_expression: term
 		{
 			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of simple expression
+			$$->set_code($1->get_code());
+			$$->set_size($1->get_size());
 			set_data_type($$,$1);
+			$$->set_symbol($1->get_symbol());
+
  		  	print_line();
 			fp2<<"simple_expression : term\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		} 
 		  | simple_expression ADDOP term 
 		{
 			$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
+			//add two code segments
+			$$->set_code($1->get_code()+$3->get_code());
 			//set data type of simple expression
 
 			if($1->get_data_type() == "void" | $3->get_data_type() == "void")
@@ -1234,10 +1577,30 @@ simple_expression: term
 				$$->set_data_type("int");
 			}
 
+			//code
+			string temp = newTemp();
+			data_seg.push_back(temp+" dw ?");
+			$$->code +="\tMOV "+temp+","+$1->get_symbol()+"\n";
+			$$->code +="\tMOV ax,"+$3->get_symbol()+"\n";
+			
+			if($2->getName() == "+")
+			{
+				$$->code +="\tADD "+temp+",ax\n";
+			}
+			else
+			{
+				$$->code +="\tSUB "+temp+",ax\n";
+			}
+
+			$$->set_symbol(temp);
+
 
  		  	print_line();
+			fp2<<$2->getName()<<endl;
+			//fp2<<$$->code<<endl;
 			fp2<<"simple_expression : simple_expression ADDOP term\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		} 
 		  
 		  ;
@@ -1246,14 +1609,22 @@ term:	unary_expression
 		{
 			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of term
+			$$->set_code($1->get_code());
+			$$->set_size($1->get_size());
 			set_data_type($$,$1);
+			$$->set_symbol($1->get_symbol());
+
  		  	print_line();
 			fp2<<"term : unary_expression\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		}
      |  term MULOP unary_expression
      	{
 		 	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
+
+			//adding the code segments together
+			$$->set_code($1->get_code()+$3->get_code());
 
 			print_line();
 			fp2<<"term : term MULOP unary_expression\n"<<endl;
@@ -1314,9 +1685,40 @@ term:	unary_expression
 				$$->set_data_type("int");
 			}
 
- 		  	
-			
+			//code
+			string temp = newTemp();
+			data_seg.push_back(temp+" dw ?");
+
+			if($2->getName() == "*")
+			{
+				$$->code+="\tMOV ax,"+$1->get_symbol()+"\n";
+				$$->code+="\tMOV dx,"+$3->get_symbol()+"\n";
+				$$->code+="\tMUL dx\n";
+				//result lower half is in ax, upper half in dx
+				$$->code+="\tMOV "+temp+",ax\n";
+				
+			}
+
+			else
+			{
+				$$->code+="\tMOV ax,"+$1->get_symbol()+"\n";
+				$$->code+="\tXOR dx,dx\n";
+				$$->code+="\tMOV bx,"+$3->get_symbol()+"\n";
+				$$->code+="\tDIV bx\n";
+
+				if($2->getName() == "/")
+				{
+					$$->code+="\tMOV "+temp+",ax\n";
+				}
+				else if($2->getName() == "%")
+				{
+					$$->code+="\tMOV "+temp+",dx\n";
+				}
+			}
+			$$->set_symbol(temp);
+
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		}
      ;
 
@@ -1324,7 +1726,9 @@ unary_expression: ADDOP unary_expression
  		{
 			$$ = new SymbolInfo($1->getName()+$2->getName(),$2->getType());
 			//set data type of unary expression
-			set_data_type($$,$2);
+			$$->set_code($2->get_code());
+			set_data_type($$,$2);		
+			$$->set_size($2->get_size());
 
 			if($2->get_data_type() == "void")
 			{
@@ -1335,16 +1739,28 @@ unary_expression: ADDOP unary_expression
 				fp3<<"Void function used in expression"<<endl<<endl;
 				fp2<<"Void function used in expression"<<endl<<endl;
 			}
+
+			//code
+			if($1->getName() == "-")
+			{
+				$$->code+="\tNEG "+$2->get_symbol()+"\n";	
+			}
+			//symbol same as unary_expression
+			$$->set_symbol($2->get_symbol());
+
  		  	print_line();
 			fp2<<"unary_expression : ADDOP unary expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		}  
 		 | NOT unary_expression
 		 {
 			$$ = new SymbolInfo($1->getName()+$2->getName(),$2->getType());
 			//set data type of unary expression
+			$$->set_code($2->get_code());
 			set_data_type($$,$2);
+			$$->set_size($2->get_size());
 
 			if($2->get_data_type() == "void")
 			{
@@ -1355,19 +1771,31 @@ unary_expression: ADDOP unary_expression
 				fp3<<"Void function used in expression"<<endl<<endl;
 				fp2<<"Void function used in expression"<<endl<<endl;
 			}
+
+			//code
+			$$->code+="\tNOT "+$2->get_symbol()+"\n";
+			//symbol same as unary_expression
+			$$->set_symbol($2->get_symbol());
+
  		  	print_line();
 			fp2<<"unary_expression : NOT unary expression\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		}   
 		 | factor 
 		 {
 			$$ = new SymbolInfo($1->getName(),$1->getType());
 			//set data type of unary expression
+			$$->set_code($1->get_code());
 			set_data_type($$,$1);
+			$$->set_size($1->get_size());
+			$$->set_symbol($1->get_symbol());
+
  		  	print_line();
 			fp2<<"unary_expression : factor\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		}  
 		 ;
@@ -1375,12 +1803,31 @@ unary_expression: ADDOP unary_expression
 factor: variable 
  		{
 			$$ = new SymbolInfo($1->getName(),$1->getType());
+			$$->set_code($1->get_code());
 			//set data type of factor
 			set_data_type($$,$1);
+			
+			//the symbol is same as variable symbol
+			if($1->getType() == "array")
+			{
+				string temp = newTemp();
+				data_seg.push_back(temp+" dw ?");
+				$$->set_size($1->get_size());
+
+				$$->code+= "\tMOV ax,"+$1->get_symbol()+"[bx]\n";
+				$$->code+= "\tMOV "+temp+",ax\n";
+				$$->set_symbol(temp);
+			}
+
+			else
+			{
+				$$->set_symbol($1->get_symbol());
+			}
 
  		  	print_line();
 			fp2<<"factor : variable\n"<<endl;
 			fp2<<$1->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
  		} 
 	| id LPAREN argument_list RPAREN
 	{
@@ -1478,13 +1925,19 @@ factor: variable
 		arg_list.clear();
  	  	
 		fp2<<$$->getName()<<endl;
+		fp2<<$$->get_code()<<endl;
  	} 
 	| LPAREN expression RPAREN
 	{
 		$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(), $2->getType());
+		$$->set_code($2->get_code());
+
 		set_data_type($$,$2);
+		//set symbol same as the expression symbol
+		$$->set_symbol($2->get_symbol());
  		print_line();
 		fp2<<"factor : LPAREN expression RPAREN\n"<<endl;
+		fp2<<$$->get_code()<<endl;
 		fp2<<$$->getName()<<endl<<endl;
 
 	} 
@@ -1497,34 +1950,98 @@ factor: variable
 		{
 			$$->setType("zero");
 		}
+
+		//the symbol is same as value
+		$$->set_symbol($1->getName());
+
  		print_line();
 		fp2<<"factor : CONST_INT\n"<<endl;
+		
 		fp2<<$1->getName()<<endl<<endl;
 	} 
 	| CONST_FLOAT
 	{
 		$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
 		$$->set_data_type("float");
+
+		//the symbol is same as value
+		$$->set_symbol($1->getName());
+
 	  	print_line();
 		fp2<<"factor : CONST_FLOAT\n"<<endl;
+		
 		fp2<<$1->getName()<<endl<<endl;
  	} 
 	| variable INCOP
 	{
 		$$ = new SymbolInfo($1->getName()+$2->getName(),$1->getType());
+		$$->set_code($1->get_code());
 		//set data type of factor
 		set_data_type($$,$1);
+
+		if($1->getType() == "array")
+		{
+			string temp = newTemp();
+			data_seg.push_back(temp+" dw ?");
+
+			$$->code += "\tMOV ax,"+$1->get_symbol()+"[bx]\n";
+			$$->code += "\tMOV "+temp+",ax\n";
+			$$->code += "\tDEC "+$1->get_symbol()+"[bx]\n";
+
+			$$->set_symbol(temp);
+		}
+
+		else
+		{
+			string temp = newTemp();
+			data_seg.push_back(temp+" dw ?");
+			
+			$$->code += "\tMOV ax,"+$1->get_symbol()+"\n";
+			$$->code += "\tMOV "+temp+",ax\n";
+			$$->code += "\tINC "+$1->get_symbol()+"\n";
+
+			$$->set_symbol(temp);
+		}
+
  	  	print_line();
 		fp2<<"factor : variable INCOP\n"<<endl;
+		fp2<<$$->get_code()<<endl;
 		fp2<<$$->getName()<<endl<<endl;
  	}  
 	| variable DECOP
 	{
-		$$ = new SymbolInfo($1->getName()+$2->getName(),$1->getType());
+		$$ = new SymbolInfo($1->getName()+$2->getName(),"NON_TERMINAL");
+		$$->set_code($1->get_code());
 		//set data type of factor
 		set_data_type($$,$1);
+
+		if($1->getType() == "array")
+		{
+			string temp = newTemp();
+			data_seg.push_back(temp+" dw ?");
+
+			$$->code += "\tMOV ax,"+$1->get_symbol()+"[bx]\n";
+			$$->code += "\tMOV "+temp+",ax\n";
+			$$->code += "\tDEC "+$1->get_symbol()+"[bx]\n";
+
+			$$->set_symbol(temp);
+		}
+
+		else
+		{
+			string temp = newTemp();
+			data_seg.push_back(temp+" dw ?");
+			
+			$$->code += "\tMOV ax,"+$1->get_symbol()+"\n";
+			$$->code += "\tMOV "+temp+",ax\n";
+			$$->code += "\tDEC "+$1->get_symbol()+"\n";
+
+			$$->set_symbol(temp);
+		}
+
  	  	print_line();
 		fp2<<"factor : variable DECOP\n"<<endl;
+		fp2<<$$->get_code()<<endl;
 		fp2<<$$->getName()<<endl<<endl;
  	} 
 	;

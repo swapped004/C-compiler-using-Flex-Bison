@@ -49,6 +49,7 @@ MULOP [*/%]
 "void" {return VOID;}
 "main"	{return MAIN;}
 "println"	{return PRINTLN;}
+"printf"	{return PRINTLN;}
 
 {ADDOP} { 
 			SymbolInfo *s= new  SymbolInfo(yytext, (char *)"ADDOP");
