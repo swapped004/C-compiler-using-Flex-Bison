@@ -21,6 +21,8 @@ class func_param{
     string return_type;
     vector<pair<string,string>> param_list;
     int dec_or_def;
+    vector<string> param_symbol;
+    vector<string> stack_symbol;
 
 public:
     func_param()
@@ -61,6 +63,26 @@ public:
         return return_type;
     }
 
+    void set_param_symbol(vector<string> p)
+    {
+        param_symbol = p;
+    }
+
+    vector<string> get_param_symbol()
+    {
+        return param_symbol;
+    }
+
+    void set_stack_symbol(vector<string> p)
+    {
+        stack_symbol = p;
+    }
+
+    vector<string> get_stack_symbol()
+    {
+        return stack_symbol;
+    }
+
     vector<pair<string,string>> getParam_list()
     {
         return param_list;
@@ -81,8 +103,9 @@ class SymbolInfo{
     bool is_array;
     //for array size
     int size;
-
-
+    //for array index symbol
+    string index_symbol;
+    
     //data type
     string data_type;
     //function parameters if it is a function
@@ -91,8 +114,8 @@ class SymbolInfo{
     //symbol
     string symbol;
     
-
 public:
+    //store code
     string code;
 
     SymbolInfo()
@@ -115,6 +138,10 @@ public:
         data_type = "int";
         func = NULL;
         is_array = false;
+
+        //
+        symbol = "";
+        index_symbol = "";
     }
 
     void set_symbol(string symbol)
@@ -125,6 +152,16 @@ public:
     string get_symbol()
     {
         return symbol;
+    }
+
+    void set_index_symbol(string index_symbol)
+    {
+        this->index_symbol = index_symbol;
+    }
+
+    string get_index_symbol()
+    {
+        return index_symbol;
     }
 
     void set_size(int size)

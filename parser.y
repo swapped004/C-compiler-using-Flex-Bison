@@ -95,6 +95,12 @@ map<int,int> mismatch_map;
 vector<string> data_seg;
 //array_index
 
+//function_parameter_symbol
+vector<string> param_symbol;
+
+//function_argument_symbol
+vector<string> arg_symbol;
+
 
 bool insert_ID(string name, string data_type, int is_array)
 {
@@ -198,7 +204,20 @@ void enterScope_parser()
 	cout<<"entered scope"<<endl;
 	st.enter_scope();
 
+	string scope_id = st.get_curr()->get_id();
+
+	//replace all '.' with '_'
+	for(int i=0;i<scope_id.length();i++)
+	{
+		if(scope_id[i] == '.')
+		{
+			scope_id[i] = '_';
+		}
+	}
+	//string var_name = name+scope_id;
+
 	//add func parameters int the new scope
+	int stack_index = (int)(param_list.size()); 
 	for(auto x:param_list)
 	{
 		//cout<<"("<<x.first<<", "<<x.second<<")"<<endl;
@@ -210,6 +229,14 @@ void enterScope_parser()
 		{
 			SymbolInfo* si = st.Look_up(x.first);
 			si->set_data_type(x.second);
+
+			string para_sym = x.first+scope_id;
+			int temp_index = 10+stack_index*2;
+			si->set_symbol("[bp+"+to_string(temp_index)+"]");
+			data_seg.push_back(para_sym+" dw ?");
+			param_symbol.push_back(para_sym);
+
+			stack_index--;
 		}
 		else //check multiple declaration in the parameter
 		{
@@ -322,8 +349,6 @@ start: program
 		print_line();
 		fp2<<"start : program\n"<<endl;
 		//fp2<<$$->getName()<<endl<<endl;
-
-		fp4.open("code.asm");
 
 		if(error_cnt == 0) // generate code
 		{	
@@ -478,6 +503,7 @@ func_declaration: type_specifier id func_begin LPAREN parameter_list RPAREN SEMI
 				fp2<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
 			}
 			
+			
 			//clear the parameter list
 			param_list.clear();
 
@@ -551,6 +577,8 @@ func_definition: type_specifier id func_begin LPAREN parameter_list RPAREN compo
 							i++;
 						}
 					}
+
+					
 				}
 			}
 
@@ -560,10 +588,42 @@ func_definition: type_specifier id func_begin LPAREN parameter_list RPAREN compo
 				fp3<<"Error at line "<<temp_line<<": ";
 				fp3<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
 				fp2<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
-			}			
+			}	
+
+			//code
+			if(f!=NULL)
+			{
+				f->set_param_symbol(param_symbol);
+
+				$$->code +=$2->getName()+" PROC\n";
+				$$->code +="\tPUSH ax\n";
+				$$->code +="\tPUSH bx\n";
+				$$->code +="\tPUSH cx\n";
+				$$->code +="\tPUSH dx\n";
+				$$->code +="\tPUSH bp\n";
+				$$->code +="\tMOV bp,sp\n";
+				//function body start
+				$$->code += $7->get_code();
+				//end
+				$$->code +="\tPOP bp\n";
+				$$->code +="\tPOP dx\n";
+				$$->code +="\tPOP cx\n";
+				$$->code +="\tPOP bx\n";
+				$$->code +="\tPOP ax\n";
+
+				/*
+				if($1->getName() != "void")
+				{
+					$$->code +="\tPUSH ret_temp\n";
+				}
+				*/
+				$$->code +="\tRET 2\n";
+				$$->code +=$2->getName()+" endp\n";
+			}	
 		
 				
 			param_list.clear();
+			param_symbol.clear();
 
 			fp2<<$$->getName()<<endl<<endl;
 
@@ -633,8 +693,10 @@ func_definition: type_specifier id func_begin LPAREN parameter_list RPAREN compo
 				fp3<<"Error at line "<<temp_line<<": ";
 				fp3<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
 				fp2<<"Multiple declaration of " <<$2->getName()<<endl<<endl;
-			}	
+			}
 
+			vector<string> empty_list;
+			f->set_param_symbol(empty_list);	
 
 			//code
 			if($2->getName() == "main")
@@ -642,13 +704,46 @@ func_definition: type_specifier id func_begin LPAREN parameter_list RPAREN compo
 				$$->code +="main proc\n";
 				$$->code+="\tmov ax,@data\n";
 				$$->code+="\tmov ds,ax\n\n\n";
+				$$->code+=$6->get_code();
+				$$->code+="\tMOV AH,4CH\n";
+				$$->code+="\tINT 21H\n";
+				$$->code+="ENDP main\n";
+				$$->code+="END main";
 			}
 
-			$$->code+=$6->get_code();
-			$$->code+="main endp";
+			
+
+			//code
+			if(f!=NULL && $2->getName() != "main")
+			{
+				f->set_param_symbol(param_symbol);
+
+				$$->code +=$2->getName()+" PROC\n";
+				$$->code +="\tPUSH ax\n";
+				$$->code +="\tPUSH bx\n";
+				$$->code +="\tPUSH cx\n";
+				$$->code +="\tPUSH dx\n";
+				$$->code +="\tPUSH bp\n";
+				$$->code +="\tMOV bp,sp\n";
+				//function body start
+				$$->code += $6->get_code();
+				//end
+				$$->code +="\tPOP bp\n";
+				$$->code +="\tPOP dx\n";
+				$$->code +="\tPOP cx\n";
+				$$->code +="\tPOP bx\n";
+				$$->code +="\tPOP ax\n";
+				/*if($1->getName() != "void")
+				{
+					$$->code +="\tPUSH ret_temp\n";
+				}*/
+				$$->code +="\tRET 2\n";
+				$$->code +="ENDP "+$2->getName()+"\n";
+			}	
 			
 					
 			param_list.clear();
+			param_symbol.clear();
 
 			fp2<<$$->getName()<<endl<<endl;
 			fp2<<$$->get_code()<<endl;
@@ -1011,7 +1106,7 @@ statements: statement
 			{
 				$$ = new SymbolInfo($1->getName()+"\n","NON_TERMINAL");
 				//set_code
-				$$->set_code($1->get_code());
+				$$->set_code(";"+$1->getName()+"\n"+$1->get_code());
  		  		print_line();
 				fp2<<"statements : statement\n"<<endl;
 				fp2<<$$->getName()<<endl;
@@ -1022,7 +1117,7 @@ statements: statement
 	   {
 		   	$$ = new SymbolInfo($1->getName()+$2->getName()+"\n","NON_TERMINAL");
 			//add two code segments
-			$$->set_code($1->get_code()+$2->get_code());
+			$$->set_code($1->get_code()+";"+$2->getName()+"\n"+$2->get_code());
  		  	print_line();
 			fp2<<"statements : statements statement\n"<<endl;
 			fp2<<$$->getName()<<endl;
@@ -1073,17 +1168,49 @@ statement: var_declaration
 	  | IF LPAREN expression RPAREN statement %prec LOWER_THAN_ELSE
 	   {
 		   	$$ = new SymbolInfo("if "+$2->getName()+$3->getName()+$4->getName()+$5->getName(), "NON_TERMINAL");
+			//code
+			$$->set_code($3->get_code());
+
+			string label1 = newLabel();
+			string label2 = newLabel();
+
+			$$->code+="\tCMP "+$3->get_symbol()+",1\n";
+			$$->code+="\tJE "+label1+"\n";
+			$$->code+="\tJMP "+label2+"\n";
+			$$->code+=label1+":\n";
+			$$->code +=$5->get_code();
+			$$->code+=label2+":\n";
+
+
  		  	print_line();
 			fp2<<"statement : IF LPAREN expression RPAREN statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl<<endl;
 
  		}
 	  | IF LPAREN expression RPAREN statement ELSE statement
 	  {
 		  	$$ = new SymbolInfo("if "+$2->getName()+$3->getName()+$4->getName()+$5->getName()+"\nelse\n"+$7->getName(), "NON_TERMINAL");
+
+			//code
+			$$->set_code($3->get_code());
+
+			string label1 = newLabel();
+			string label2 = newLabel();
+
+			$$->code+="\tCMP "+$3->get_symbol()+",1\n";
+			$$->code+="\tJE "+label1+"\n";
+			$$->code +=$7->get_code();
+			$$->code+="\tJMP "+label2+"\n";
+			$$->code+=label1+":\n";
+			$$->code +=$5->get_code();
+			$$->code+=label2+":\n";
+
+
  		  	print_line();
 			fp2<<"statement : IF LPAREN expression RPAREN statement ELSE statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
+			fp2<<$$->get_code()<<endl;
 
  		}
 	  | WHILE LPAREN expression RPAREN statement
@@ -1098,14 +1225,18 @@ statement: var_declaration
 	   {
 		   	
 		   	$$ = new SymbolInfo("printf"+$2->getName()+$3->getName()+$4->getName()+$5->getName(), "NON_TERMINAL");
-			bool ok = st.Look_up($3->getName());
-			if(!ok)
+			SymbolInfo *s = st.Look_up($3->getName());
+			if(s == NULL)
 			{
 				error_cnt++;
 				error_print_line();
 				fp3<<"Undeclared variable "<<$3->getName()<<endl<<endl;
 				fp2<<"Undeclared variable "<<$3->getName()<<endl<<endl;
 			}
+			//code
+			$$->code += "\tMOV ax,"+s->get_symbol()+"\n";
+			$$->code += "\tMOV print_var,ax\n";
+			$$->code += "\tCALL print\n";
  		  	print_line();
 			fp2<<"statement : PRINTLN LPAREN ID RPAREN SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
@@ -1115,6 +1246,11 @@ statement: var_declaration
 	  	{
 			//fp2<<"RETURN symbol->name: "<<$1->getName()<<endl<<endl;
 		  	$$ = new SymbolInfo($1->getName()+" "+$2->getName()+$3->getName(), "NON_TERMINAL");
+			//set_code
+			$$->set_code($2->get_code());
+			//code
+			$$->code += "\tMOV ax,"+$2->get_symbol()+"\n";
+			$$->code += "\tMOV ret_temp,ax\n";
  		  	print_line();
 			fp2<<"statement : RETURN expression SEMICOLON\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
@@ -1304,7 +1440,6 @@ variable: id
 				
 				$$->code +="\tMOV cx,"+$1->get_symbol()+"\n";
 				$$->code +="\tMOV "+temp+",cx[bx]\n";
-
 				$$->set_symbol(temp);
 				*/
 			}
@@ -1333,11 +1468,7 @@ variable: id
 	   | variable ASSIGNOP logic_expression
 	   {
 		   	$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(),"NON_TERMINAL");
-			//add two code segments
-			$$->set_code($1->get_code()+$3->get_code());
 
- 		  	
-			
 			//set data type of logic expression
 			set_data_type($$,$1);
 
@@ -1370,6 +1501,9 @@ variable: id
 			// fp2<<mismatch_map[yylineno]<<endl;
 
 			mismatch_map.clear();
+
+			//add two code segments
+			$$->set_code($3->get_code()+$1->get_code());
 
 			//code
 			if($1->getType() == "array")
@@ -1431,15 +1565,51 @@ logic_expression: rel_expression
 			$$->code +="\tMOV ax,"+$3->get_symbol()+"\n";
 			if($2->getName() == "||")
 			{
-				$$->code +="\tOR "+$1->get_symbol()+",ax\n";
+				string label1 = newLabel();
+				string label2 = newLabel();
+
+				string temp = newTemp();
+				data_seg.push_back(temp+" dw ?");
+
+				$$->code+="\tMOV ax,"+$1->get_symbol()+"\n";
+				$$->code+="\tCMP ax,1\n";
+				$$->code+="\tJE "+label1+"\n";
+				$$->code+="\tMOV ax,"+$3->get_symbol()+"\n";
+				$$->code+="\tCMP ax,1\n";
+				$$->code+="\tJE "+label1+"\n";
+				$$->code+="\tMOV "+temp+",0\n";
+				$$->code+="\tJMP "+label2+"\n";
+				$$->code+=label1+":\n";
+				$$->code+="\tMOV "+temp+",1\n";
+				$$->code+=label2+":\n";
+
+				$$->set_symbol(temp);
 			}
 
 			else if($2->getName() == "&&")
 			{
-				$$->code +="\tAND "+$1->get_symbol()+",ax\n";
+				string label1 = newLabel();
+				string label2 = newLabel();
+
+				string temp = newTemp();
+				data_seg.push_back(temp+" dw ?");
+
+				$$->code+="\tMOV ax,"+$1->get_symbol()+"\n";
+				$$->code+="\tCMP ax,0\n";
+				$$->code+="\tJE "+label1+"\n";
+				$$->code+="\tMOV ax,"+$3->get_symbol()+"\n";
+				$$->code+="\tCMP ax,0\n";
+				$$->code+="\tJE "+label1+"\n";
+				$$->code+="\tMOV "+temp+",1\n";
+				$$->code+="\tJMP "+label2+"\n";
+				$$->code+=label1+":\n";
+				$$->code+="\tMOV "+temp+",0\n";
+				$$->code+=label2+":\n";
+
+				$$->set_symbol(temp);
 			}
 
-			$$->set_symbol($1->get_symbol());
+			
 
  		  	print_line();
 			fp2<<"logic_expression : rel_expression LOGICOP rel_expression\n"<<endl;
@@ -1483,6 +1653,7 @@ rel_expression: simple_expression
 
 			//code
 			string temp = newTemp();
+			data_seg.push_back(temp+" dw ?");
 			string label1 = newLabel();
 			string label2 = newLabel();
 
@@ -1580,17 +1751,18 @@ simple_expression: term
 			//code
 			string temp = newTemp();
 			data_seg.push_back(temp+" dw ?");
-			$$->code +="\tMOV "+temp+","+$1->get_symbol()+"\n";
-			$$->code +="\tMOV ax,"+$3->get_symbol()+"\n";
+			$$->code +="\tMOV ax,"+$1->get_symbol()+"\n";
 			
 			if($2->getName() == "+")
 			{
-				$$->code +="\tADD "+temp+",ax\n";
+				$$->code +="\tADD ax,"+$3->get_symbol()+"\n";
 			}
 			else
 			{
-				$$->code +="\tSUB "+temp+",ax\n";
+				$$->code +="\tSUB ax,"+$3->get_symbol()+"\n";
 			}
+
+			$$->code+="\tMOV "+temp+",ax\n";
 
 			$$->set_symbol(temp);
 
@@ -1703,8 +1875,8 @@ term:	unary_expression
 			{
 				$$->code+="\tMOV ax,"+$1->get_symbol()+"\n";
 				$$->code+="\tXOR dx,dx\n";
-				$$->code+="\tMOV bx,"+$3->get_symbol()+"\n";
-				$$->code+="\tDIV bx\n";
+				$$->code+="\tMOV cx,"+$3->get_symbol()+"\n";
+				$$->code+="\tDIV cx\n";
 
 				if($2->getName() == "/")
 				{
@@ -1920,9 +2092,37 @@ factor: variable
 
 							
 			}
+
+			//code
+			vector<string> para_sym_list = f->get_param_symbol();
+			for(string x:arg_symbol)
+			{
+				$$->code+="\tPUSH "+x+"\n";
+			}
+			$$->code+="\tCALL "+$1->getName()+"\n";
+
+			if(f->getReturn_type() != "void")
+			{
+				//$$->code+="\tPOP ret_temp\n";
+				$$->code+="\tMOV ax,ret_temp\n";
+
+				string temp = newTemp();
+				data_seg.push_back(temp+" dw ?");
+				$$->code+="\tMOV "+temp+",ax\n";
+
+				$$->set_symbol(temp);
+			}
+
+			/*
+			for(int i=(int)(arg_symbol.size()-1);i>=0;i--)
+			{
+				$$->code+="\tPOP "+arg_symbol[i]+"\n";
+			}
+			*/
 		}
 
 		arg_list.clear();
+		arg_symbol.clear();
  	  	
 		fp2<<$$->getName()<<endl;
 		fp2<<$$->get_code()<<endl;
@@ -1986,7 +2186,7 @@ factor: variable
 
 			$$->code += "\tMOV ax,"+$1->get_symbol()+"[bx]\n";
 			$$->code += "\tMOV "+temp+",ax\n";
-			$$->code += "\tDEC "+$1->get_symbol()+"[bx]\n";
+			$$->code += "\tINC "+$1->get_symbol()+"[bx]\n";
 
 			$$->set_symbol(temp);
 		}
@@ -2074,7 +2274,7 @@ arguments: arguments COMMA logic_expression
 				else
 					arg_list.push_back("array");
 
-
+				arg_symbol.push_back($3->get_symbol());
  			} 
 	      | logic_expression
 	     	{
@@ -2087,6 +2287,8 @@ arguments: arguments COMMA logic_expression
 					arg_list.push_back($1->get_data_type());
 				else
 					arg_list.push_back("array");
+
+				arg_symbol.push_back($1->get_symbol());
  			} 
 	      ;
 	      
@@ -2119,7 +2321,8 @@ int main(int argc,char *argv[])
 	cout<<argv[2]<<endl;
 
 	yylineno = 1;
-	
+
+	fp4.open("code.asm");
 	
 	yyparse();	
 
@@ -2136,4 +2339,3 @@ int main(int argc,char *argv[])
 	
 	return 0;
 }
-
