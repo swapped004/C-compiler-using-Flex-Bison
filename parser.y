@@ -1106,7 +1106,14 @@ statements: statement
 			{
 				$$ = new SymbolInfo($1->getName()+"\n","NON_TERMINAL");
 				//set_code
-				$$->set_code(";"+$1->getName()+"\n"+$1->get_code());
+				stringstream ss($1->getName());
+				string word;
+				string temp ="";
+				while (ss >> word) {
+					temp+=";"+word+"\n";
+				}
+
+				$$->set_code(temp+"\n"+$1->get_code());
  		  		print_line();
 				fp2<<"statements : statement\n"<<endl;
 				fp2<<$$->getName()<<endl;
@@ -1117,7 +1124,13 @@ statements: statement
 	   {
 		   	$$ = new SymbolInfo($1->getName()+$2->getName()+"\n","NON_TERMINAL");
 			//add two code segments
-			$$->set_code($1->get_code()+";"+$2->getName()+"\n"+$2->get_code());
+			stringstream ss($2->getName());
+			string word;
+			string temp ="";
+			while (ss >> word) {
+				temp+=";"+word+"\n";
+			}
+			$$->set_code($1->get_code()+temp+"\n"+$2->get_code());
  		  	print_line();
 			fp2<<"statements : statements statement\n"<<endl;
 			fp2<<$$->getName()<<endl;
@@ -1161,6 +1174,26 @@ statement: var_declaration
 	  {
 			$$ = new SymbolInfo("for"+$2->getName()+$3->getName()+$4->getName()+$5->getName()+$6->getName()+$7->getName(), "NON_TERMINAL");
  		  	print_line();
+			//code
+			string label1 = newLabel();
+			string label2 = newLabel();
+
+			//initiallize
+			$$->set_code($3->get_code());
+			//condition check
+			$$->code+=label1+":\n";
+			$$->code+=$4->get_code();
+			$$->code+="\tCMP "+$4->get_symbol()+",0\n";
+			$$->code+="\tJE "+label2+"\n";
+			//loop body
+			$$->code+=$7->get_code();
+			//increment
+			$$->code+=$5->get_code();
+			$$->code+="\tJMP "+label1+"\n";
+			//exit_loop
+			$$->code+=label2+":\n";
+
+
 			fp2<<"statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
@@ -1217,6 +1250,23 @@ statement: var_declaration
 	  {
 		  	$$ = new SymbolInfo("while "+$2->getName()+$3->getName()+$4->getName()+$5->getName(), "NON_TERMINAL");
  		  	print_line();
+
+			//code
+			string label1 = newLabel();
+			string label2 = newLabel();
+
+			//condition check
+			$$->code+=label1+":\n";
+			$$->code+=$3->get_code();
+			$$->code+="\tCMP "+$3->get_symbol()+",0\n";
+			$$->code+="\tJE "+label2+"\n";
+			//loop body
+			$$->code+=$5->get_code();
+			$$->code+="\tJMP "+label1+"\n";
+			//exit_loop
+			$$->code+=label2+":\n";
+
+
 			fp2<<"statement : WHILE LPAREN expression RPAREN statement\n"<<endl;
 			fp2<<$$->getName()<<endl<<endl;
 
@@ -1562,7 +1612,6 @@ logic_expression: rel_expression
 			}
 
 			//code
-			$$->code +="\tMOV ax,"+$3->get_symbol()+"\n";
 			if($2->getName() == "||")
 			{
 				string label1 = newLabel();
@@ -1571,12 +1620,10 @@ logic_expression: rel_expression
 				string temp = newTemp();
 				data_seg.push_back(temp+" dw ?");
 
-				$$->code+="\tMOV ax,"+$1->get_symbol()+"\n";
-				$$->code+="\tCMP ax,1\n";
-				$$->code+="\tJE "+label1+"\n";
-				$$->code+="\tMOV ax,"+$3->get_symbol()+"\n";
-				$$->code+="\tCMP ax,1\n";
-				$$->code+="\tJE "+label1+"\n";
+				$$->code+="\tCMP "+$1->get_symbol()+",0\n";
+				$$->code+="\tJNE "+label1+"\n";
+				$$->code+="\tCMP "+$1->get_symbol()+",0\n";
+				$$->code+="\tJNE "+label1+"\n";
 				$$->code+="\tMOV "+temp+",0\n";
 				$$->code+="\tJMP "+label2+"\n";
 				$$->code+=label1+":\n";
@@ -1594,11 +1641,9 @@ logic_expression: rel_expression
 				string temp = newTemp();
 				data_seg.push_back(temp+" dw ?");
 
-				$$->code+="\tMOV ax,"+$1->get_symbol()+"\n";
-				$$->code+="\tCMP ax,0\n";
+				$$->code+="\tCMP "+$1->get_symbol()+",0\n";
 				$$->code+="\tJE "+label1+"\n";
-				$$->code+="\tMOV ax,"+$3->get_symbol()+"\n";
-				$$->code+="\tCMP ax,0\n";
+				$$->code+="\tCMP "+$3->get_symbol()+",0\n";
 				$$->code+="\tJE "+label1+"\n";
 				$$->code+="\tMOV "+temp+",1\n";
 				$$->code+="\tJMP "+label2+"\n";
