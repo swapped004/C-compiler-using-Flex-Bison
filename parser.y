@@ -792,50 +792,7 @@ func_begin:
 				s1->set_func(0,"",temp_param,-1);
 			}
 
-			// fp2<<"id: "<<st.get_curr()->get_id()<<endl<<endl;
-
-			// if(st.get_curr()->get_id() != "1")
-			// {
-			// 	error_cnt++;
-			// 	error_print_line();
-			// 	fp2<<"function declaration inside another function\n"<<endl;
-			// 	fp3<<"function declaration inside another function\n"<<endl;
-			// }
-			// else
-			// {
-			// 	func_param* f =s->get_func();
-			// 	if(f == NULL)
-			// 	{
-			// 		error_cnt++;
-			// 		//error_print_line();
-					
-			// 		fp3<<"Error at line "<<temp_line<<": ";
-			// 		fp3<<"Multiple declaration of " <<temp_id<<endl<<endl;
-			// 		fp2<<"Error at line "<<temp_line<<": ";
-			// 		fp2<<"Multiple declaration of " <<temp_id<<endl<<endl;
-			// 	}
-
-			// 	else
-			// 	{
-			// 		if(f->get_flag() == 1) //defined
-			// 		{
-						
-			// 			error_cnt++;
-			// 			//error_print_line();
-			// 			fp3<<"Error at line "<<temp_line<<": ";
-			// 			fp3<<"Multiple definition of function " <<temp_id<<endl<<endl;
-			// 			fp2<<"Error at line "<<temp_line<<": ";
-			// 			fp2<<"Multiple definition of function " <<temp_id<<endl<<endl;
-			// 		}
-
-			// 		else if(f->get_flag() == 0) //declared
-			// 		{
-			// 			//do nothing
-			// 		}
-			// 	}
-			// }
-
-			//temp_id = "";
+			
 		}
 		;
 
@@ -2068,6 +2025,8 @@ factor: variable
 	| id LPAREN argument_list RPAREN
 	{
 		$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName()+$4->getName(), "NON_TERMINAL");
+		//set_code
+		$$->set_code($3->get_code());
 		print_line();
 		fp2<<"factor : ID LPAREN argument_list RPAREN\n"<<endl;
 
@@ -2103,16 +2062,18 @@ factor: variable
 				$$->set_data_type(f->getReturn_type());
 
 				//check if defined
-				if(f->get_flag() != 1)
+				if(f->get_flag() == 0)
 				{
 					//mismatch_map[yylineno]++;
 					error_cnt++;
 					error_print_line();
+
 					fp3<<$1->getName() + " function declared but not defined"<<endl<<endl;
 					fp2<<$1->getName() + " function declared but not defined"<<endl<<endl;
+
 				}
 
-				else //function defined
+				else if(f->get_flag() == 1)//function defined
 				{
 					//check if arguments are consistent
 					
@@ -2150,6 +2111,47 @@ factor: variable
 							i++;
 						}
 
+					}
+
+				}
+
+				else
+				{
+					//check if arguments are consistent
+					
+					//number of arguments
+					if((int)arg_list.size() != (int)param_list.size())
+					{
+						//mismatch_map[yylineno]++;
+						error_cnt++;
+						error_print_line();
+						fp3<<"Total number of arguments mismatch in function "+$1->getName()<<endl<<endl;
+						fp2<<"Total number of arguments mismatch in function "+$1->getName()<<endl<<endl;
+					}
+
+					else //data types of arguments
+					{
+						//fp2<<"here"<<endl;
+						vector<pair<string,string>> p_list = param_list;
+
+						int i = 0;
+						for(string x:arg_list)
+						{
+							//fp2<<x<<" : "<<p_list[i].second<<endl;
+							if(x != p_list[i].second)
+							{
+								if(x != "array")
+								{
+									//mismatch_map[yylineno]++;
+									error_cnt++;
+									error_print_line();
+									fp3<<i+1<<"th argument mismatch in function " + $1->getName()<<endl<<endl;
+									fp2<<i+1<<"th argument mismatch in function " + $1->getName()<<endl<<endl;
+									break;
+								}
+							}
+							i++;
+						}
 					}
 
 				}
@@ -2314,6 +2316,8 @@ argument_list: arguments
 		{
 			$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
  		  	print_line();
+			//set_code
+			$$->set_code($1->get_code());
 			fp2<<"argument_list : arguments\n"<<endl;
 			fp2<<$$->getName()<<endl;
  		} 
@@ -2329,6 +2333,8 @@ argument_list: arguments
 arguments: arguments COMMA logic_expression
 			{
 				$$ = new SymbolInfo($1->getName()+$2->getName()+$3->getName(), "NON_TERMINAL");
+				//set_code
+				$$->set_code($1->get_code()+$3->get_code());
 				print_line();
 				fp2<<"arguments : arguments COMMA logic_expression\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;
@@ -2343,6 +2349,8 @@ arguments: arguments COMMA logic_expression
 	      | logic_expression
 	     	{
 				$$ = new SymbolInfo($1->getName(),"NON_TERMINAL");
+				//set_code
+				$$->set_code($1->get_code());
 				print_line();
 				fp2<<"arguments : logic_expression\n"<<endl;
 				fp2<<$$->getName()<<endl<<endl;

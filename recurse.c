@@ -28,7 +28,8 @@ int main(){
     b=2;
     a=g(a,b);
     b=h(a);
-    
+
     println(a);
+    println(b);
     return 0;
 }
