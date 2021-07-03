@@ -25,7 +25,7 @@ extern long long int error_cnt;
 
 
 SymbolTable st(30);
-ofstream fp2,fp3,fp4;
+ofstream fp2,fp3,fp4,fp5;
 
 int labelCount=0;
 int tempCount=0;
@@ -261,7 +261,7 @@ void exitScope_parser()
 
 
 
-void print_proc()
+void print_proc(ofstream &fp4)
 {
 	fp4<<"print PROC"<<endl;
 	fp4<<"\tPUSH ax"<<endl;
@@ -325,13 +325,72 @@ void init()
 	fp4<<"\tprint_var dw ?"<<endl;
 	fp4<<"\tret_temp dw ?"<<endl;
 
+	fp5<<".MODEL SMALL"<<endl;
+	fp5<<".STACK 100H"<<endl;
+	fp5<<".DATA"<<endl;
+	fp5<<"\tprint_var dw ?"<<endl;
+	fp5<<"\tret_temp dw ?"<<endl;
+
 	for(string x:data_seg)
 	{
 		fp4<<"\t"<<x<<endl;
+		fp5<<"\t"<<x<<endl;
 	}
 
 	fp4<<".CODE"<<endl;
-	print_proc();
+	fp5<<".CODE"<<endl;
+	print_proc(fp4);
+	print_proc(fp5);
+}
+
+void optimize_code(string unop_code)
+{
+	vector <string> lines;
+      
+    // stringstream class check1
+    stringstream check1(unop_code);
+      
+    string intermediate;
+      
+    // Tokenizing w.r.t. space '\n'
+    while(getline(check1, intermediate, '\n'))
+    {
+        lines.push_back(intermediate);
+    }
+
+	string opt_code = "";
+
+	for(int i=0;i<(int)lines.size()-1;i++)
+	{
+		opt_code+=lines[i]+"\n";
+		if(lines[i].length() > 4)
+		{
+			if(lines[i].substr(1,3) == "MOV" && lines[i+1].substr(1,3) == "MOV")
+			{
+				int pos1 = lines[i].find(",");
+				int pos2 = lines[i+1].find(",");
+
+				if(pos1 >=5 && pos2>= 5){
+				/*
+				string val1 = lines[i].substr(5,pos1-5);
+				string val2 = lines[i+1].substr(pos2+1);
+				string val3 = lines[i+1].substr(5,pos2-5);
+				string val4 = lines[i].substr(pos1+1);
+
+				fp5<<","+val1+"->"+val2+"->"+val3+"->"+val4<<"\n";
+				*/
+
+				if(lines[i].substr(5,pos1-5) == lines[i+1].substr(pos2+1) && lines[i+1].substr(5,pos2-5) == lines[i].substr(pos1+1))
+				{
+					i++; //skip the next line
+				}
+				}
+			}
+		}
+	}
+
+	fp5<<opt_code;
+	fp5<<"END main\n";
 }
 
 
@@ -373,6 +432,7 @@ start: program
 		{	
 			init();
 			fp4<<$1->code<<endl;
+			optimize_code($1->code);
 		}
 		// else blank code.asm
 
@@ -2395,6 +2455,7 @@ int main(int argc,char *argv[])
 	yylineno = 1;
 
 	fp4.open("code.asm");
+	fp5.open("optimized_code.asm");
 	
 	yyparse();	
 
