@@ -1,1 +1,3 @@
-Total Errors: 0
+Error at line 21: h function declared but not defined
+
+Total Errors: 1

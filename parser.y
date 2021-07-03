@@ -233,7 +233,7 @@ void enterScope_parser()
 			string para_sym = x.first+scope_id;
 			int temp_index = 10+stack_index*2;
 			si->set_symbol("[bp+"+to_string(temp_index)+"]");
-			data_seg.push_back(para_sym+" dw ?");
+			//data_seg.push_back(para_sym+" dw ?");
 			param_symbol.push_back(para_sym);
 
 			stack_index--;
@@ -264,38 +264,57 @@ void exitScope_parser()
 void print_proc()
 {
 	fp4<<"print PROC"<<endl;
-	fp4<<"\tpush ax"<<endl;
-	fp4<<"\tpush bx"<<endl; 
-	fp4<<"\tpush cx"<<endl;
-	fp4<<"\tpush dx"<<endl;
-	fp4<<"\tmov ax, print_var"<<endl;
-	fp4<<"\tmov bx, 10"<<endl;
-	fp4<<"\tmov cx, 0"<<endl;
-	fp4<<"printLabel1:"<<endl;
-	fp4<<"\tmov dx, 0"<<endl;
-	fp4<<"\tdiv bx"<<endl;
-	fp4<<"\tpush dx"<<endl;
-	fp4<<"\tinc cx"<<endl;
-	fp4<<"\tcmp ax, 0"<<endl;
-	fp4<<"\tjne printLabel1"<<endl;
-	fp4<<"\tprintLabel2:"<<endl;
-	fp4<<"\tmov ah, 2"<<endl;
-	fp4<<"\tpop dx"<<endl;
-	fp4<<"\tadd dl, '0'"<<endl;
-	fp4<<"\tint 21h"<<endl;
-	fp4<<"\tdec cx"<<endl;
-	fp4<<"\tcmp cx, 0"<<endl;
-	fp4<<"\tjne printLabel2"<<endl;
-	fp4<<"\tmov dl, 0Ah"<<endl;
-	fp4<<"\tint 21h"<<endl;
-	fp4<<"\tmov dl, 0Dh"<<endl;
-	fp4<<"\tint 21h"<<endl;
-	fp4<<"\tpop dx"<<endl;
-	fp4<<"\tpop cx"<<endl;
-	fp4<<"\tpop bx"<<endl;
-	fp4<<"\tpop ax"<<endl;
-	fp4<<"\tret"<<endl;
-	fp4<<"print endp"<<endl;
+	fp4<<"\tPUSH ax"<<endl;
+	fp4<<"\tPUSH bx"<<endl; 
+	fp4<<"\tPUSH cx"<<endl;
+	fp4<<"\tPUSH dx"<<endl;
+	fp4<<"\tMOV cx, 0"<<endl;
+	fp4<<"\tXOR dx,dx"<<endl;
+	fp4<<"check_if_negative:"<<endl;
+	fp4<<"\tCMP print_var,32767"<<endl;
+	fp4<<"\tJA negative"<<endl;
+	fp4<<"\tJMP loop_begin"<<endl;
+	fp4<<"negative:"<<endl;
+	fp4<<"\tMOV ax,65535"<<endl;
+	fp4<<"\tSUB ax, print_var"<<endl;
+	fp4<<"\tMOV print_var,ax"<<endl;
+	fp4<<"\tINC print_var"<<endl;
+	fp4<<"\tMOV dx,'-'"<<endl;
+	fp4<<"\tMOV ah,2"<<endl;
+	fp4<<"\tINT 21H"<<endl;
+	fp4<<"loop_begin:"<<endl;
+	fp4<<"\tMOV ax,print_var"<<endl;
+	fp4<<"\tMOV dx, 0"<<endl;
+	fp4<<"\tMOV bx,10"<<endl;
+	fp4<<"\tDIV bx"<<endl;
+	fp4<<"\tMOV print_var,ax"<<endl;
+	fp4<<"\tADD dx,'0'"<<endl;
+	fp4<<"\tPUSH dx"<<endl;
+	fp4<<"\tINC cx"<<endl;
+	fp4<<"\tCMP print_var,0"<<endl;
+	fp4<<"\tJE loop_exit"<<endl;
+	fp4<<"\tJMP loop_begin"<<endl;
+	fp4<<"loop_exit:"<<endl;
+	fp4<<"\tPOP dx"<<endl;
+	fp4<<"\tMOV ah,2"<<endl;
+	fp4<<"\tINT 21H"<<endl;
+	fp4<<"\tDEC cx"<<endl;
+	fp4<<"\tCMP cx,0"<<endl;
+	fp4<<"\tJE func_end"<<endl;
+	fp4<<"\tJMP loop_exit"<<endl;
+	fp4<<"func_end:"<<endl;
+	fp4<<"\tMOV dl,10"<<endl;
+	fp4<<"\tMOV ah,02h"<<endl;
+	fp4<<"\tINT 21H"<<endl;
+	fp4<<"\tMOV dl,13"<<endl;
+	fp4<<"\tMOV ah,02h"<<endl;
+	fp4<<"\tINT 21H"<<endl;
+	fp4<<"\tPOP dx"<<endl;
+	fp4<<"\tPOP cx"<<endl;
+	fp4<<"\tPOP bx"<<endl;
+	fp4<<"\tPOP ax"<<endl;
+	fp4<<"\tRET"<<endl;
+	fp4<<"ENDP print"<<endl;
 }
 
 void init()
@@ -303,8 +322,8 @@ void init()
 	fp4<<".MODEL SMALL"<<endl;
 	fp4<<".STACK 100H"<<endl;
 	fp4<<".DATA"<<endl;
-	fp4<<"print_var dw ?"<<endl;
-	fp4<<"ret_temp dw ?"<<endl;
+	fp4<<"\tprint_var dw ?"<<endl;
+	fp4<<"\tret_temp dw ?"<<endl;
 
 	for(string x:data_seg)
 	{

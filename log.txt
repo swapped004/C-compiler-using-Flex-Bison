@@ -2,1218 +2,2402 @@ Line 1: type_specifier : INT
 
 int
 
-Line 2: type_specifier : INT
+Line 1: type_specifier : INT
 
 int
 
-Line 2: declaration_list : ID
+Line 1: parameter_list : type_specifier ID
+
+int a
+
+Line 2: factor : CONST_INT
+
+2
+
+Line 2: unary_expression : factor
+
+2
+
+
+Line 2: term : unary_expression
+
+2
+
+
+Line 2: variable : ID
 
 a
 
-Line 2: declaration_list : declaration_list COMMA ID
 
-a,b
+Line 2: factor : variable
 
-Line 2: declaration_list : declaration_list COMMA ID
+a
 
-a,b,c
 
-Line 2: declaration_list : declaration_list COMMA ID
+Line 2: unary_expression : factor
 
-a,b,c,i
+a
 
-Line 2: var_declaration : type_specifier declaration_list SEMICOLON
 
-int a,b,c,i;
+Line 2: term : term MULOP unary_expression
 
-Line 2: statement : var_declaration
+2*a
 
-int a,b,c,i;
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+
+Line 2: simple_expression : term
+
+2*a
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+
+Line 2: rel_expression : simple_expression
+
+2*a
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+
+Line 2: logic_expression : rel_expression
+
+2*a
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+
+Line 2: expression : logic expression
+
+2*a
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+
+Line 2: statement : RETURN expression SEMICOLON
+
+return 2*a;
 
 Line 2: statements : statement
 
-int a,b,c,i;
+return 2*a;
 
-;int
-;a,b,c,i;
+;return
+;2*a;
 
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+	MOV ax,t0
+	MOV ret_temp,ax
 
 Line 3: variable : ID
 
-b
+a
 
 
 Line 3: factor : CONST_INT
 
-0
+9
 
 Line 3: unary_expression : factor
 
-0
+9
 
 
 Line 3: term : unary_expression
 
-0
+9
 
 
 Line 3: simple_expression : term
 
-0
+9
 
 
 Line 3: rel_expression : simple_expression
 
-0
+9
 
 
 Line 3: logic_expression : rel_expression
 
-0
+9
 
 
 Line 3: expression : variable ASSIGNOP logic_expression
 
-b=0
+a=9
 
-	MOV ax,0
-	MOV b1_1,ax
+	MOV ax,9
+	MOV [bp+12],ax
 
 Line 3: expression_statement : expression SEMICOLON
 
-b=0;
+a=9;
 
-	MOV ax,0
-	MOV b1_1,ax
+	MOV ax,9
+	MOV [bp+12],ax
 
 Line 3: statement : expression_statement
 
-b=0;
+a=9;
 
-	MOV ax,0
-	MOV b1_1,ax
+	MOV ax,9
+	MOV [bp+12],ax
 
 Line 3: statements : statements statement
 
-int a,b,c,i;
-b=0;
+return 2*a;
+a=9;
+
+;return
+;2*a;
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+	MOV ax,t0
+	MOV ret_temp,ax
+;a=9;
+
+	MOV ax,9
+	MOV [bp+12],ax
+
+Line 4: compound_statement : LCURL statements RCURL
+
+{
+return 2*a;
+a=9;
+}
+
+ScopeTable # 1.1
+ 7 --> < a , ID > 
+
+ScopeTable # 1
+ 12 --> < f , ID > 
+
+;return
+;2*a;
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+	MOV ax,t0
+	MOV ret_temp,ax
+;a=9;
+
+	MOV ax,9
+	MOV [bp+12],ax
+
+Line 4: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+int f(int a){
+return 2*a;
+a=9;
+}
+
+Line 4: unit : func_definition
+
+int f(int a){
+return 2*a;
+a=9;
+}
+
+
+f PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;return
+;2*a;
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+	MOV ax,t0
+	MOV ret_temp,ax
+;a=9;
+
+	MOV ax,9
+	MOV [bp+12],ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+f endp
+
+Line 4: program : unit
+
+int f(int a){
+return 2*a;
+a=9;
+}
+
+
+f PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;return
+;2*a;
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+	MOV ax,t0
+	MOV ret_temp,ax
+;a=9;
+
+	MOV ax,9
+	MOV [bp+12],ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+f endp
+
+Line 6: type_specifier : INT
+
+int
+
+Line 6: type_specifier : INT
+
+int
+
+Line 6: parameter_list : type_specifier ID
+
+int a
+
+Line 6: type_specifier : INT
+
+int
+
+Line 6: parameter_list : parameter_list COMMA type_specifier ID
+
+int a,int b
+
+Line 7: type_specifier : INT
+
+int
+
+Line 7: declaration_list : ID
+
+x
+
+Line 7: var_declaration : type_specifier declaration_list SEMICOLON
+
+int x;
+
+Line 7: statement : var_declaration
+
+int x;
+
+Line 7: statements : statement
+
+int x;
 
 ;int
-;a,b,c,i;
+;x;
 
-;b=0;
 
-	MOV ax,0
-	MOV b1_1,ax
+Line 8: variable : ID
 
-Line 4: variable : ID
+x
 
-c
 
-
-Line 4: factor : CONST_INT
-
-1
-
-Line 4: unary_expression : factor
-
-1
-
-
-Line 4: term : unary_expression
-
-1
-
-
-Line 4: simple_expression : term
-
-1
-
-
-Line 4: rel_expression : simple_expression
-
-1
-
-
-Line 4: logic_expression : rel_expression
-
-1
-
-
-Line 4: expression : variable ASSIGNOP logic_expression
-
-c=1
-
-	MOV ax,1
-	MOV c1_1,ax
-
-Line 4: expression_statement : expression SEMICOLON
-
-c=1;
-
-	MOV ax,1
-	MOV c1_1,ax
-
-Line 4: statement : expression_statement
-
-c=1;
-
-	MOV ax,1
-	MOV c1_1,ax
-
-Line 4: statements : statements statement
-
-int a,b,c,i;
-b=0;
-c=1;
-
-;int
-;a,b,c,i;
-
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
-
-	MOV ax,1
-	MOV c1_1,ax
-
-Line 5: variable : ID
-
-i
-
-
-Line 5: factor : CONST_INT
-
-0
-
-Line 5: unary_expression : factor
-
-0
-
-
-Line 5: term : unary_expression
-
-0
-
-
-Line 5: simple_expression : term
-
-0
-
-
-Line 5: rel_expression : simple_expression
-
-0
-
-
-Line 5: logic_expression : rel_expression
-
-0
-
-
-Line 5: expression : variable ASSIGNOP logic_expression
-
-i=0
-
-	MOV ax,0
-	MOV i1_1,ax
-
-Line 5: expression_statement : expression SEMICOLON
-
-i=0;
-
-	MOV ax,0
-	MOV i1_1,ax
-
-Line 5: variable : ID
-
-i
-
-
-Line 5: factor : variable
-
-i
-
-
-Line 5: unary_expression : factor
-
-i
-
-
-Line 5: term : unary_expression
-
-i
-
-
-Line 5: simple_expression : term
-
-i
-
-
-Line 5: factor : CONST_INT
-
-4
-
-Line 5: unary_expression : factor
-
-4
-
-
-Line 5: term : unary_expression
-
-4
-
-
-Line 5: simple_expression : term
-
-4
-
-
-Line 5: rel_expression : simple_expression RELOP simple_expression
-
-i<4
-
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-
-Line 5: logic_expression : rel_expression
-
-i<4
-
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-
-Line 5: expression : logic expression
-
-i<4
-
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-
-Line 5: expression_statement : expression SEMICOLON
-
-i<4;
-
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-
-Line 5: variable : ID
-
-i
-
-
-Line 5: factor : variable INCOP
-
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-
-i++
-
-Line 5: unary_expression : factor
-
-i++
-
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-
-Line 5: term : unary_expression
-
-i++
-
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-
-Line 5: simple_expression : term
-
-i++
-
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-
-Line 5: rel_expression : simple_expression
-
-i++
-
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-
-Line 5: logic_expression : rel_expression
-
-i++
-
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-
-Line 5: expression : logic expression
-
-i++
-
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-
-Line 6: variable : ID
+Line 8: variable : ID
 
 a
 
 
-Line 6: factor : CONST_INT
-
-3
-
-Line 6: unary_expression : factor
-
-3
-
-
-Line 6: term : unary_expression
-
-3
-
-
-Line 6: simple_expression : term
-
-3
-
-
-Line 6: rel_expression : simple_expression
-
-3
-
-
-Line 6: logic_expression : rel_expression
-
-3
-
-
-Line 6: expression : variable ASSIGNOP logic_expression
-
-a=3
-
-	MOV ax,3
-	MOV a1_1,ax
-
-Line 6: expression_statement : expression SEMICOLON
-
-a=3;
-
-	MOV ax,3
-	MOV a1_1,ax
-
-Line 6: statement : expression_statement
-
-a=3;
-
-	MOV ax,3
-	MOV a1_1,ax
-
-Line 6: statements : statement
-
-a=3;
-
-;a=3;
-
-	MOV ax,3
-	MOV a1_1,ax
-
-Line 7: variable : ID
+Line 8: factor : variable
 
 a
 
 
-Line 7: factor : variable DECOP
+Line 8: unary_expression : factor
 
-	MOV ax,a1_1
+a
+
+
+Line 8: term : unary_expression
+
+a
+
+
+Line 8: simple_expression : term
+
+a
+
+
+Line 8: rel_expression : simple_expression
+
+a
+
+
+Line 8: logic_expression : rel_expression
+
+a
+
+
+Line 8: arguments : logic_expression
+
+a
+
+Line 8: argument_list : arguments
+
+a
+Line 8: factor : ID LPAREN argument_list RPAREN
+
+f(a)
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+
+Line 8: unary_expression : factor
+
+f(a)
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+
+Line 8: term : unary_expression
+
+f(a)
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+
+Line 8: simple_expression : term
+
+f(a)
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+
+Line 8: variable : ID
+
+a
+
+
+Line 8: factor : variable
+
+a
+
+
+Line 8: unary_expression : factor
+
+a
+
+
+Line 8: term : unary_expression
+
+a
+
+
+Line 8: +
+simple_expression : simple_expression ADDOP term
+
+f(a)+a
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
 	MOV t2,ax
-	DEC a1_1
-
-a--
-
-Line 7: unary_expression : factor
-
-a--
-
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-
-Line 7: term : unary_expression
-
-a--
-
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-
-Line 7: simple_expression : term
-
-a--
-
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-
-Line 7: rel_expression : simple_expression
-
-a--
-
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-
-Line 7: logic_expression : rel_expression
-
-a--
-
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-
-Line 7: expression : logic expression
-
-a--
-
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
 
 Line 8: variable : ID
 
 b
 
 
-Line 8: factor : variable INCOP
+Line 8: factor : variable
 
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
+b
 
-b++
 
 Line 8: unary_expression : factor
 
-b++
+b
 
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
 
 Line 8: term : unary_expression
 
-b++
+b
 
-	MOV ax,b1_1
+
+Line 8: +
+simple_expression : simple_expression ADDOP term
+
+f(a)+a+b
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
-
-Line 8: simple_expression : term
-
-b++
-
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
 
 Line 8: rel_expression : simple_expression
 
-b++
+f(a)+a+b
 
-	MOV ax,b1_1
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
 
 Line 8: logic_expression : rel_expression
 
-b++
+f(a)+a+b
 
-	MOV ax,b1_1
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
 
-Line 8: expression : logic expression
+Line 8: expression : variable ASSIGNOP logic_expression
 
-b++
+x=f(a)+a+b
 
-	MOV ax,b1_1
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
+	MOV ax,t3
+	MOV x1_2,ax
 
 Line 8: expression_statement : expression SEMICOLON
 
-b++;
+x=f(a)+a+b;
 
-	MOV ax,b1_1
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
+	MOV ax,t3
+	MOV x1_2,ax
 
 Line 8: statement : expression_statement
 
-b++;
+x=f(a)+a+b;
 
-	MOV ax,b1_1
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
+	MOV ax,t3
+	MOV x1_2,ax
 
-Line 8: statements : statement
+Line 8: statements : statements statement
 
-b++;
+int x;
+x=f(a)+a+b;
 
-;b++;
+;int
+;x;
 
-	MOV ax,b1_1
+;x=f(a)+a+b;
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
+	MOV ax,t3
+	MOV x1_2,ax
 
-Line 9: compound_statement : LCURL statements RCURL
+Line 9: variable : ID
 
-{
-b++;
-}
+x
 
-ScopeTable # 1.1.1.1
 
-ScopeTable # 1.1.1
+Line 9: factor : variable
 
-ScopeTable # 1.1
- 7 --> < a , ID > 
- 8 --> < b , ID > 
- 9 --> < c , ID > 
- 15 --> < i , ID > 
+x
 
-ScopeTable # 1
- 1 --> < main , ID > 
 
-;b++;
+Line 9: unary_expression : factor
 
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
+x
 
-Line 9: statement : compound_statement
 
-{
-b++;
-}
+Line 9: term : unary_expression
 
-;b++;
+x
 
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
 
-Line 9: statement : WHILE LPAREN expression RPAREN statement
+Line 9: simple_expression : term
 
-while (a--){
-b++;
-}
+x
+
+
+Line 9: rel_expression : simple_expression
+
+x
+
+
+Line 9: logic_expression : rel_expression
+
+x
+
+
+Line 9: expression : logic expression
+
+x
+
+
+Line 9: statement : RETURN expression SEMICOLON
+
+return x;
 
 Line 9: statements : statements statement
 
-a=3;
-while (a--){
-b++;
-}
+int x;
+x=f(a)+a+b;
+return x;
 
-;a=3;
+;int
+;x;
 
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
+;x=f(a)+a+b;
 
-L2:
-	MOV ax,a1_1
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
 	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
+	MOV ax,t3
+	MOV x1_2,ax
+;return
+;x;
+
+	MOV ax,x1_2
+	MOV ret_temp,ax
 
 Line 10: compound_statement : LCURL statements RCURL
 
 {
-a=3;
-while (a--){
-b++;
-}
+int x;
+x=f(a)+a+b;
+return x;
 }
 
-ScopeTable # 1.1.1
-
-ScopeTable # 1.1
+ScopeTable # 1.2
+ 0 --> < x , ID > 
  7 --> < a , ID > 
  8 --> < b , ID > 
- 9 --> < c , ID > 
- 15 --> < i , ID > 
 
 ScopeTable # 1
- 1 --> < main , ID > 
+ 12 --> < f , ID > 
+ 13 --> < g , ID > 
 
-;a=3;
+;int
+;x;
 
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
+;x=f(a)+a+b;
 
-L2:
-	MOV ax,a1_1
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
 	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
+	MOV ax,t2
+	ADD ax,[bp+12]
 	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
+	MOV ax,t3
+	MOV x1_2,ax
+;return
+;x;
 
-Line 10: statement : compound_statement
+	MOV ax,x1_2
+	MOV ret_temp,ax
+
+Line 10: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+int g(int a,int b){
+int x;
+x=f(a)+a+b;
+return x;
+}
+
+Line 10: unit : func_definition
+
+int g(int a,int b){
+int x;
+x=f(a)+a+b;
+return x;
+}
+
+
+g PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;int
+;x;
+
+;x=f(a)+a+b;
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
+	MOV t3,ax
+	MOV ax,t3
+	MOV x1_2,ax
+;return
+;x;
+
+	MOV ax,x1_2
+	MOV ret_temp,ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+g endp
+
+Line 10: program : program unit
+
+int f(int a){
+return 2*a;
+a=9;
+}
+int g(int a,int b){
+int x;
+x=f(a)+a+b;
+return x;
+}
+
+
+f PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;return
+;2*a;
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+	MOV ax,t0
+	MOV ret_temp,ax
+;a=9;
+
+	MOV ax,9
+	MOV [bp+12],ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+f endp
+g PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;int
+;x;
+
+;x=f(a)+a+b;
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
+	MOV t3,ax
+	MOV ax,t3
+	MOV x1_2,ax
+;return
+;x;
+
+	MOV ax,x1_2
+	MOV ret_temp,ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+g endp
+
+Line 12: type_specifier : INT
+
+int
+
+Line 12: type_specifier : INT
+
+int
+
+Line 12: parameter_list : type_specifier ID
+
+int a
+
+Line 14: variable : ID
+
+a
+
+
+Line 14: factor : variable
+
+a
+
+
+Line 14: unary_expression : factor
+
+a
+
+
+Line 14: term : unary_expression
+
+a
+
+
+Line 14: simple_expression : term
+
+a
+
+
+Line 14: factor : CONST_INT
+
+1
+
+Line 14: unary_expression : factor
+
+1
+
+
+Line 14: term : unary_expression
+
+1
+
+
+Line 14: simple_expression : term
+
+1
+
+
+Line 14: rel_expression : simple_expression RELOP simple_expression
+
+a<=1
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t4,cx
+
+Line 14: logic_expression : rel_expression
+
+a<=1
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t4,cx
+
+Line 14: expression : logic expression
+
+a<=1
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t4,cx
+
+Line 16: factor : CONST_INT
+
+1
+
+Line 16: unary_expression : factor
+
+1
+
+
+Line 16: term : unary_expression
+
+1
+
+
+Line 16: simple_expression : term
+
+1
+
+
+Line 16: rel_expression : simple_expression
+
+1
+
+
+Line 16: logic_expression : rel_expression
+
+1
+
+
+Line 16: expression : logic expression
+
+1
+
+
+Line 16: statement : RETURN expression SEMICOLON
+
+return 1;
+
+Line 16: statements : statement
+
+return 1;
+
+;return
+;1;
+
+	MOV ax,1
+	MOV ret_temp,ax
+
+Line 17: compound_statement : LCURL statements RCURL
 
 {
-a=3;
-while (a--){
-b++;
-}
+return 1;
 }
 
-;a=3;
+ScopeTable # 1.3.1
+ 7 --> < a , ID > 
 
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
+ScopeTable # 1.3
+ 7 --> < a , ID > 
 
-L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
+ScopeTable # 1
+ 12 --> < f , ID > 
+ 13 --> < g , ID > 
+ 14 --> < h , ID > 
 
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
-
-Line 10: statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement
-
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
-
-Line 10: statements : statements statement
-
-int a,b,c,i;
-b=0;
-c=1;
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
-
-;int
-;a,b,c,i;
-
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
+;return
+;1;
 
 	MOV ax,1
-	MOV c1_1,ax
-;for(i=0;i<4;i++){
-;a=3;
-;while
-;(a--){
-;b++;
-;}
-;}
+	MOV ret_temp,ax
 
-	MOV ax,0
-	MOV i1_1,ax
-L4:
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-	CMP t0,0
-	JE L5
-;a=3;
-
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
-
-L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-	JMP L4
-L5:
-
-Line 11: statement : PRINTLN LPAREN ID RPAREN SEMICOLON
-
-printf(a);
-
-Line 11: statements : statements statement
-
-int a,b,c,i;
-b=0;
-c=1;
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
-printf(a);
-
-;int
-;a,b,c,i;
-
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
-
-	MOV ax,1
-	MOV c1_1,ax
-;for(i=0;i<4;i++){
-;a=3;
-;while
-;(a--){
-;b++;
-;}
-;}
-
-	MOV ax,0
-	MOV i1_1,ax
-L4:
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-	CMP t0,0
-	JE L5
-;a=3;
-
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
-
-L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-	JMP L4
-L5:
-;printf(a);
-
-	MOV ax,a1_1
-	MOV print_var,ax
-	CALL print
-
-Line 12: statement : PRINTLN LPAREN ID RPAREN SEMICOLON
-
-printf(b);
-
-Line 12: statements : statements statement
-
-int a,b,c,i;
-b=0;
-c=1;
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
-printf(a);
-printf(b);
-
-;int
-;a,b,c,i;
-
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
-
-	MOV ax,1
-	MOV c1_1,ax
-;for(i=0;i<4;i++){
-;a=3;
-;while
-;(a--){
-;b++;
-;}
-;}
-
-	MOV ax,0
-	MOV i1_1,ax
-L4:
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-	CMP t0,0
-	JE L5
-;a=3;
-
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
-
-L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-	JMP L4
-L5:
-;printf(a);
-
-	MOV ax,a1_1
-	MOV print_var,ax
-	CALL print
-;printf(b);
-
-	MOV ax,b1_1
-	MOV print_var,ax
-	CALL print
-
-Line 13: statement : PRINTLN LPAREN ID RPAREN SEMICOLON
-
-printf(c);
-
-Line 13: statements : statements statement
-
-int a,b,c,i;
-b=0;
-c=1;
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
-printf(a);
-printf(b);
-printf(c);
-
-;int
-;a,b,c,i;
-
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
-
-	MOV ax,1
-	MOV c1_1,ax
-;for(i=0;i<4;i++){
-;a=3;
-;while
-;(a--){
-;b++;
-;}
-;}
-
-	MOV ax,0
-	MOV i1_1,ax
-L4:
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-	CMP t0,0
-	JE L5
-;a=3;
-
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
-
-L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-	JMP L4
-L5:
-;printf(a);
-
-	MOV ax,a1_1
-	MOV print_var,ax
-	CALL print
-;printf(b);
-
-	MOV ax,b1_1
-	MOV print_var,ax
-	CALL print
-;printf(c);
-
-	MOV ax,c1_1
-	MOV print_var,ax
-	CALL print
-
-Line 14: compound_statement : LCURL statements RCURL
+Line 17: statement : compound_statement
 
 {
-int a,b,c,i;
-b=0;
-c=1;
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
-printf(a);
-printf(b);
-printf(c);
+return 1;
 }
 
-ScopeTable # 1.1
+;return
+;1;
+
+	MOV ax,1
+	MOV ret_temp,ax
+
+Line 21: variable : ID
+
+a
+
+
+Line 21: factor : variable
+
+a
+
+
+Line 21: unary_expression : factor
+
+a
+
+
+Line 21: term : unary_expression
+
+a
+
+
+Line 21: variable : ID
+
+a
+
+
+Line 21: factor : variable
+
+a
+
+
+Line 21: unary_expression : factor
+
+a
+
+
+Line 21: term : unary_expression
+
+a
+
+
+Line 21: simple_expression : term
+
+a
+
+
+Line 21: factor : CONST_INT
+
+1
+
+Line 21: unary_expression : factor
+
+1
+
+
+Line 21: term : unary_expression
+
+1
+
+
+Line 21: -
+simple_expression : simple_expression ADDOP term
+
+a-1
+
+	MOV ax,[bp+12]
+	SUB ax,1
+	MOV t5,ax
+
+Line 21: rel_expression : simple_expression
+
+a-1
+
+	MOV ax,[bp+12]
+	SUB ax,1
+	MOV t5,ax
+
+Line 21: logic_expression : rel_expression
+
+a-1
+
+	MOV ax,[bp+12]
+	SUB ax,1
+	MOV t5,ax
+
+Line 21: arguments : logic_expression
+
+a-1
+
+Line 21: argument_list : arguments
+
+a-1
+Line 21: factor : ID LPAREN argument_list RPAREN
+
+Error at line 21: h function declared but not defined
+
+h(a-1)
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+
+Line 21: unary_expression : factor
+
+h(a-1)
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+
+Line 21: term : term MULOP unary_expression
+
+a*h(a-1)
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+
+Line 21: simple_expression : term
+
+a*h(a-1)
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+
+Line 21: rel_expression : simple_expression
+
+a*h(a-1)
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+
+Line 21: logic_expression : rel_expression
+
+a*h(a-1)
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+
+Line 21: expression : logic expression
+
+a*h(a-1)
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+
+Line 21: statement : RETURN expression SEMICOLON
+
+return a*h(a-1);
+
+Line 21: statements : statement
+
+return a*h(a-1);
+
+;return
+;a*h(a-1);
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+
+Line 22: compound_statement : LCURL statements RCURL
+
+{
+return a*h(a-1);
+}
+
+ScopeTable # 1.3.2
+ 7 --> < a , ID > 
+
+ScopeTable # 1.3
+ 7 --> < a , ID > 
+
+ScopeTable # 1
+ 12 --> < f , ID > 
+ 13 --> < g , ID > 
+ 14 --> < h , ID > 
+
+;return
+;a*h(a-1);
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+
+Line 22: statement : compound_statement
+
+{
+return a*h(a-1);
+}
+
+;return
+;a*h(a-1);
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+
+Line 22: statement : IF LPAREN expression RPAREN statement ELSE statement
+
+if (a<=1){
+return 1;
+}
+else
+{
+return a*h(a-1);
+}
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t4,cx
+	CMP t4,1
+	JE L2
+;return
+;a*h(a-1);
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+	JMP L3
+L2:
+;return
+;1;
+
+	MOV ax,1
+	MOV ret_temp,ax
+L3:
+
+Line 22: statements : statement
+
+if (a<=1){
+return 1;
+}
+else
+{
+return a*h(a-1);
+}
+
+;if
+;(a<=1){
+;return
+;1;
+;}
+;else
+;{
+;return
+;a*h(a-1);
+;}
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t4,cx
+	CMP t4,1
+	JE L2
+;return
+;a*h(a-1);
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+	JMP L3
+L2:
+;return
+;1;
+
+	MOV ax,1
+	MOV ret_temp,ax
+L3:
+
+Line 23: compound_statement : LCURL statements RCURL
+
+{
+if (a<=1){
+return 1;
+}
+else
+{
+return a*h(a-1);
+}
+}
+
+ScopeTable # 1.3
+ 7 --> < a , ID > 
+
+ScopeTable # 1
+ 12 --> < f , ID > 
+ 13 --> < g , ID > 
+ 14 --> < h , ID > 
+
+;if
+;(a<=1){
+;return
+;1;
+;}
+;else
+;{
+;return
+;a*h(a-1);
+;}
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t4,cx
+	CMP t4,1
+	JE L2
+;return
+;a*h(a-1);
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+	JMP L3
+L2:
+;return
+;1;
+
+	MOV ax,1
+	MOV ret_temp,ax
+L3:
+
+Line 23: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+int h(int a){
+if (a<=1){
+return 1;
+}
+else
+{
+return a*h(a-1);
+}
+}
+
+Line 23: unit : func_definition
+
+int h(int a){
+if (a<=1){
+return 1;
+}
+else
+{
+return a*h(a-1);
+}
+}
+
+
+h PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;if
+;(a<=1){
+;return
+;1;
+;}
+;else
+;{
+;return
+;a*h(a-1);
+;}
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t4,cx
+	CMP t4,1
+	JE L2
+;return
+;a*h(a-1);
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+	JMP L3
+L2:
+;return
+;1;
+
+	MOV ax,1
+	MOV ret_temp,ax
+L3:
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+h endp
+
+Line 23: program : program unit
+
+int f(int a){
+return 2*a;
+a=9;
+}
+int g(int a,int b){
+int x;
+x=f(a)+a+b;
+return x;
+}
+int h(int a){
+if (a<=1){
+return 1;
+}
+else
+{
+return a*h(a-1);
+}
+}
+
+
+f PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;return
+;2*a;
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+	MOV ax,t0
+	MOV ret_temp,ax
+;a=9;
+
+	MOV ax,9
+	MOV [bp+12],ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+f endp
+g PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;int
+;x;
+
+;x=f(a)+a+b;
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
+	MOV t3,ax
+	MOV ax,t3
+	MOV x1_2,ax
+;return
+;x;
+
+	MOV ax,x1_2
+	MOV ret_temp,ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+g endp
+h PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;if
+;(a<=1){
+;return
+;1;
+;}
+;else
+;{
+;return
+;a*h(a-1);
+;}
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t4,cx
+	CMP t4,1
+	JE L2
+;return
+;a*h(a-1);
+
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+	JMP L3
+L2:
+;return
+;1;
+
+	MOV ax,1
+	MOV ret_temp,ax
+L3:
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+h endp
+
+Line 25: type_specifier : INT
+
+int
+
+Line 26: type_specifier : INT
+
+int
+
+Line 26: declaration_list : ID
+
+a
+
+Line 26: declaration_list : declaration_list COMMA ID
+
+a,b
+
+Line 26: var_declaration : type_specifier declaration_list SEMICOLON
+
+int a,b;
+
+Line 26: statement : var_declaration
+
+int a,b;
+
+Line 26: statements : statement
+
+int a,b;
+
+;int
+;a,b;
+
+
+Line 27: variable : ID
+
+a
+
+
+Line 27: factor : CONST_INT
+
+1
+
+Line 27: unary_expression : factor
+
+1
+
+
+Line 27: term : unary_expression
+
+1
+
+
+Line 27: simple_expression : term
+
+1
+
+
+Line 27: rel_expression : simple_expression
+
+1
+
+
+Line 27: logic_expression : rel_expression
+
+1
+
+
+Line 27: expression : variable ASSIGNOP logic_expression
+
+a=1
+
+	MOV ax,1
+	MOV a1_4,ax
+
+Line 27: expression_statement : expression SEMICOLON
+
+a=1;
+
+	MOV ax,1
+	MOV a1_4,ax
+
+Line 27: statement : expression_statement
+
+a=1;
+
+	MOV ax,1
+	MOV a1_4,ax
+
+Line 27: statements : statements statement
+
+int a,b;
+a=1;
+
+;int
+;a,b;
+
+;a=1;
+
+	MOV ax,1
+	MOV a1_4,ax
+
+Line 28: variable : ID
+
+b
+
+
+Line 28: factor : CONST_INT
+
+2
+
+Line 28: unary_expression : factor
+
+2
+
+
+Line 28: term : unary_expression
+
+2
+
+
+Line 28: simple_expression : term
+
+2
+
+
+Line 28: rel_expression : simple_expression
+
+2
+
+
+Line 28: logic_expression : rel_expression
+
+2
+
+
+Line 28: expression : variable ASSIGNOP logic_expression
+
+b=2
+
+	MOV ax,2
+	MOV b1_4,ax
+
+Line 28: expression_statement : expression SEMICOLON
+
+b=2;
+
+	MOV ax,2
+	MOV b1_4,ax
+
+Line 28: statement : expression_statement
+
+b=2;
+
+	MOV ax,2
+	MOV b1_4,ax
+
+Line 28: statements : statements statement
+
+int a,b;
+a=1;
+b=2;
+
+;int
+;a,b;
+
+;a=1;
+
+	MOV ax,1
+	MOV a1_4,ax
+;b=2;
+
+	MOV ax,2
+	MOV b1_4,ax
+
+Line 29: variable : ID
+
+a
+
+
+Line 29: variable : ID
+
+a
+
+
+Line 29: factor : variable
+
+a
+
+
+Line 29: unary_expression : factor
+
+a
+
+
+Line 29: term : unary_expression
+
+a
+
+
+Line 29: simple_expression : term
+
+a
+
+
+Line 29: rel_expression : simple_expression
+
+a
+
+
+Line 29: logic_expression : rel_expression
+
+a
+
+
+Line 29: arguments : logic_expression
+
+a
+
+Line 29: variable : ID
+
+b
+
+
+Line 29: factor : variable
+
+b
+
+
+Line 29: unary_expression : factor
+
+b
+
+
+Line 29: term : unary_expression
+
+b
+
+
+Line 29: simple_expression : term
+
+b
+
+
+Line 29: rel_expression : simple_expression
+
+b
+
+
+Line 29: logic_expression : rel_expression
+
+b
+
+
+Line 29: arguments : arguments COMMA logic_expression
+
+a,b
+
+Line 29: argument_list : arguments
+
+a,b
+Line 29: factor : ID LPAREN argument_list RPAREN
+
+g(a,b)
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+
+Line 29: unary_expression : factor
+
+g(a,b)
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+
+Line 29: term : unary_expression
+
+g(a,b)
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+
+Line 29: simple_expression : term
+
+g(a,b)
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+
+Line 29: rel_expression : simple_expression
+
+g(a,b)
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+
+Line 29: logic_expression : rel_expression
+
+g(a,b)
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+
+Line 29: expression : variable ASSIGNOP logic_expression
+
+a=g(a,b)
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+
+Line 29: expression_statement : expression SEMICOLON
+
+a=g(a,b);
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+
+Line 29: statement : expression_statement
+
+a=g(a,b);
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+
+Line 29: statements : statements statement
+
+int a,b;
+a=1;
+b=2;
+a=g(a,b);
+
+;int
+;a,b;
+
+;a=1;
+
+	MOV ax,1
+	MOV a1_4,ax
+;b=2;
+
+	MOV ax,2
+	MOV b1_4,ax
+;a=g(a,b);
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+
+Line 30: variable : ID
+
+b
+
+
+Line 30: variable : ID
+
+a
+
+
+Line 30: factor : variable
+
+a
+
+
+Line 30: unary_expression : factor
+
+a
+
+
+Line 30: term : unary_expression
+
+a
+
+
+Line 30: simple_expression : term
+
+a
+
+
+Line 30: rel_expression : simple_expression
+
+a
+
+
+Line 30: logic_expression : rel_expression
+
+a
+
+
+Line 30: arguments : logic_expression
+
+a
+
+Line 30: argument_list : arguments
+
+a
+Line 30: factor : ID LPAREN argument_list RPAREN
+
+h(a)
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+
+Line 30: unary_expression : factor
+
+h(a)
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+
+Line 30: term : unary_expression
+
+h(a)
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+
+Line 30: simple_expression : term
+
+h(a)
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+
+Line 30: rel_expression : simple_expression
+
+h(a)
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+
+Line 30: logic_expression : rel_expression
+
+h(a)
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+
+Line 30: expression : variable ASSIGNOP logic_expression
+
+b=h(a)
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
+
+Line 30: expression_statement : expression SEMICOLON
+
+b=h(a);
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
+
+Line 30: statement : expression_statement
+
+b=h(a);
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
+
+Line 30: statements : statements statement
+
+int a,b;
+a=1;
+b=2;
+a=g(a,b);
+b=h(a);
+
+;int
+;a,b;
+
+;a=1;
+
+	MOV ax,1
+	MOV a1_4,ax
+;b=2;
+
+	MOV ax,2
+	MOV b1_4,ax
+;a=g(a,b);
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+;b=h(a);
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
+
+Line 32: statement : PRINTLN LPAREN ID RPAREN SEMICOLON
+
+printf(a);
+
+Line 32: statements : statements statement
+
+int a,b;
+a=1;
+b=2;
+a=g(a,b);
+b=h(a);
+printf(a);
+
+;int
+;a,b;
+
+;a=1;
+
+	MOV ax,1
+	MOV a1_4,ax
+;b=2;
+
+	MOV ax,2
+	MOV b1_4,ax
+;a=g(a,b);
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+;b=h(a);
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
+;printf(a);
+
+	MOV ax,a1_4
+	MOV print_var,ax
+	CALL print
+
+Line 33: factor : CONST_INT
+
+0
+
+Line 33: unary_expression : factor
+
+0
+
+
+Line 33: term : unary_expression
+
+0
+
+
+Line 33: simple_expression : term
+
+0
+
+
+Line 33: rel_expression : simple_expression
+
+0
+
+
+Line 33: logic_expression : rel_expression
+
+0
+
+
+Line 33: expression : logic expression
+
+0
+
+
+Line 33: statement : RETURN expression SEMICOLON
+
+return 0;
+
+Line 33: statements : statements statement
+
+int a,b;
+a=1;
+b=2;
+a=g(a,b);
+b=h(a);
+printf(a);
+return 0;
+
+;int
+;a,b;
+
+;a=1;
+
+	MOV ax,1
+	MOV a1_4,ax
+;b=2;
+
+	MOV ax,2
+	MOV b1_4,ax
+;a=g(a,b);
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+;b=h(a);
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
+;printf(a);
+
+	MOV ax,a1_4
+	MOV print_var,ax
+	CALL print
+;return
+;0;
+
+	MOV ax,0
+	MOV ret_temp,ax
+
+Line 34: compound_statement : LCURL statements RCURL
+
+{
+int a,b;
+a=1;
+b=2;
+a=g(a,b);
+b=h(a);
+printf(a);
+return 0;
+}
+
+ScopeTable # 1.4
  7 --> < a , ID > 
  8 --> < b , ID > 
- 9 --> < c , ID > 
- 15 --> < i , ID > 
 
 ScopeTable # 1
  1 --> < main , ID > 
+ 12 --> < f , ID > 
+ 13 --> < g , ID > 
+ 14 --> < h , ID > 
 
 ;int
-;a,b,c,i;
+;a,b;
 
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
+;a=1;
 
 	MOV ax,1
-	MOV c1_1,ax
-;for(i=0;i<4;i++){
-;a=3;
-;while
-;(a--){
-;b++;
-;}
-;}
+	MOV a1_4,ax
+;b=2;
 
-	MOV ax,0
-	MOV i1_1,ax
-L4:
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-	CMP t0,0
-	JE L5
-;a=3;
+	MOV ax,2
+	MOV b1_4,ax
+;a=g(a,b);
 
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+;b=h(a);
 
-L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-	JMP L4
-L5:
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
 ;printf(a);
 
-	MOV ax,a1_1
+	MOV ax,a1_4
 	MOV print_var,ax
 	CALL print
-;printf(b);
+;return
+;0;
 
-	MOV ax,b1_1
-	MOV print_var,ax
-	CALL print
-;printf(c);
+	MOV ax,0
+	MOV ret_temp,ax
 
-	MOV ax,c1_1
-	MOV print_var,ax
-	CALL print
-
-Line 14: func_definition : type_specifier ID LPAREN RPAREN compound_statement
+Line 34: func_definition : type_specifier ID LPAREN RPAREN compound_statement
 
 int main(){
-int a,b,c,i;
-b=0;
-c=1;
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
+int a,b;
+a=1;
+b=2;
+a=g(a,b);
+b=h(a);
 printf(a);
-printf(b);
-printf(c);
+return 0;
 }
 
 main proc
@@ -1222,99 +2406,57 @@ main proc
 
 
 ;int
-;a,b,c,i;
+;a,b;
 
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
+;a=1;
 
 	MOV ax,1
-	MOV c1_1,ax
-;for(i=0;i<4;i++){
-;a=3;
-;while
-;(a--){
-;b++;
-;}
-;}
+	MOV a1_4,ax
+;b=2;
 
-	MOV ax,0
-	MOV i1_1,ax
-L4:
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-	CMP t0,0
-	JE L5
-;a=3;
+	MOV ax,2
+	MOV b1_4,ax
+;a=g(a,b);
 
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+;b=h(a);
 
-L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-	JMP L4
-L5:
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
 ;printf(a);
 
-	MOV ax,a1_1
+	MOV ax,a1_4
 	MOV print_var,ax
 	CALL print
-;printf(b);
+;return
+;0;
 
-	MOV ax,b1_1
-	MOV print_var,ax
-	CALL print
-;printf(c);
-
-	MOV ax,c1_1
-	MOV print_var,ax
-	CALL print
+	MOV ax,0
+	MOV ret_temp,ax
 	MOV AH,4CH
 	INT 21H
 ENDP main
 END main
-Line 14: unit : func_definition
+Line 34: unit : func_definition
 
 int main(){
-int a,b,c,i;
-b=0;
-c=1;
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
+int a,b;
+a=1;
+b=2;
+a=g(a,b);
+b=h(a);
 printf(a);
-printf(b);
-printf(c);
+return 0;
 }
 
 
@@ -1324,192 +2466,254 @@ main proc
 
 
 ;int
-;a,b,c,i;
+;a,b;
 
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
+;a=1;
 
 	MOV ax,1
-	MOV c1_1,ax
-;for(i=0;i<4;i++){
-;a=3;
-;while
-;(a--){
-;b++;
-;}
-;}
+	MOV a1_4,ax
+;b=2;
+
+	MOV ax,2
+	MOV b1_4,ax
+;a=g(a,b);
+
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+;b=h(a);
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
+;printf(a);
+
+	MOV ax,a1_4
+	MOV print_var,ax
+	CALL print
+;return
+;0;
 
 	MOV ax,0
-	MOV i1_1,ax
-L4:
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
+	MOV ret_temp,ax
+	MOV AH,4CH
+	INT 21H
+ENDP main
+END main
+Line 34: program : program unit
+
+int f(int a){
+return 2*a;
+a=9;
+}
+int g(int a,int b){
+int x;
+x=f(a)+a+b;
+return x;
+}
+int h(int a){
+if (a<=1){
+return 1;
+}
+else
+{
+return a*h(a-1);
+}
+}
+int main(){
+int a,b;
+a=1;
+b=2;
+a=g(a,b);
+b=h(a);
+printf(a);
+return 0;
+}
+
+
+f PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;return
+;2*a;
+
+	MOV ax,2
+	MOV dx,[bp+12]
+	MUL dx
+	MOV t0,ax
+	MOV ax,t0
+	MOV ret_temp,ax
+;a=9;
+
+	MOV ax,9
+	MOV [bp+12],ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+f endp
+g PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;int
+;x;
+
+;x=f(a)+a+b;
+
+	PUSH [bp+14]
+	CALL f
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,t1
+	ADD ax,[bp+14]
+	MOV t2,ax
+	MOV ax,t2
+	ADD ax,[bp+12]
+	MOV t3,ax
+	MOV ax,t3
+	MOV x1_2,ax
+;return
+;x;
+
+	MOV ax,x1_2
+	MOV ret_temp,ax
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+g endp
+h PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;if
+;(a<=1){
+;return
+;1;
+;}
+;else
+;{
+;return
+;a*h(a-1);
+;}
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
 	MOV cx,0
 	JMP L1
 L0:
 	MOV cx,1
 L1:
-	MOV t0,cx
-	CMP t0,0
-	JE L5
-;a=3;
+	MOV t4,cx
+	CMP t4,1
+	JE L2
+;return
+;a*h(a-1);
 
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
-
+	PUSH t5
+	CALL h
+	MOV ax,ret_temp
+	MOV t6,ax
+	MOV ax,[bp+12]
+	MOV dx,t6
+	MUL dx
+	MOV t7,ax
+	MOV ax,t7
+	MOV ret_temp,ax
+	JMP L3
 L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
+;return
+;1;
 
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
+	MOV ax,1
+	MOV ret_temp,ax
 L3:
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-	JMP L4
-L5:
-;printf(a);
-
-	MOV ax,a1_1
-	MOV print_var,ax
-	CALL print
-;printf(b);
-
-	MOV ax,b1_1
-	MOV print_var,ax
-	CALL print
-;printf(c);
-
-	MOV ax,c1_1
-	MOV print_var,ax
-	CALL print
-	MOV AH,4CH
-	INT 21H
-ENDP main
-END main
-Line 14: program : unit
-
-int main(){
-int a,b,c,i;
-b=0;
-c=1;
-for(i=0;i<4;i++){
-a=3;
-while (a--){
-b++;
-}
-}
-printf(a);
-printf(b);
-printf(c);
-}
-
-
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+h endp
 main proc
 	mov ax,@data
 	mov ds,ax
 
 
 ;int
-;a,b,c,i;
+;a,b;
 
-;b=0;
-
-	MOV ax,0
-	MOV b1_1,ax
-;c=1;
+;a=1;
 
 	MOV ax,1
-	MOV c1_1,ax
-;for(i=0;i<4;i++){
-;a=3;
-;while
-;(a--){
-;b++;
-;}
-;}
+	MOV a1_4,ax
+;b=2;
 
-	MOV ax,0
-	MOV i1_1,ax
-L4:
-	MOV ax,i1_1
-	CMP ax,4
-	JL L0
-	MOV cx,0
-	JMP L1
-L0:
-	MOV cx,1
-L1:
-	MOV t0,cx
-	CMP t0,0
-	JE L5
-;a=3;
+	MOV ax,2
+	MOV b1_4,ax
+;a=g(a,b);
 
-	MOV ax,3
-	MOV a1_1,ax
-;while
-;(a--){
-;b++;
-;}
+	PUSH a1_4
+	PUSH b1_4
+	CALL g
+	MOV ax,ret_temp
+	MOV t8,ax
+	MOV ax,t8
+	MOV a1_4,ax
+;b=h(a);
 
-L2:
-	MOV ax,a1_1
-	MOV t2,ax
-	DEC a1_1
-	CMP t2,0
-	JE L3
-;b++;
-
-	MOV ax,b1_1
-	MOV t3,ax
-	INC b1_1
-	JMP L2
-L3:
-	MOV ax,i1_1
-	MOV t1,ax
-	INC i1_1
-	JMP L4
-L5:
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t9,ax
+	MOV ax,t9
+	MOV b1_4,ax
 ;printf(a);
 
-	MOV ax,a1_1
+	MOV ax,a1_4
 	MOV print_var,ax
 	CALL print
-;printf(b);
+;return
+;0;
 
-	MOV ax,b1_1
-	MOV print_var,ax
-	CALL print
-;printf(c);
-
-	MOV ax,c1_1
-	MOV print_var,ax
-	CALL print
+	MOV ax,0
+	MOV ret_temp,ax
 	MOV AH,4CH
 	INT 21H
 ENDP main
 END main
-Line 15: start : program
+Line 35: start : program
 
 
 ScopeTable # 1
  1 --> < main , ID > 
+ 12 --> < f , ID > 
+ 13 --> < g , ID > 
+ 14 --> < h , ID > 
 
 
-Total lines: 15
-Total errors: 0
+Total lines: 35
+Total errors: 1
