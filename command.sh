@@ -1,6 +1,6 @@
 yaccFile=parser.y
 lexFile=offline.l
-inputFile=loop.c
+inputFile=func.c
 ####################################################################
 #Created by Swapnil 1705025
 ####################################################################

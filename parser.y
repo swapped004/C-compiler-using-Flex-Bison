@@ -31,17 +31,7 @@ int labelCount=0;
 int tempCount=0;
 
 
-char *newLabel()
-{
-	char *lb= new char[4];
-	strcpy(lb,"L");
-	char b[3];
-	sprintf(b,"%d", labelCount);
-	labelCount++;
-	strcat(lb,b);
-	return lb;
-}
-
+/*
 char *newTemp()
 {
 	char *t= new char[4];
@@ -52,6 +42,7 @@ char *newTemp()
 	strcat(t,b);
 	return t;
 }
+*/
 
 
 void print_line()
@@ -85,6 +76,7 @@ vector<string> arg_list;
 int temp_line;
 string temp_id;
 
+
 //mismatch cascade control
 
 map<int,int> mismatch_map;
@@ -100,6 +92,93 @@ vector<string> param_symbol;
 
 //function_argument_symbol
 vector<string> arg_symbol;
+
+//track temp variables used in a statement
+vector<string> current_temp;
+
+//to store temp variables
+vector<pair<int,int>> temp_var(10001,make_pair(-1,0));
+int max_temp_var = 10001;
+
+void free_var(string var)
+{
+	string sub = var.substr(1);
+ 
+    // object from the class stringstream
+    stringstream geek(sub);
+
+    int x = 0;
+    geek >> x;
+
+	temp_var[x].first = -1;
+}
+
+string newTemp()
+{
+	string var_name = "t";
+	int i=0;
+	for(;i<max_temp_var;i++)
+	{
+		if(temp_var[i].first == -1)
+		{
+			var_name += to_string(i);
+			temp_var[i].first = 0;
+
+			if(temp_var[i].second == 0)
+			{
+				data_seg.push_back(var_name+" dw ?");
+				temp_var[i].second = 1;
+			}
+			break;
+		}
+	}
+
+	if(i == max_temp_var)
+	{
+		//out of temp_vars
+		int prev_size = max_temp_var;
+		max_temp_var+=10001;
+		vector<pair<int,int>> new_temp_var(max_temp_var,make_pair(-1,0));
+
+		for(int j=0;j<prev_size;j++)
+		{
+			new_temp_var[j] = temp_var[j];
+		}
+
+		temp_var = new_temp_var;
+
+		i = 0;
+		for(;i<max_temp_var;i++)
+		{
+			if(temp_var[i].first == -1)
+			{
+				var_name += to_string(i);
+				temp_var[i].first = 0;
+
+				if(temp_var[i].second == 0)
+				{
+					data_seg.push_back(var_name+" dw ?");
+					temp_var[i].second = 1;
+				}
+				break;
+			}
+		}
+	}
+
+	return var_name;
+}
+
+
+char *newLabel()
+{
+	char *lb= new char[4];
+	strcpy(lb,"L");
+	char b[3];
+	sprintf(b,"%d", labelCount);
+	labelCount++;
+	strcat(lb,b);
+	return lb;
+}
 
 
 bool insert_ID(string name, string data_type, int is_array)
@@ -1154,6 +1233,14 @@ statements: statement
 				fp2<<"statements : statement\n"<<endl;
 				fp2<<$$->getName()<<endl;
 				fp2<<$$->get_code()<<endl;
+
+				//free the temporary variables used in the statement
+				for(string x:current_temp)
+				{
+					free_var(x);
+				}
+
+				current_temp.clear();
  		  	}
 		
 	   | statements statement
@@ -1171,6 +1258,14 @@ statements: statement
 			fp2<<"statements : statements statement\n"<<endl;
 			fp2<<$$->getName()<<endl;
 			fp2<<$$->get_code()<<endl;
+
+			//free the temporary variables used in the statement
+			for(string x:current_temp)
+			{
+				free_var(x);
+			}
+
+			current_temp.clear();
 
  		}
 		
@@ -1654,7 +1749,8 @@ logic_expression: rel_expression
 				string label2 = newLabel();
 
 				string temp = newTemp();
-				data_seg.push_back(temp+" dw ?");
+				current_temp.push_back(temp);
+				//data_seg.push_back(temp+" dw ?");
 
 				$$->code+="\tCMP "+$1->get_symbol()+",0\n";
 				$$->code+="\tJNE "+label1+"\n";
@@ -1675,7 +1771,8 @@ logic_expression: rel_expression
 				string label2 = newLabel();
 
 				string temp = newTemp();
-				data_seg.push_back(temp+" dw ?");
+				current_temp.push_back(temp);
+				//data_seg.push_back(temp+" dw ?");
 
 				$$->code+="\tCMP "+$1->get_symbol()+",0\n";
 				$$->code+="\tJE "+label1+"\n";
@@ -1734,7 +1831,8 @@ rel_expression: simple_expression
 
 			//code
 			string temp = newTemp();
-			data_seg.push_back(temp+" dw ?");
+			current_temp.push_back(temp);
+			//data_seg.push_back(temp+" dw ?");
 			string label1 = newLabel();
 			string label2 = newLabel();
 
@@ -1831,7 +1929,8 @@ simple_expression: term
 
 			//code
 			string temp = newTemp();
-			data_seg.push_back(temp+" dw ?");
+			current_temp.push_back(temp);
+			//data_seg.push_back(temp+" dw ?");
 			$$->code +="\tMOV ax,"+$1->get_symbol()+"\n";
 			
 			if($2->getName() == "+")
@@ -1940,7 +2039,8 @@ term:	unary_expression
 
 			//code
 			string temp = newTemp();
-			data_seg.push_back(temp+" dw ?");
+			current_temp.push_back(temp);
+			//data_seg.push_back(temp+" dw ?");
 
 			if($2->getName() == "*")
 			{
@@ -2064,7 +2164,8 @@ factor: variable
 			if($1->getType() == "array")
 			{
 				string temp = newTemp();
-				data_seg.push_back(temp+" dw ?");
+				current_temp.push_back(temp);
+				//data_seg.push_back(temp+" dw ?");
 				$$->set_size($1->get_size());
 
 				$$->code+= "\tMOV ax,"+$1->get_symbol()+"[bx]\n";
@@ -2224,6 +2325,7 @@ factor: variable
 			for(string x:arg_symbol)
 			{
 				$$->code+="\tPUSH "+x+"\n";
+				
 			}
 			$$->code+="\tCALL "+$1->getName()+"\n";
 
@@ -2233,7 +2335,8 @@ factor: variable
 				$$->code+="\tMOV ax,ret_temp\n";
 
 				string temp = newTemp();
-				data_seg.push_back(temp+" dw ?");
+				current_temp.push_back(temp);
+				//data_seg.push_back(temp+" dw ?");
 				$$->code+="\tMOV "+temp+",ax\n";
 
 				$$->set_symbol(temp);
@@ -2308,7 +2411,9 @@ factor: variable
 		if($1->getType() == "array")
 		{
 			string temp = newTemp();
-			data_seg.push_back(temp+" dw ?");
+			current_temp.push_back(temp);
+			
+			//data_seg.push_back(temp+" dw ?");
 
 			$$->code += "\tMOV ax,"+$1->get_symbol()+"[bx]\n";
 			$$->code += "\tMOV "+temp+",ax\n";
@@ -2320,7 +2425,8 @@ factor: variable
 		else
 		{
 			string temp = newTemp();
-			data_seg.push_back(temp+" dw ?");
+			current_temp.push_back(temp);
+			//data_seg.push_back(temp+" dw ?");
 			
 			$$->code += "\tMOV ax,"+$1->get_symbol()+"\n";
 			$$->code += "\tMOV "+temp+",ax\n";
@@ -2344,7 +2450,8 @@ factor: variable
 		if($1->getType() == "array")
 		{
 			string temp = newTemp();
-			data_seg.push_back(temp+" dw ?");
+			current_temp.push_back(temp);
+			//data_seg.push_back(temp+" dw ?");
 
 			$$->code += "\tMOV ax,"+$1->get_symbol()+"[bx]\n";
 			$$->code += "\tMOV "+temp+",ax\n";
@@ -2356,7 +2463,8 @@ factor: variable
 		else
 		{
 			string temp = newTemp();
-			data_seg.push_back(temp+" dw ?");
+			//data_seg.push_back(temp+" dw ?");
+			current_temp.push_back(temp);
 			
 			$$->code += "\tMOV ax,"+$1->get_symbol()+"\n";
 			$$->code += "\tMOV "+temp+",ax\n";
