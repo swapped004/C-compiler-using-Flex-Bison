@@ -12,6 +12,18 @@ I managed to make a fully functional C compiler that was able to compile even so
 ___
 
 # How to Use:
-+ Set `inputFile=<"The C file you want to compile">` in `command.sh`
-+ Run `command.sh`
-+ Volia!!! The code will be generated into `optimized_code.asm` assembly file
++ As a prerequisite, install flex and bison:
+```
+sudo apt-get update
+sudo apt-get install -f flex
+sudo apt-get install bison
+```
++ Give `command.sh` permission to execute
+```
+chmod +x command.sh
+```
++ Run `command.sh` with the command line argument set to the file you want to compile
+```
+command.sh a.c
+```
++ Volia!!! The code will be generated into `code.asm` assembly file with the optimized version of it into `optimized_code.asm`

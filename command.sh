@@ -1,6 +1,6 @@
 yaccFile=parser.y
 lexFile=offline.l
-inputFile=sample_input_files_regression_test/recurse.c
+inputFile=$1
 ####################################################################
 #Created by Swapnil 1705025
 ####################################################################
