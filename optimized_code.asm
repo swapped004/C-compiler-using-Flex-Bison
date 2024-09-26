@@ -7,8 +7,8 @@
 	x1_2 dw ?
 	t1 dw ?
 	t2 dw ?
-	a1_3 dw ?
-	b1_3 dw ?
+	a1_4 dw ?
+	b1_4 dw ?
 .CODE
 print PROC
 	PUSH ax
@@ -121,6 +121,65 @@ g PROC
 	POP ax
 	RET 2
 g endp
+h PROC
+	PUSH ax
+	PUSH bx
+	PUSH cx
+	PUSH dx
+	PUSH bp
+	MOV bp,sp
+;if
+;(a<=1){
+;return
+;1;
+;}
+;else
+;{
+;return
+;a*h(a-1);
+;}
+
+	MOV ax,[bp+12]
+	CMP ax,1
+	JLE L0
+	MOV cx,0
+	JMP L1
+L0:
+	MOV cx,1
+L1:
+	MOV t0,cx
+	CMP t0,1
+	JE L2
+;return
+;a*h(a-1);
+
+	MOV ax,[bp+12]
+	SUB ax,1
+	MOV t0,ax
+	PUSH t0
+	CALL h
+	MOV ax,ret_temp
+	MOV t1,ax
+	MOV ax,[bp+12]
+	MOV dx,t1
+	MUL dx
+	MOV t2,ax
+	MOV ret_temp,ax
+	JMP L3
+L2:
+;return
+;1;
+
+	MOV ax,1
+	MOV ret_temp,ax
+L3:
+	POP bp
+	POP dx
+	POP cx
+	POP bx
+	POP ax
+	RET 2
+h endp
 main proc
 	mov ax,@data
 	mov ds,ax
@@ -132,22 +191,34 @@ main proc
 ;a=1;
 
 	MOV ax,1
-	MOV a1_3,ax
+	MOV a1_4,ax
 ;b=2;
 
 	MOV ax,2
-	MOV b1_3,ax
+	MOV b1_4,ax
 ;a=g(a,b);
 
-	PUSH a1_3
-	PUSH b1_3
+	PUSH a1_4
+	PUSH b1_4
 	CALL g
 	MOV ax,ret_temp
 	MOV t0,ax
-	MOV a1_3,ax
+	MOV a1_4,ax
+;b=h(a);
+
+	PUSH a1_4
+	CALL h
+	MOV ax,ret_temp
+	MOV t0,ax
+	MOV b1_4,ax
 ;printf(a);
 
-	MOV ax,a1_3
+	MOV ax,a1_4
+	MOV print_var,ax
+	CALL print
+;printf(b);
+
+	MOV ax,b1_4
 	MOV print_var,ax
 	CALL print
 ;return

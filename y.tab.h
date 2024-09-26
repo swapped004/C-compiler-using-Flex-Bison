@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.5.1.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -31,8 +31,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_Y_TAB_H_INCLUDED
 # define YY_YY_Y_TAB_H_INCLUDED
@@ -44,48 +45,57 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    CONST_INT = 258,
-    CONST_FLOAT = 259,
-    CONST_CHAR = 260,
-    ID = 261,
-    INT = 262,
-    FLOAT = 263,
-    VOID = 264,
-    CHAR = 265,
-    DOUBLE = 266,
-    IF = 267,
-    ELSE = 268,
-    FOR = 269,
-    WHILE = 270,
-    RETURN = 271,
-    PRINTLN = 272,
-    CONTINUE = 273,
-    DO = 274,
-    ASSIGNOP = 275,
-    NOT = 276,
-    INCOP = 277,
-    DECOP = 278,
-    LOGICOP = 279,
-    RELOP = 280,
-    ADDOP = 281,
-    MULOP = 282,
-    LPAREN = 283,
-    RPAREN = 284,
-    LCURL = 285,
-    RCURL = 286,
-    LTHIRD = 287,
-    RTHIRD = 288,
-    COMMA = 289,
-    SEMICOLON = 290,
-    LOWER_THAN_ELSE = 291
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    CONST_INT = 258,               /* CONST_INT  */
+    CONST_FLOAT = 259,             /* CONST_FLOAT  */
+    CONST_CHAR = 260,              /* CONST_CHAR  */
+    ID = 261,                      /* ID  */
+    INT = 262,                     /* INT  */
+    FLOAT = 263,                   /* FLOAT  */
+    VOID = 264,                    /* VOID  */
+    CHAR = 265,                    /* CHAR  */
+    DOUBLE = 266,                  /* DOUBLE  */
+    IF = 267,                      /* IF  */
+    ELSE = 268,                    /* ELSE  */
+    FOR = 269,                     /* FOR  */
+    WHILE = 270,                   /* WHILE  */
+    RETURN = 271,                  /* RETURN  */
+    PRINTLN = 272,                 /* PRINTLN  */
+    CONTINUE = 273,                /* CONTINUE  */
+    DO = 274,                      /* DO  */
+    ASSIGNOP = 275,                /* ASSIGNOP  */
+    NOT = 276,                     /* NOT  */
+    INCOP = 277,                   /* INCOP  */
+    DECOP = 278,                   /* DECOP  */
+    LOGICOP = 279,                 /* LOGICOP  */
+    RELOP = 280,                   /* RELOP  */
+    ADDOP = 281,                   /* ADDOP  */
+    MULOP = 282,                   /* MULOP  */
+    LPAREN = 283,                  /* LPAREN  */
+    RPAREN = 284,                  /* RPAREN  */
+    LCURL = 285,                   /* LCURL  */
+    RCURL = 286,                   /* RCURL  */
+    LTHIRD = 287,                  /* LTHIRD  */
+    RTHIRD = 288,                  /* RTHIRD  */
+    COMMA = 289,                   /* COMMA  */
+    SEMICOLON = 290,               /* SEMICOLON  */
+    LOWER_THAN_ELSE = 291          /* LOWER_THAN_ELSE  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Tokens.  */
+/* Token kinds.  */
+#define YYEMPTY -2
+#define YYEOF 0
+#define YYerror 256
+#define YYUNDEF 257
 #define CONST_INT 258
 #define CONST_FLOAT 259
 #define CONST_CHAR 260
@@ -128,7 +138,7 @@ union YYSTYPE
 #line 480 "./parser.y"
 int ival;SymbolInfo* si;
 
-#line 132 "y.tab.h"
+#line 142 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -139,6 +149,8 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
+
 int yyparse (void);
+
 
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */
