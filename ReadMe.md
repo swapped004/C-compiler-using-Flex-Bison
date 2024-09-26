@@ -22,7 +22,7 @@ sudo apt-get install bison
 ```
 chmod +x command.sh
 ```
-+ Run `command.sh` with the command line argument set to the file you want to compile
++ Run `command.sh` with the command line argument set to the file you want to compile, e.g:
 ```
 command.sh a.c
 ```
